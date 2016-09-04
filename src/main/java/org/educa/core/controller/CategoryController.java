@@ -3,7 +3,7 @@ package org.educa.core.controller;
 import java.util.List;
 
 import org.educa.core.dao.CategoryRepository;
-import org.educa.core.model.Category;
+import org.educa.core.entities.model.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
