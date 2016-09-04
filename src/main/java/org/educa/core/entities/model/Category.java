@@ -1,4 +1,4 @@
-package org.educa.core.model;
+package org.educa.core.entities.model;
 
 import java.io.Serializable;
 
@@ -62,5 +62,10 @@ public class Category implements Serializable{
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Category [id=" + id + ", description=" + description + "]";
 	}	
 }

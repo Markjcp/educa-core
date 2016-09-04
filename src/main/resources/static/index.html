@@ -1,10 +1,28 @@
 <!DOCTYPE HTML>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head> 
-    <title>Getting Started: Serving Web Content</title> 
+    <title>Taller Desarrollo II - FIUBA</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+	<link href="css/bootstrap.css" th:href="@{/css/bootstrap.css}" rel="stylesheet" media="screen,projection" />
+	<link href="css/sb-admin-2.css" th:href="@{/css/sb-admin-2.css}" rel="stylesheet" media="screen,projection" />
+	<link href="css/materialize.css" th:href="@{/css/materialize.css}" rel="stylesheet" media="screen,projection" />
+	<link href="css/style.css" th:href="@{/css/style.css}" rel="stylesheet" media="screen,projection" />
 </head>
 <body>
-    <p>List categories <a href="/categories">here</a></p>
+	<div th:replace="/templates/views/fragments/header :: header">&nbsp;</div>
+	
+	<div class="container">
+		<p>List categories <a href="/categories">here</a></p>
+    	<p>Alta curso <a href="/cursoAdmin/altaCurso">here</a></p>
+	</div>
+	
+	<!--  Scripts-->
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="js/bootstrap.js" th:src="@{/js/bootstrap.js}"></script>
+    <script src="js/sb-admin-2.js" th:src="@{/js/sb-admin-2.js}"></script>
+    <script src="js/materialize.js" th:src="@{/js/materialize.js}"></script>
+    <script src="js/init.js" th:src="@{/js/init.js}"></script>    
 </body>
 </html>
