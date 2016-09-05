@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.educa.core.entities.Persistible;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -31,7 +32,7 @@ public class Curso implements Persistible {
 	private String nombre;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@NotEmpty(message="Debe ingresar una categoría.")
+	@NotNull(message="Debe ingresar una categoría.")
 	//@JoinColumn(name = "curso_categoria", nullable = false)	
 	private Category categoria;
 		
@@ -41,7 +42,7 @@ public class Curso implements Persistible {
 	private String imagen; //TODO [ediaz] ESTO HAY Q DEFINIR BIEN
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@NotEmpty(message="Debe asignarselo a un profesor.")
+	@NotNull(message="Debe asignarselo a un profesor.")
 	//@JoinColumn(name = "curso_profesor", nullable = false)
 	private Profesor profesor;
 		
