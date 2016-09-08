@@ -10,18 +10,21 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="category")
-public class Category implements Serializable{
+@Table(name="categoria")
+public class Categoria implements Serializable{
 
 	private static final long serialVersionUID = -3590319647987305944L;
 	
-	@Id
-	@Column(name="category_id")
+	@Id 
+	@Column(name="id_categoria")
     @GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
-	@Column(name = "category_description")
-	private String description;
+	@Column(name = "descripcion")
+	private String descripcion;
+	
+	@Column(name = "imagen")
+	private String imagen;
 
 	public Long getId() {
 		return id;
@@ -31,12 +34,20 @@ public class Category implements Serializable{
 		this.id = id;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getDescripcion() {
+		return descripcion;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+	
+	public String getImagen() {
+		return imagen;
+	}
+
+	public void setImagen(String imagen) {
+		this.imagen = imagen;
 	}
 
 	@Override
@@ -55,7 +66,7 @@ public class Category implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Category other = (Category) obj;
+		Categoria other = (Categoria) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -66,6 +77,6 @@ public class Category implements Serializable{
 
 	@Override
 	public String toString() {
-		return "Category [id=" + id + ", description=" + description + "]";
+		return "Category [id=" + id + ", description=" + descripcion + "]";
 	}	
 }

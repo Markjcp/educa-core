@@ -1,9 +1,12 @@
 package org.educa.core.entities.model;
 
+import java.util.Arrays;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -20,34 +23,39 @@ public class Curso implements Persistible {
 	private static final long serialVersionUID = 312187995114943044L;
 
 	@Id
-	@GeneratedValue
+    @GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name = "id_curso")
 	private Long id;
-	
-	@NotEmpty(message="Debe ingresar un código único.")
-	@Column(nullable = false, columnDefinition = "VARCHAR(10)", unique = true)
-	private String codigo;
-		
-	@NotEmpty(message="Debe ingresar un nombre.")
-	@Column(nullable = false, columnDefinition = "VARCHAR(20)")
+
+	@NotEmpty(message = "Debe ingresar un nombre.")
+	@Column(name = "nombre")
 	private String nombre;
+
+	@ManyToOne
+	@NotNull(message = "Debe ingresar una categoría.")
+	@JoinColumn(name = "id_categoria", referencedColumnName = "id_categoria", nullable = false)
+	private Categoria categoria;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@NotNull(message="Debe ingresar una categoría.")
-	//@JoinColumn(name = "curso_categoria", nullable = false)	
-	private Category categoria;
-		
-	@Column(columnDefinition = "VARCHAR(150)")
+	@Column(name="id_categoria", insertable = false, updatable = false)
+	private Long categoriaId;
+
+	@Column(name = "descripcion")
 	private String descripcion;
-	
-	private String imagen; //TODO [ediaz] ESTO HAY Q DEFINIR BIEN
-	
+
+	@Column(name = "imagen")
+	private byte[] imagen;
+
 	@ManyToOne(fetch = FetchType.EAGER)
-	@NotNull(message="Debe asignarselo a un profesor.")
-	//@JoinColumn(name = "curso_profesor", nullable = false)
-	private Profesor profesor;
-		
-	//private List<Profesor> ayudantes;  TODO [ediaz] ESTO HAY Q VER SI SON TODOS PROFESORES O SI SON PUNTUALES AYUDANTES (OTRA ENTIDAD)
-	
+	@NotNull(message = "Debe asignarselo a un docente.")
+	@JoinColumn(name = "legajo_docente", referencedColumnName="legajo", nullable = false)
+	private Docente docente;
+
+	@Column(name = "valoracion_promedio")
+	private Integer valoracionesPromedio;
+
+	@Column(name = "cantidad_valoraciones")
+	private Integer cantidadValoraciones;
+
 	public Curso() {
 		super();
 	}
@@ -62,14 +70,6 @@ public class Curso implements Persistible {
 		return this.id;
 	}
 
-	public String getCodigo() {
-		return codigo;
-	}
-
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
-
 	public String getNombre() {
 		return nombre;
 	}
@@ -78,11 +78,11 @@ public class Curso implements Persistible {
 		this.nombre = nombre;
 	}
 
-	public Category getCategoria() {
+	public Categoria getCategoria() {
 		return categoria;
 	}
 
-	public void setCategoria(Category categoria) {
+	public void setCategoria(Categoria categoria) {
 		this.categoria = categoria;
 	}
 
@@ -94,25 +94,76 @@ public class Curso implements Persistible {
 		this.descripcion = descripcion;
 	}
 
-	public String getImagen() {
+	public byte[] getImagen() {
 		return imagen;
 	}
 
-	public void setImagen(String imagen) {
+	public void setImagen(byte[] imagen) {
 		this.imagen = imagen;
 	}
 
-	public Profesor getProfesor() {
-		return profesor;
+	public Docente getDocente() {
+		return docente;
 	}
 
-	public void setProfesor(Profesor profesor) {
-		this.profesor = profesor;
+	public void setDocente(Docente docente) {
+		this.docente = docente;
+	}
+
+	public Integer getValoracionesPromedio() {
+		return valoracionesPromedio;
+	}
+
+	public void setValoracionesPromedio(Integer valoracionesPromedio) {
+		this.valoracionesPromedio = valoracionesPromedio;
+	}
+
+	public Integer getCantidadValoraciones() {
+		return cantidadValoraciones;
+	}
+
+	public void setCantidadValoraciones(Integer cantidadValoraciones) {
+		this.cantidadValoraciones = cantidadValoraciones;
+	}
+	
+	public Long getCategoriaId() {
+		return categoriaId;
+	}
+
+	public void setCategoriaId(Long categoriaId) {
+		this.categoriaId = categoriaId;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Curso other = (Curso) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Curso [id=" + id + ", codigo=" + codigo + ", nombre=" + nombre + ", categoria=" + categoria
-				+ ", descripcion=" + descripcion + ", imagen=" + imagen + ", profesor=" + profesor + "]";
-	}	
+		return "Curso [id=" + id + ", nombre=" + nombre + ", categoria=" + categoria + ", descripcion=" + descripcion
+				+ ", imagen=" + Arrays.toString(imagen) + ", docente=" + docente + ", valoracionesPromedio="
+				+ valoracionesPromedio + ", cantidadValoraciones=" + cantidadValoraciones + "]";
+	}
+
 }

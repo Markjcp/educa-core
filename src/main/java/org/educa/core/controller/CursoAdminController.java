@@ -1,15 +1,15 @@
 package org.educa.core.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import org.educa.core.controller.forms.CursoForm;
-import org.educa.core.dao.CategoryRepository;
-import org.educa.core.dao.ProfesorRepository;
-import org.educa.core.entities.model.Category;
-import org.educa.core.entities.model.Profesor;
+import org.educa.core.dao.CategoriaRepository;
+import org.educa.core.dao.DocenteRepository;
+import org.educa.core.entities.model.Categoria;
+import org.educa.core.entities.model.Curso;
+import org.educa.core.entities.model.Docente;
 import org.educa.core.services.CursoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,22 +32,22 @@ public class CursoAdminController {
 	@Autowired private CursoService cursoService;
 	
 	@Autowired
-	@Qualifier("categoryRepository")
-	private CategoryRepository categoryRepository;
+	@Qualifier("categoriaRepository")
+	private CategoriaRepository categoriaRepository;
 	
 	@Autowired
-	@Qualifier("profesorRepository")
-	private ProfesorRepository profesorRepository;
+	@Qualifier("docenteRepository")
+	private DocenteRepository docenteRepository;
 	
 	@RequestMapping(value = "/altaCurso", method = RequestMethod.GET)
 	public String altaCurso(Model model){
 		CursoForm cursoForm = new CursoForm();
-		List<Category> categories = (List<Category>)categoryRepository.findAll();
-		List<Profesor> profesores = (List<Profesor>)profesorRepository.findAll();
+		List<Categoria> categories = (List<Categoria>)categoriaRepository.findAll();
+		List<Docente> docentes = (List<Docente>)docenteRepository.findAll();
 		
 		model.addAttribute("cursoForm", cursoForm);
 		model.addAttribute("categorias", categories);				
-		model.addAttribute("profesores", profesores);
+		model.addAttribute("docentes", docentes);
 		
 		return ALTA_PROFESOR;
 	}
@@ -59,18 +59,20 @@ public class CursoAdminController {
 			
 			model.addAttribute("cursoForm", cursoForm);
 			
-			List<Category> categories = (List<Category>)categoryRepository.findAll();
+			List<Categoria> categories = (List<Categoria>)categoriaRepository.findAll();
 			model.addAttribute("categorias", categories);
 			
-			List<Profesor> profesores = (List<Profesor>)profesorRepository.findAll();
+			List<Docente> profesores = (List<Docente>)docenteRepository.findAll();
 			model.addAttribute("profesores", profesores);
 			
 			return ALTA_PROFESOR;
 		}
 		
 		System.out.println("EL CURSO NO TIENE ERRORES Y SE VA A GUARDAR: " + cursoForm.getCurso());
-		
-		this.cursoService.crearCurso(cursoForm.getCurso());
+		Curso curso = cursoForm.getCurso();
+		curso.setValoracionesPromedio(0);
+		curso.setCantidadValoraciones(0);
+		this.cursoService.crearCurso(curso);
 		
 		return "redirect:/index.html";
 	}
