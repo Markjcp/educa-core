@@ -107,3 +107,14 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+
+-- 10/09
+CREATE TABLE IF NOT EXISTS `educa`.`parametro` (
+  `key` VARCHAR(45) NOT NULL,
+  `value` VARCHAR(100) NULL,
+  PRIMARY KEY (`key`))
+ENGINE = InnoDB;
+
+ALTER TABLE `educa`.`curso` 
+ADD COLUMN `fecha_estimada_prox_sesion` DATE NULL AFTER `cantidad_valoraciones`;

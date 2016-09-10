@@ -1,6 +1,7 @@
 package org.educa.core.entities.model;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,7 +55,10 @@ public class Curso implements Persistible {
 	private Integer valoracionesPromedio;
 
 	@Column(name = "cantidad_valoraciones")
-	private Integer cantidadValoraciones;
+	private Integer cantidadValoraciones; 
+	
+	@Column(name="fecha_estimada_prox_sesion")
+	private Date fechaEstimadaProximaSesion;
 
 	public Curso() {
 		super();
@@ -133,6 +137,14 @@ public class Curso implements Persistible {
 	public void setCategoriaId(Long categoriaId) {
 		this.categoriaId = categoriaId;
 	}
+	
+	public Date getFechaEstimadaProximaSesion() {
+		return fechaEstimadaProximaSesion;
+	}
+
+	public void setFechaEstimadaProximaSesion(Date fechaEstimadaProximaSesion) {
+		this.fechaEstimadaProximaSesion = fechaEstimadaProximaSesion;
+	}
 
 	@Override
 	public int hashCode() {
@@ -161,9 +173,9 @@ public class Curso implements Persistible {
 
 	@Override
 	public String toString() {
-		return "Curso [id=" + id + ", nombre=" + nombre + ", categoria=" + categoria + ", descripcion=" + descripcion
-				+ ", imagen=" + Arrays.toString(imagen) + ", docente=" + docente + ", valoracionesPromedio="
-				+ valoracionesPromedio + ", cantidadValoraciones=" + cantidadValoraciones + "]";
+		return "Curso [id=" + id + ", nombre=" + nombre + ", categoria=" + categoria + ", categoriaId=" + categoriaId
+				+ ", descripcion=" + descripcion + ", imagen=" + Arrays.toString(imagen) + ", docente=" + docente
+				+ ", valoracionesPromedio=" + valoracionesPromedio + ", cantidadValoraciones=" + cantidadValoraciones
+				+ ", fechaEstimadaProximaSesion=" + fechaEstimadaProximaSesion + "]";
 	}
-
 }

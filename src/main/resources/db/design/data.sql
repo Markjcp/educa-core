@@ -10,3 +10,8 @@ INSERT INTO `usuario`(`id_usuario`,`nombre`,`apellido`,`email`,`foto`)VALUES(2,'
 
 INSERT INTO `docente`(`legajo`,`id_usuario`)VALUES(1,1);
 INSERT INTO `docente`(`legajo`,`id_usuario`)VALUES(2,2);
+
+-- 10/09
+INSERT INTO `educa`.`parametro` (`key`, `value`) VALUES ('FECHA_DEFAUL_PROX_CURSO', '2016-10-30');
+INSERT INTO `educa`.`parametro` (`key`, `value`) VALUES ('CANT_MESES_PROX_CURSO', '3');
+update `educa`.`curso` set fecha_estimada_prox_sesion = '2016-10-30' where 1=1;
