@@ -1,9 +1,12 @@
 package org.educa.core.controller.forms;
 
+import javax.validation.Valid;
+
 import org.educa.core.entities.model.Curso;
 
 public class CursoForm {
 
+	@Valid
 	private Curso curso;
 	//private boolean esEditar;
 	

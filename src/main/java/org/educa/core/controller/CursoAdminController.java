@@ -17,6 +17,7 @@ import org.educa.core.entities.model.Curso;
 import org.educa.core.entities.model.Docente;
 import org.educa.core.entities.model.Parametro;
 import org.educa.core.services.CursoService;
+import org.educa.core.validator.NombreRepetidoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -55,6 +56,10 @@ public class CursoAdminController {
 	@Qualifier("parametroRepository")
 	private ParametroRepository parametroRepository;
 	
+	@Autowired
+	@Qualifier("nombreRepetidoValidator")
+	private NombreRepetidoValidator nombreRepetidoValidator;
+	
 	@RequestMapping(value = "/altaCurso", method = RequestMethod.GET)
 	public String altaCurso(Model model){
 		CursoForm cursoForm = new CursoForm();
@@ -69,7 +74,8 @@ public class CursoAdminController {
 	}
 
 	@RequestMapping(value = "/altaCurso", method = RequestMethod.POST)
-	public String guardarCurso(@ModelAttribute @Valid CursoForm cursoForm, BindingResult bindingResult, Model model){		
+	public String guardarCurso(@ModelAttribute @Valid CursoForm cursoForm, BindingResult bindingResult, Model model){
+		nombreRepetidoValidator.validate(cursoForm.getCurso(),bindingResult);
 		if(bindingResult.hasFieldErrors("curso.*")){
 			System.out.println("El curso tiene errores!!!!!!!!: " + cursoForm.getCurso());
 			
@@ -78,8 +84,8 @@ public class CursoAdminController {
 			List<Categoria> categories = (List<Categoria>)categoriaRepository.findAll();
 			model.addAttribute("categorias", categories);
 			
-			List<Docente> profesores = (List<Docente>)docenteRepository.findAll();
-			model.addAttribute("profesores", profesores);
+			List<Docente> docentes = (List<Docente>)docenteRepository.findAll();
+			model.addAttribute("docentes", docentes);
 			
 			return ALTA_PROFESOR;
 		}

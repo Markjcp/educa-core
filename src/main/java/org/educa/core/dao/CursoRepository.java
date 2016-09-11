@@ -10,5 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface CursoRepository extends CrudRepository<Curso, Long>{
 	
 	List<Curso> findByCategoriaId(Long categoriaId);
+	
+	List<Curso> findByNombre(String nombre);
 
 }
