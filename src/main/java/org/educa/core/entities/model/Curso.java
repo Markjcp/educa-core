@@ -12,10 +12,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.educa.core.entities.Persistible;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "curso")
@@ -29,18 +32,20 @@ public class Curso implements Persistible {
 	private Long id;
 
 	@NotEmpty(message = "Debe ingresar un nombre.")
-	@Column(name = "nombre")
+	@Column(name = "nombre", unique=true, nullable=false)
+	@Length(max=100, message="Longitud máxima de 100 caracteres alfanuméricos.")
 	private String nombre;
 
 	@ManyToOne
 	@NotNull(message = "Debe ingresar una categoría.")
-	@JoinColumn(name = "id_categoria", referencedColumnName = "id_categoria", nullable = false)
+	@JoinColumn(name = "id_categoria", referencedColumnName = "id_categoria", nullable = false)	
 	private Categoria categoria;
 	
 	@Column(name="id_categoria", insertable = false, updatable = false)
 	private Long categoriaId;
 
 	@Column(name = "descripcion")
+	@Length(max=255, message="Longitud máxima de 255 caracteres.")
 	private String descripcion;
 
 	@Column(name = "imagen")
@@ -59,6 +64,9 @@ public class Curso implements Persistible {
 	
 	@Column(name="fecha_estimada_prox_sesion")
 	private Date fechaEstimadaProximaSesion;
+	
+	@Transient
+	private MultipartFile foto;
 
 	public Curso() {
 		super();
@@ -144,6 +152,14 @@ public class Curso implements Persistible {
 
 	public void setFechaEstimadaProximaSesion(Date fechaEstimadaProximaSesion) {
 		this.fechaEstimadaProximaSesion = fechaEstimadaProximaSesion;
+	}
+
+	public MultipartFile getFoto() {
+		return foto;
+	}
+
+	public void setFoto(MultipartFile foto) {
+		this.foto = foto;
 	}
 
 	@Override

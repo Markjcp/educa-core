@@ -25,4 +25,9 @@ public class CursoServiceImpl implements CursoService {
 		this.notificacionService.notificarCursoNuevo(curso.getDocente(), curso.getId()+"", curso.getNombre());		
 	}
 
+	@Override
+	public Curso encontrarCursoPorId(long id) {
+		return this.cursoDao.findById(id);
+	}
+
 }
