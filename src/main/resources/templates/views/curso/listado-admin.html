@@ -37,15 +37,7 @@
                 
                 <div th:if="${not #lists.isEmpty(cursos)}" class="panel panel-default">				    
 				    <div class="panel-body">
-				        <div id="dataTables-example_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-				            <div class="row">				                
-				                <div class="col-sm-6">
-				                    <div id="dataTables-example_filter" class="dataTables_filter"> <!-- class =   -->
-				                    	<input type="search" class="form-control input-sm" placeholder="Nombre del curso" aria-controls="dataTables-example"/>
-				                        <label for="nombre">Nombre Curso</label>
-				                     </div>				                     
-				                 </div>
-			                </div>
+				        <div id="dataTables-example_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">				            
 			                <div class="row">
 			                    <div class="col-sm-12">
 			                        <table class="table" id="dataTables-example" role="grid" aria-describedby="dataTables-example_info">
@@ -70,22 +62,7 @@
 			                            </tbody>
 			                        </table>
 			                    </div>
-			                </div>
-			                <div class="row">
-			                    <div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate">
-		                            <ul class="pagination">
-		                                <li class="paginate_button previous disabled" aria-controls="dataTables-example" tabindex="0" id="dataTables-example_previous">
-		                                    <a href="#">Previo</a>
-		                                </li>
-		                                <li class="paginate_button active" aria-controls="dataTables-example" tabindex="0">
-		                                    <a href="#">1</a>
-		                                </li>
-		                                <li class="paginate_button next disabled" aria-controls="dataTables-example" tabindex="0" id="dataTables-example_next">
-		                                    <a href="#">Siguiente</a>
-		                                </li>
-		                            </ul>
-		                        </div>
-			                </div>
+			                </div>			                
 			            </div>
 			            <!-- /.table-responsive -->
 			        </div>
