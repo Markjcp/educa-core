@@ -3,6 +3,7 @@ INSERT INTO `categoria`(`id_categoria`,`descripcion`,`imagen`)VALUES(2,'Gastrono
 INSERT INTO `categoria`(`id_categoria`,`descripcion`,`imagen`)VALUES(3,'Moda','moda.png');
 INSERT INTO `categoria`(`id_categoria`,`descripcion`,`imagen`)VALUES(4,'Gestión','gestion.png');
 INSERT INTO `categoria`(`id_categoria`,`descripcion`,`imagen`)VALUES(5,'Exactas','exactas.png');
+INSERT INTO `categoria`(`id_categoria`,`descripcion`,`imagen`)VALUES(6,'Idiomas','idiomas.png');
 
 /*  Docente  */
 INSERT INTO `usuario`(`id_usuario`,`nombre`,`apellido`,`email`,`foto`)VALUES(1,'Carlos','Fontela','carlos@mail.com',null);

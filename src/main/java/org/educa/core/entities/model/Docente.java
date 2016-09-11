@@ -6,6 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.educa.core.entities.Persistible;
 
@@ -23,8 +24,12 @@ public class Docente implements Persistible {
 	@JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
 	private Usuario usuario;
 
+	@Transient
+	private String identificacion;
+
 	public Docente() {
 		super();
+		this.identificacion = "";
 	}
 
 	@Override
@@ -43,6 +48,15 @@ public class Docente implements Persistible {
 
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+
+	public String getIdentificacion() {
+		if (this.usuario != null && (this.identificacion == null || this.identificacion.isEmpty())) {
+			this.identificacion = this.getUsuario().getNombre() + " " + this.getUsuario().getApellido() + " ("
+					+ this.getUsuario().getEmail() + ")";
+		}
+
+		return this.identificacion;
 	}
 
 	@Override

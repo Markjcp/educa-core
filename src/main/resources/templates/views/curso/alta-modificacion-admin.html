@@ -22,7 +22,7 @@
 		<div class="section">
 			<div class="row">
 				<h1>Nuevo curso</h1>
-			    <form action="#" th:action="@{/cursoAdmin/altaCurso}" th:object="${cursoForm}" method="post" >
+			    <form action="#" th:action="@{/cursoAdmin/altaCurso}" th:object="${cursoForm}" method="post" enctype="multipart/form-data">
 			    	<div class="col l6 s12"> 
 			    		<div class="form-group input-field">
 			    			<input type="text" th:field="*{curso.nombre}" placeholder="Nombre del curso" />
@@ -43,29 +43,39 @@
 			    	<div class="col l6 s12">
 			    		 <div class="form-group">
 			    		 	<p class="help-block">Seleccione una imagen</p>			    			
-			    			<input type="file" accept="image/*" onchange="loadFile(event)" th:field="*{curso.imagen}"/>
+			    			<input type="file" accept="image/*" onchange="loadFile(event)" th:field="*{curso.foto}"/>
 			    			<br></br>
-							<img id="output"/>
-			    			<p th:errors="*{curso.imagen}" class="has-error-custom"></p>			    			
+		    				<img th:if="${edicion} == true" id="output" th:src="${foto}"/>
+		    				<img th:if="${edicion} == false" id="output"/>			    																
+			    			<p th:errors="*{curso.imagen}" class="has-error"></p>
+			    			<p th:errors="*{curso.foto}" class="has-error"></p>
 			    		 </div>
 			    		 <div class="form-group input-field">                             
                              <select class="form-control input-field" th:field="*{curso.docente}">
-                             	 <option value="-1">Seleccione un profesor</option>
-                             	 <option th:each="docente : ${docentes}" th:value="${docente.id}" th:text="${docente.usuario.nombre}"/>                             	              
+                             	 <option value="-1">Seleccione un docente</option>
+                             	 <option th:each="docente : ${docentes}" th:value="${docente.id}" th:text="${docente.identificacion}"/>                             	              
                              </select>
                              <p th:errors="*{curso.docente}" class="has-error-custom"></p>                            
                          </div>			    		 
-                         <div class="form-group">
-                         	<button type="submit" class="btn blue-effect blue-light">Crear Curso</button>
-                         	<a class="btn blue-effect blue-light" href="#" th:href="@{/}">Volver</a>                        	          
-                         </div>									    		
+                         									    		
 			    	</div>
+			    	<div class="row">        		
+						<div class="col-xs-12">
+					    	<hr></hr>
+						</div>
+					</div>
+					
+			    	<div class="col l12 s12">			    					    				
+	    				<div class="form-group">
+                         	<button th:if="${edicion} == true" type="submit" class="btn orange-effect orange darken-4">Actualizar Curso</button>
+                       		<button th:if="${edicion} == false" type="submit" class="btn orange-effect orange darken-4">Crear Curso</button>
+                         	<a class="btn orange-effect orange darken-4" href="#" th:href="@{/}">Volver</a>                        	          
+                         </div>		    			
+			    	</div>			    	
 			    </form>
 			</div>		
 		</div>		
 	</div>
-	
-	<div th:replace="views/fragments/footer :: 'footer-admin' ">&copy; 2016 Taller de Desarrollo II - FIUBA - Grupo 4</div>
 		
 	<script>
 	  var loadFile = function(event) {

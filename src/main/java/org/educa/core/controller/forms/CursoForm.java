@@ -8,10 +8,11 @@ public class CursoForm {
 
 	@Valid
 	private Curso curso;
-	//private boolean esEditar;
+	private boolean editar;
 	
 	public CursoForm() {
 		super();
+		editar = false;
 	}
 
 	public Curso getCurso() {
@@ -22,11 +23,11 @@ public class CursoForm {
 		this.curso = curso;
 	}
 
-	/*public boolean isEsEditar() {
-		return esEditar;
+	public boolean isEditar() {
+		return editar;
 	}
 
-	public void setEsEditar(boolean esEditar) {
-		this.esEditar = esEditar;
-	}	*/	
+	public void setEditar(boolean editar) {
+		this.editar = editar;
+	}
 }

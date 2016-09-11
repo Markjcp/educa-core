@@ -1,5 +1,6 @@
 package org.educa.core.controller;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.logging.Logger;
 
 import javax.validation.Valid;
 
+import org.apache.commons.codec.binary.Base64;
 import org.educa.core.controller.forms.CursoForm;
 import org.educa.core.dao.CategoriaRepository;
 import org.educa.core.dao.DocenteRepository;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
@@ -31,49 +34,49 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @Controller
 @RequestMapping("/cursoAdmin")
 @SessionAttributes({ "cursoForm" })
-//@Secured("ROLE_USER")  -- TODO [ediaz] VER ESTO XQ CAPAZ NOS SIRVE
+// @Secured("ROLE_USER") -- TODO [ediaz] VER ESTO XQ CAPAZ NOS SIRVE
 public class CursoAdminController {
-	
+
 	private static final String FECHA_DEFAULT_KEY = "FECHA_DEFAUL_PROX_CURSO";
-	
+
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
 	private static final String ALTA_PROFESOR = "views/curso/alta-modificacion-admin";
-	
+
 	private static final Logger logger = Logger.getLogger(CursoAdminController.class.toString());
-	
-	@Autowired private CursoService cursoService;
-	
+
+	@Autowired
+	private CursoService cursoService;
+
 	@Autowired
 	@Qualifier("categoriaRepository")
 	private CategoriaRepository categoriaRepository;
-	
+
 	@Autowired
 	@Qualifier("docenteRepository")
 	private DocenteRepository docenteRepository;
-	
+
 	@Autowired
 	@Qualifier("parametroRepository")
 	private ParametroRepository parametroRepository;
+<<<<<<< HEAD
 	
 	@Autowired
 	@Qualifier("nombreRepetidoValidator")
 	private NombreRepetidoValidator nombreRepetidoValidator;
 	
+=======
+
+>>>>>>> cef102f8d7df9804a5774c31483b6947a33f066d
 	@RequestMapping(value = "/altaCurso", method = RequestMethod.GET)
-	public String altaCurso(Model model){
-		CursoForm cursoForm = new CursoForm();
-		List<Categoria> categories = (List<Categoria>)categoriaRepository.findAll();
-		List<Docente> docentes = (List<Docente>)docenteRepository.findAll();
-		
-		model.addAttribute("cursoForm", cursoForm);
-		model.addAttribute("categorias", categories);				
-		model.addAttribute("docentes", docentes);
-		
+	public String altaCurso(Model model) {
+		cargaInicial(model, null);
+
 		return ALTA_PROFESOR;
 	}
 
 	@RequestMapping(value = "/altaCurso", method = RequestMethod.POST)
+<<<<<<< HEAD
 	public String guardarCurso(@ModelAttribute @Valid CursoForm cursoForm, BindingResult bindingResult, Model model){
 		nombreRepetidoValidator.validate(cursoForm.getCurso(),bindingResult);
 		if(bindingResult.hasFieldErrors("curso.*")){
@@ -86,24 +89,84 @@ public class CursoAdminController {
 			
 			List<Docente> docentes = (List<Docente>)docenteRepository.findAll();
 			model.addAttribute("docentes", docentes);
+=======
+	public String guardarCurso(@ModelAttribute @Valid CursoForm cursoForm, BindingResult bindingResult, Model model) {
+		Curso curso = cursoForm.getCurso();
+		try {
+			if (curso.getFoto() != null && curso.getFoto().getBytes().length != 0) {
+				try {					
+					curso.setImagen(curso.getFoto().getBytes());
+				} catch (IOException e) {
+					e.printStackTrace();
+					bindingResult.rejectValue("curso.foto", "ERROR-FOTO", "Error al obtener la imagen seleccionada.");
+				}
+			} else {
+				//Si no viene de editar, no deberia de venir sin imagen. En editar, si no cambio la imagen, este campo viene sin bytes.
+				if(!cursoForm.isEditar()){
+					bindingResult.rejectValue("curso.foto", "ERROR-FOTO", "Debe de seleccionar una imagen.");
+				}
+			}
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+		if (bindingResult.hasFieldErrors("curso.*")) {
+			boolean eraEdicion = cursoForm.isEditar();
+			cargaInicial(model, cursoForm);
+			if(eraEdicion){
+				model.addAttribute("edicion", true);
+			}			
+>>>>>>> cef102f8d7df9804a5774c31483b6947a33f066d
 			
 			return ALTA_PROFESOR;
 		}
-		
-		System.out.println("EL CURSO NO TIENE ERRORES Y SE VA A GUARDAR: " + cursoForm.getCurso());
-		Curso curso = cursoForm.getCurso();
+
 		Parametro fechaDefaultParametro = parametroRepository.findOne(FECHA_DEFAULT_KEY);
 		Date fechaDefault;
 		try {
 			fechaDefault = sdf.parse(fechaDefaultParametro.getValor());
 			curso.setFechaEstimadaProximaSesion(fechaDefault);
 		} catch (ParseException e) {
-			logger.severe("No se pudo parsear el parametro " + e.getMessage());			
+			logger.severe("No se pudo parsear el parametro " + e.getMessage());
 		}
 		curso.setValoracionesPromedio(0);
 		curso.setCantidadValoraciones(0);
+
 		this.cursoService.crearCurso(curso);
-		
+
 		return "redirect:/index.html";
 	}
+
+	@RequestMapping(value = "/altaCurso/{id}", method = RequestMethod.GET)
+	public String altaCurso(@PathVariable("id") long id, Model model) {
+		Curso curso = this.cursoService.encontrarCursoPorId(id);		
+		CursoForm cursoForm = new CursoForm();
+		cursoForm.setCurso(curso);
+		cursoForm.setEditar(true);
+		
+		cargaInicial(model, cursoForm);
+		model.addAttribute("edicion", true);
+		
+		//data:image/jpg;base64,${foto}
+		String foto = "data:image/jpg;base64,";
+		String base64 = Base64.encodeBase64String(curso.getImagen());
+		foto +=base64;		
+		model.addAttribute("foto", foto);
+		
+		return ALTA_PROFESOR;
+	}
+
+	private void cargaInicial(Model model, CursoForm cursoForm) {
+		if (cursoForm == null) {
+			cursoForm = new CursoForm();
+		}
+
+		List<Categoria> categories = (List<Categoria>) categoriaRepository.findAll();
+		List<Docente> docentes = (List<Docente>) docenteRepository.findAll();
+
+		model.addAttribute("cursoForm", cursoForm);
+		model.addAttribute("categorias", categories);
+		model.addAttribute("docentes", docentes);
+		model.addAttribute("edicion", false);
+	}	
 }
