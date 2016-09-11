@@ -6,11 +6,11 @@
     
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 	
-	
-	<link href="css/materialize.css" th:href="@{/css/materialize.css}" rel="stylesheet" media="screen,projection" />
-	<link href="css/style.css" th:href="@{/css/style.css}" rel="stylesheet" media="screen,projection" />
 	<link href="css/bootstrap.css" th:href="@{/css/bootstrap.css}" rel="stylesheet" media="screen,projection" />
 	<link href="css/sb-admin-2.css" th:href="@{/css/sb-admin-2.css}" rel="stylesheet" media="screen,projection" />
+	<link href="css/materialize.css" th:href="@{/css/materialize.css}" rel="stylesheet" media="screen,projection" />
+	<link href="css/style.css" th:href="@{/css/style.css}" rel="stylesheet" media="screen,projection" />
+	<link href="css/style.css" th:href="@{/css/educa.css}" rel="stylesheet" media="screen,projection" />
 </head>
 <body>
 	<div th:replace="views/fragments/header :: header">&nbsp;</div>
@@ -20,11 +20,19 @@
 			<div class="row">
 				<h1>Listado de cursos</h1>
 				
-				<button th:if="${edicion} == true" type="submit" class="btn orange-effect orange darken-4">Actualizar Curso</button>
-				
                 <div th:if="${mostrarMensajeAlta} == true" class="alert alert-success alert-dismissable">
                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                    <a href="#" class="alert-link">Bien Hecho!</a> El nuevo curso se cre&oacute; correctamente.	                   
+                </div>
+                
+                <div th:if="${mostrarMensajeModificar} == true" class="alert alert-success alert-dismissable">
+                   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                   <a href="#" class="alert-link">Bien Hecho!</a> El curso se modific&oacute; correctamente.	                   
+                </div>
+                
+                <div th:if="${mostrarMensajeEliminar} == true" class="alert alert-success alert-dismissable">
+                   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                   <a href="#" class="alert-link">Bien Hecho!</a> El curso se elimin&oacute; correctamente.	                   
                 </div>
                 
                 <div th:if="${not #lists.isEmpty(cursos)}" class="panel panel-default">				    
@@ -40,7 +48,7 @@
 			                </div>
 			                <div class="row">
 			                    <div class="col-sm-12">
-			                        <table class="table table-striped table-bordered table-hover dataTable no-footer dtr-inline" id="dataTables-example" role="grid" aria-describedby="dataTables-example_info">
+			                        <table class="table" id="dataTables-example" role="grid" aria-describedby="dataTables-example_info">
 			                            <thead>
 			                                <tr role="row">
 			                                    <th tabindex="0" aria-controls="dataTables-example">Nombre</th>
@@ -52,10 +60,10 @@
 			                                <tr th:each="curso : ${cursos}" class="gradeA odd" role="row">			                                	
 										        <td th:text="${curso.nombre}">&nbsp;</td>
 										        <td th:text="${curso.descripcion}">&nbsp;</td>
-										        <td>
-										        	<button type="button" class="btn btn-default">Modificar</button>
+										        <td>										        	
+										        	<a type="button" class="btn btn-default btn-educa-basico" th:href="@{/cursoAdmin/altaCurso/{cursoId}(cursoId=${curso.id})}">Modificar</a>
 										        	&nbsp;
-										        	<button type="button" class="btn btn-default">Eliminar</button>
+										        	<a type="button" th:href="@{/cursoAdmin/eliminarCurso/{cursoId}(cursoId=${curso.id})}" class="btn btn-default btn-educa-basico">Eliminar</a>
 										        </td>
 										    </tr>
 			                                
@@ -67,13 +75,13 @@
 			                    <div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate">
 		                            <ul class="pagination">
 		                                <li class="paginate_button previous disabled" aria-controls="dataTables-example" tabindex="0" id="dataTables-example_previous">
-		                                    <a href="#">Previous</a>
+		                                    <a href="#">Previo</a>
 		                                </li>
 		                                <li class="paginate_button active" aria-controls="dataTables-example" tabindex="0">
 		                                    <a href="#">1</a>
 		                                </li>
 		                                <li class="paginate_button next disabled" aria-controls="dataTables-example" tabindex="0" id="dataTables-example_next">
-		                                    <a href="#">Next</a>
+		                                    <a href="#">Siguiente</a>
 		                                </li>
 		                            </ul>
 		                        </div>
@@ -91,8 +99,8 @@
 			    </div>
 			    
 			    <div class="row">        		
-					<div class="col-xs-12">
-				    	<a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
+					<div class="col-xs-12" style="text-align: right;">
+				    	<a class="btn-floating btn-large waves-effect waves-light orange darken-4" th:href="@{/cursoAdmin/altaCurso}"><i class="material-icons">add</i></a>				    	
 					</div>
 				</div>			    
                                 

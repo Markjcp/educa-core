@@ -37,4 +37,12 @@ public class CursoServiceImpl implements CursoService {
 		return this.cursoDao.findAll();
 	}
 
+	@Override
+	public void eliminarCurso(long id) {
+		Curso curso = this.cursoDao.findById(id);
+		if(curso != null) {
+			this.cursoDao.remove(curso);
+		}		
+	}
+
 }

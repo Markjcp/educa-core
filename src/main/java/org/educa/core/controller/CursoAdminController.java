@@ -66,18 +66,18 @@ public class CursoAdminController {
 	@Qualifier("nombreRepetidoValidator")
 	private NombreRepetidoValidator nombreRepetidoValidator;
 	
+	@RequestMapping(method = RequestMethod.GET)
+	public String index(Model model) {
+		cargaInicialListado(model, false, false, false);
+
+		return LISTADO_CURSOS;
+	}
+	
 	@RequestMapping(value = "/altaCurso", method = RequestMethod.GET)
 	public String altaCurso(Model model) {
 		cargaInicialAlta(model, null);
 
 		return ALTA_CURSO;
-	}
-	
-	@RequestMapping(method = RequestMethod.GET)
-	public String index(Model model) {
-		cargaInicialListado(model, false);
-
-		return LISTADO_CURSOS;
 	}
 
 	@RequestMapping(value = "/altaCurso", method = RequestMethod.POST)
@@ -127,8 +127,12 @@ public class CursoAdminController {
 
 		this.cursoService.crearCurso(curso);
 		
-		cargaInicialListado(model, true);
-
+		if(cursoForm.isEditar()){
+			cargaInicialListado(model, false, true, false);
+		} else {
+			cargaInicialListado(model, true, false, false);
+		}
+		
 		return LISTADO_CURSOS;
 	}
 
@@ -150,7 +154,15 @@ public class CursoAdminController {
 		
 		return ALTA_CURSO;
 	}
-
+	
+	@RequestMapping(value = "/eliminarCurso/{id}", method = RequestMethod.GET)
+	public String eliminarCurso(@PathVariable("id") long id, Model model) {
+		this.cursoService.eliminarCurso(id);
+		cargaInicialListado(model, false, false, true);
+		
+		return LISTADO_CURSOS;
+	}
+	
 	private void cargaInicialAlta(Model model, CursoForm cursoForm) {
 		if (cursoForm == null) {
 			cursoForm = new CursoForm();
@@ -165,13 +177,23 @@ public class CursoAdminController {
 		model.addAttribute("edicion", false);
 	}
 	
-	private void cargaInicialListado(Model model, boolean vieneDeAlta) {
+	private void cargaInicialListado(Model model, boolean vieneDeAlta, boolean vieneDeModificar, boolean vieneDeEliminar) {
 		List<Curso> cursos = cursoService.obtenerTodos();
 		model.addAttribute("cursos", cursos);		
 		model.addAttribute("mostrarMensajeAlta", false);
+		model.addAttribute("mostrarMensajeModificar", false);
+		model.addAttribute("mostrarMensajeEliminar", false);
 		
 		if(vieneDeAlta) {
 			model.addAttribute("mostrarMensajeAlta", true);
+		}
+		
+		if(vieneDeModificar) {
+			model.addAttribute("mostrarMensajeModificar", true);
+		}
+		
+		if(vieneDeEliminar) {
+			model.addAttribute("mostrarMensajeEliminar", true);
 		}
 	}
 }

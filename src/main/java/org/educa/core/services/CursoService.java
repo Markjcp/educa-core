@@ -11,4 +11,6 @@ public interface CursoService {
 	Curso encontrarCursoPorId(long id);
 
 	List<Curso> obtenerTodos();
+	
+	void eliminarCurso(long id);
 }
