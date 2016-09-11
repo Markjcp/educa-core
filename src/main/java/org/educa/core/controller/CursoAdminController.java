@@ -61,24 +61,23 @@ public class CursoAdminController {
 	@Autowired
 	@Qualifier("parametroRepository")
 	private ParametroRepository parametroRepository;
-	
+
 	@Autowired
 	@Qualifier("nombreRepetidoValidator")
 	private NombreRepetidoValidator nombreRepetidoValidator;
-	
-	
-	@RequestMapping(method = RequestMethod.GET)
-	public String index(Model model) {
-		cargaInicialListado(model, false);
-
-		return LISTADO_CURSOS;
-	}
 	
 	@RequestMapping(value = "/altaCurso", method = RequestMethod.GET)
 	public String altaCurso(Model model) {
 		cargaInicialAlta(model, null);
 
 		return ALTA_CURSO;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public String index(Model model) {
+		cargaInicialListado(model, false);
+
+		return LISTADO_CURSOS;
 	}
 
 	@RequestMapping(value = "/altaCurso", method = RequestMethod.POST)
