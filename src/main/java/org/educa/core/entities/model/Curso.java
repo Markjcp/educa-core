@@ -21,6 +21,8 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "curso")
 public class Curso implements Persistible {
@@ -51,8 +53,12 @@ public class Curso implements Persistible {
 	@Length(max=255, message="Longitud máxima de 255 caracteres.")
 	private String descripcion;
 
+	@JsonIgnore
 	@Column(name = "imagen")
 	private byte[] imagen;
+	
+	@Column(name = "link_imagen")
+	private String linkImagen;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@NotNull(message = "Debe asignarselo a un docente.")
@@ -115,6 +121,14 @@ public class Curso implements Persistible {
 
 	public void setImagen(byte[] imagen) {
 		this.imagen = imagen;
+	}
+	
+	public String getLinkImagen() {
+		return linkImagen;
+	}
+
+	public void setLinkImagen(String linkImagen) {
+		this.linkImagen = linkImagen;
 	}
 
 	public Docente getDocente() {

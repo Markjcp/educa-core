@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS `educa`.`curso` (
   `legajo_docente` INT NULL,
   `id_categoria` INT NULL,
   `imagen` BLOB NULL,
+  `link_imagen` VARCHAR(45) NULL,
   `valoracion_promedio` INT NULL,
   `cantidad_valoraciones` BIGINT NULL,
   `fecha_estimada_prox_sesion` DATE NULL,

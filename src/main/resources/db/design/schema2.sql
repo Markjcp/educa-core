@@ -118,3 +118,8 @@ ENGINE = InnoDB;
 
 ALTER TABLE `educa`.`curso` 
 ADD COLUMN `fecha_estimada_prox_sesion` DATE NULL AFTER `cantidad_valoraciones`;
+
+-- 11/09
+ALTER TABLE `educa`.`curso` 
+ADD COLUMN `link_imagen` VARCHAR(45) NULL AFTER `imagen`;
+
