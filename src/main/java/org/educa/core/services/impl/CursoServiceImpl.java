@@ -1,6 +1,8 @@
 package org.educa.core.services.impl;
 
 
+import java.util.List;
+
 import org.educa.core.dao.CursoDao;
 import org.educa.core.entities.model.Curso;
 import org.educa.core.exceptions.ServiceException;
@@ -28,6 +30,11 @@ public class CursoServiceImpl implements CursoService {
 	@Override
 	public Curso encontrarCursoPorId(long id) {
 		return this.cursoDao.findById(id);
+	}
+
+	@Override
+	public List<Curso> obtenerTodos() {
+		return this.cursoDao.findAll();
 	}
 
 }

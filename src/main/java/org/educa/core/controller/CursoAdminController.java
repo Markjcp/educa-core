@@ -19,6 +19,7 @@ import org.educa.core.entities.model.Curso;
 import org.educa.core.entities.model.Docente;
 import org.educa.core.entities.model.Parametro;
 import org.educa.core.services.CursoService;
+import org.educa.core.validator.NombreRepetidoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -40,7 +41,9 @@ public class CursoAdminController {
 
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-	private static final String ALTA_PROFESOR = "views/curso/alta-modificacion-admin";
+	private static final String ALTA_CURSO = "views/curso/alta-modificacion-admin";
+	
+	private static final String LISTADO_CURSOS = "views/curso/listado-admin";
 
 	private static final Logger logger = Logger.getLogger(CursoAdminController.class.toString());
 
@@ -58,12 +61,24 @@ public class CursoAdminController {
 	@Autowired
 	@Qualifier("parametroRepository")
 	private ParametroRepository parametroRepository;
+	
+	@Autowired
+	@Qualifier("nombreRepetidoValidator")
+	private NombreRepetidoValidator nombreRepetidoValidator;
+	
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public String index(Model model) {
+		cargaInicialListado(model, false);
 
+		return LISTADO_CURSOS;
+	}
+	
 	@RequestMapping(value = "/altaCurso", method = RequestMethod.GET)
 	public String altaCurso(Model model) {
-		cargaInicial(model, null);
+		cargaInicialAlta(model, null);
 
-		return ALTA_PROFESOR;
+		return ALTA_CURSO;
 	}
 
 	@RequestMapping(value = "/altaCurso", method = RequestMethod.POST)
@@ -86,15 +101,18 @@ public class CursoAdminController {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-
+		
+		if(!cursoForm.isEditar()){
+			nombreRepetidoValidator.validate(cursoForm.getCurso(),bindingResult);
+		}
+		
 		if (bindingResult.hasFieldErrors("curso.*")) {
 			boolean eraEdicion = cursoForm.isEditar();
-			cargaInicial(model, cursoForm);
+			cargaInicialAlta(model, cursoForm);
 			if(eraEdicion){
 				model.addAttribute("edicion", true);
 			}			
-			
-			return ALTA_PROFESOR;
+			return ALTA_CURSO;
 		}
 
 		Parametro fechaDefaultParametro = parametroRepository.findOne(FECHA_DEFAULT_KEY);
@@ -109,8 +127,10 @@ public class CursoAdminController {
 		curso.setCantidadValoraciones(0);
 
 		this.cursoService.crearCurso(curso);
+		
+		cargaInicialListado(model, true);
 
-		return "redirect:/index.html";
+		return LISTADO_CURSOS;
 	}
 
 	@RequestMapping(value = "/altaCurso/{id}", method = RequestMethod.GET)
@@ -120,19 +140,19 @@ public class CursoAdminController {
 		cursoForm.setCurso(curso);
 		cursoForm.setEditar(true);
 		
-		cargaInicial(model, cursoForm);
+		cargaInicialAlta(model, cursoForm);
 		model.addAttribute("edicion", true);
 		
-		//data:image/jpg;base64,${foto}
+		//data:image/jpg;base64,${foto en base 64}
 		String foto = "data:image/jpg;base64,";
 		String base64 = Base64.encodeBase64String(curso.getImagen());
 		foto +=base64;		
 		model.addAttribute("foto", foto);
 		
-		return ALTA_PROFESOR;
+		return ALTA_CURSO;
 	}
 
-	private void cargaInicial(Model model, CursoForm cursoForm) {
+	private void cargaInicialAlta(Model model, CursoForm cursoForm) {
 		if (cursoForm == null) {
 			cursoForm = new CursoForm();
 		}
@@ -144,5 +164,15 @@ public class CursoAdminController {
 		model.addAttribute("categorias", categories);
 		model.addAttribute("docentes", docentes);
 		model.addAttribute("edicion", false);
-	}	
+	}
+	
+	private void cargaInicialListado(Model model, boolean vieneDeAlta) {
+		List<Curso> cursos = cursoService.obtenerTodos();
+		model.addAttribute("cursos", cursos);		
+		model.addAttribute("mostrarMensajeAlta", false);
+		
+		if(vieneDeAlta) {
+			model.addAttribute("mostrarMensajeAlta", true);
+		}
+	}
 }

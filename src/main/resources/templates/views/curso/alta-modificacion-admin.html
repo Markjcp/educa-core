@@ -21,23 +21,24 @@
 	<div class="container">
 		<div class="section">
 			<div class="row">
-				<h1>Nuevo curso</h1>
+				<h1 th:if="${edicion} == false">Nuevo curso</h1>
+				<h1 th:if="${edicion} == true">Modificación de curso</h1>
 			    <form action="#" th:action="@{/cursoAdmin/altaCurso}" th:object="${cursoForm}" method="post" enctype="multipart/form-data">
 			    	<div class="col l6 s12"> 
 			    		<div class="form-group input-field">
 			    			<input type="text" th:field="*{curso.nombre}" placeholder="Nombre del curso" />
-			    			<p th:errors="*{curso.nombre}" class="has-error"></p>
+			    			<p th:errors="*{curso.nombre}" class="has-error-custom"></p>
 			    		</div>			    		
 			        	<div class="form-group input-field">                             
                              <select class="form-control input-field" th:field="*{curso.categoria}">
                              	 <option value="-1">Seleccione una categor&iacute;a</option>
                              	 <option th:each="categoria : ${categorias}" th:value="${categoria.id}" th:text="${categoria.descripcion}"/>                             	              
                              </select>
-                             <p th:errors="*{curso.categoria}" class="has-error"></p>                            
+                             <p th:errors="*{curso.categoria}" class="has-error-custom"></p>                            
                          </div>                        
                          <div class="form-group input-field">
 			    			<textarea class="materialize-textarea" th:field="*{curso.descripcion}" placeholder="Descripción"></textarea>
-			    			<p th:errors="*{curso.descripcion}" class="has-error"></p>
+			    			<p th:errors="*{curso.descripcion}" class="has-error-custom"></p>
 			    		 </div>			    		 			    		 	                         
 			    	</div>
 			    	<div class="col l6 s12">
@@ -47,15 +48,15 @@
 			    			<br></br>
 		    				<img th:if="${edicion} == true" id="output" th:src="${foto}"/>
 		    				<img th:if="${edicion} == false" id="output"/>			    																
-			    			<p th:errors="*{curso.imagen}" class="has-error"></p>
-			    			<p th:errors="*{curso.foto}" class="has-error"></p>
+			    			<p th:errors="*{curso.imagen}" class="has-error-custom"></p>
+			    			<p th:errors="*{curso.foto}" class="has-error-custom"></p>
 			    		 </div>
 			    		 <div class="form-group input-field">                             
                              <select class="form-control input-field" th:field="*{curso.docente}">
                              	 <option value="-1">Seleccione un docente</option>
                              	 <option th:each="docente : ${docentes}" th:value="${docente.id}" th:text="${docente.identificacion}"/>                             	              
                              </select>
-                             <p th:errors="*{curso.docente}" class="has-error"></p>                            
+                             <p th:errors="*{curso.docente}" class="has-error-custom"></p>                            
                          </div>			    		 
                          									    		
 			    	</div>
@@ -69,8 +70,8 @@
 	    				<div class="form-group">
                          	<button th:if="${edicion} == true" type="submit" class="btn orange-effect orange darken-4">Actualizar Curso</button>
                        		<button th:if="${edicion} == false" type="submit" class="btn orange-effect orange darken-4">Crear Curso</button>
-                         	<a class="btn orange-effect orange darken-4" href="#" th:href="@{/}">Volver</a>                        	          
-                         </div>		    			
+                         	<a class="btn orange-effect orange darken-4" href="#" th:href="@{/cursoAdmin}">Volver</a>
+                         </div>
 			    	</div>			    	
 			    </form>
 			</div>		

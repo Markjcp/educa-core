@@ -11,11 +11,36 @@
 	<link href="css/style.css" th:href="@{/css/style.css}" rel="stylesheet" media="screen,projection" />
 </head>
 <body>
-	<div th:replace="/templates/views/fragments/header :: header">&nbsp;</div>
+	<!-- <div th:replace="@{/templates/views/fragments/header} :: header">&nbsp;</div> -->
+	
+	<div th:fragment="header">
+		<nav class="orange darken-3" role="navigation">
+		    <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Educa</a>
+		      <ul class="right hide-on-med-and-down">
+		        <li><a href="#">Men&uacute;</a></li>
+		      </ul>
+		
+		      <ul id="nav-mobile" class="side-nav">
+		        <li><a href="#">Men&uacute;</a></li>
+		      </ul>
+		      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+		    </div>
+		  </nav>		  
+	</div>
 	
 	<div class="container">
 		<p>List categories <a href="/categories">here</a></p>
     	<p>Alta curso <a href="/cursoAdmin/altaCurso">here</a></p>
+    	<p>Listad curso <a href="/cursoAdmin">here</a></p>
+	</div>
+
+	 
+	<div class="container">
+		<div class="section">
+			<div class="row">
+				<h1>Listado de cursos</h1>
+			</div>
+		</div>
 	</div>
 	
 	<!--  Scripts-->
