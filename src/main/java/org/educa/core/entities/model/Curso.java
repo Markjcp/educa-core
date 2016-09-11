@@ -15,7 +15,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
 import org.educa.core.entities.Persistible;
 import org.hibernate.validator.constraints.Length;
@@ -34,14 +33,9 @@ public class Curso implements Persistible {
 	private Long id;
 
 	@NotEmpty(message = "Debe ingresar un nombre.")
-<<<<<<< HEAD
-	@Size(max=100,message = "Debe tener como máximo 100 caracteres")
 	@Pattern(regexp="[ a-zA-Z0-9]*", message = "Deben ser letras o números")
-	@Column(name = "nombre")
-=======
 	@Column(name = "nombre", unique=true, nullable=false)
 	@Length(max=100, message="Longitud máxima de 100 caracteres alfanuméricos.")
->>>>>>> cef102f8d7df9804a5774c31483b6947a33f066d
 	private String nombre;
 
 	@ManyToOne
@@ -53,14 +47,11 @@ public class Curso implements Persistible {
 	private Long categoriaId;
 
 	@NotEmpty(message = "Debe ingresar una descripción.")
-	@Size(max=255,message = "Debe tener como máximo 255 caracteres")
 	@Column(name = "descripcion")
 	@Length(max=255, message="Longitud máxima de 255 caracteres.")
 	private String descripcion;
 
 	@Column(name = "imagen")
-	@NotEmpty(message = "Debe cargar una imágen")
-	@NotNull(message = "Debe cargar una imágen")
 	private byte[] imagen;
 
 	@ManyToOne(fetch = FetchType.EAGER)

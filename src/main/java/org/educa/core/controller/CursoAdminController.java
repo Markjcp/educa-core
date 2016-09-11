@@ -59,15 +59,11 @@ public class CursoAdminController {
 	@Autowired
 	@Qualifier("parametroRepository")
 	private ParametroRepository parametroRepository;
-<<<<<<< HEAD
-	
+
 	@Autowired
 	@Qualifier("nombreRepetidoValidator")
 	private NombreRepetidoValidator nombreRepetidoValidator;
 	
-=======
-
->>>>>>> cef102f8d7df9804a5774c31483b6947a33f066d
 	@RequestMapping(value = "/altaCurso", method = RequestMethod.GET)
 	public String altaCurso(Model model) {
 		cargaInicial(model, null);
@@ -76,20 +72,6 @@ public class CursoAdminController {
 	}
 
 	@RequestMapping(value = "/altaCurso", method = RequestMethod.POST)
-<<<<<<< HEAD
-	public String guardarCurso(@ModelAttribute @Valid CursoForm cursoForm, BindingResult bindingResult, Model model){
-		nombreRepetidoValidator.validate(cursoForm.getCurso(),bindingResult);
-		if(bindingResult.hasFieldErrors("curso.*")){
-			System.out.println("El curso tiene errores!!!!!!!!: " + cursoForm.getCurso());
-			
-			model.addAttribute("cursoForm", cursoForm);
-			
-			List<Categoria> categories = (List<Categoria>)categoriaRepository.findAll();
-			model.addAttribute("categorias", categories);
-			
-			List<Docente> docentes = (List<Docente>)docenteRepository.findAll();
-			model.addAttribute("docentes", docentes);
-=======
 	public String guardarCurso(@ModelAttribute @Valid CursoForm cursoForm, BindingResult bindingResult, Model model) {
 		Curso curso = cursoForm.getCurso();
 		try {
@@ -109,15 +91,17 @@ public class CursoAdminController {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-
+		
+		if(!cursoForm.isEditar()){
+			nombreRepetidoValidator.validate(cursoForm.getCurso(),bindingResult);
+		}
+		
 		if (bindingResult.hasFieldErrors("curso.*")) {
 			boolean eraEdicion = cursoForm.isEditar();
 			cargaInicial(model, cursoForm);
 			if(eraEdicion){
 				model.addAttribute("edicion", true);
 			}			
->>>>>>> cef102f8d7df9804a5774c31483b6947a33f066d
-			
 			return ALTA_PROFESOR;
 		}
 

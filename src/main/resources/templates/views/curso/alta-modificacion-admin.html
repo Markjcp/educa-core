@@ -47,8 +47,8 @@
 			    			<br></br>
 		    				<img th:if="${edicion} == true" id="output" th:src="${foto}"/>
 		    				<img th:if="${edicion} == false" id="output"/>			    																
-			    			<p th:errors="*{curso.imagen}" class="has-error"></p>
-			    			<p th:errors="*{curso.foto}" class="has-error"></p>
+			    			<p th:errors="*{curso.imagen}" class="has-error-custom"></p>
+			    			<p th:errors="*{curso.foto}" class="has-error-custom"></p>
 			    		 </div>
 			    		 <div class="form-group input-field">                             
                              <select class="form-control input-field" th:field="*{curso.docente}">
