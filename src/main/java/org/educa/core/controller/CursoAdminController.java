@@ -19,6 +19,7 @@ import org.educa.core.entities.model.Curso;
 import org.educa.core.entities.model.Docente;
 import org.educa.core.entities.model.Parametro;
 import org.educa.core.services.CursoService;
+import org.educa.core.validator.DimensionImagenValidator;
 import org.educa.core.validator.NombreRepetidoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -63,6 +64,10 @@ public class CursoAdminController {
 	private ParametroRepository parametroRepository;
 
 	@Autowired
+	@Qualifier("dimensionImagenValidator")
+	private DimensionImagenValidator dimensionImagenValidator;
+	
+	@Autowired
 	@Qualifier("nombreRepetidoValidator")
 	private NombreRepetidoValidator nombreRepetidoValidator;
 	
@@ -103,6 +108,10 @@ public class CursoAdminController {
 		
 		if(!cursoForm.isEditar()){
 			nombreRepetidoValidator.validate(cursoForm.getCurso(),bindingResult);
+		}
+		
+		if(curso.getFoto()!=null && curso.getFoto().getOriginalFilename()!=null && !curso.getFoto().getOriginalFilename().isEmpty()){
+			dimensionImagenValidator.validate(cursoForm.getCurso(),bindingResult);			
 		}
 		
 		if (bindingResult.hasFieldErrors("curso.*")) {
