@@ -15,8 +15,9 @@ import org.springframework.validation.Validator;
 @Component
 public class DimensionImagenValidator implements Validator {
 
-	private static final Logger logger = Logger.getLogger(DimensionImagenValidator.class.toString());
-	
+	private static final Logger logger = Logger
+			.getLogger(DimensionImagenValidator.class.toString());
+
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return Curso.class.isAssignableFrom(clazz);
@@ -30,10 +31,30 @@ public class DimensionImagenValidator implements Validator {
 			image = ImageIO.read(curso.getFoto().getInputStream());
 			Integer width = image.getWidth();
 			Integer height = image.getHeight();
-			if(!(width.equals(ConstantesDelModelo.ANCHO_1)&&height.equals(ConstantesDelModelo.ALTURA_1))
-					&& !(width.equals(ConstantesDelModelo.ANCHO_2)&&height.equals(ConstantesDelModelo.ALTURA_2))){
-				errors.rejectValue("curso.foto", null, "La imágen debe ser de " + ConstantesDelModelo.ANCHO_1 + "x" + ConstantesDelModelo.ALTURA_1 +
-						" ó de " + ConstantesDelModelo.ANCHO_2 + "x" + ConstantesDelModelo.ALTURA_2);
+			
+			if(curso.getFoto().getOriginalFilename().length()> ConstantesDelModelo.MAX_FILE_NAME){
+				errors.rejectValue("curso.foto", null,
+						"El nombre de la imágen debe tener menos de "
+								+ ConstantesDelModelo.MAX_FILE_NAME + " caracteres");
+			}
+			
+			
+			if (curso.getFoto().getSize() > ConstantesDelModelo.MAX_TAM_IMAGEN) {
+				errors.rejectValue("curso.foto", null,
+						"La imágen debe ser menor a "
+								+ ConstantesDelModelo.MAX_TAM_IMAGEN_MSJ);
+			} else {
+				if (!(width.equals(ConstantesDelModelo.ANCHO_1) && height
+						.equals(ConstantesDelModelo.ALTURA_1))
+						&& !(width.equals(ConstantesDelModelo.ANCHO_2) && height
+								.equals(ConstantesDelModelo.ALTURA_2))) {
+					errors.rejectValue("curso.foto", null,
+							"La imágen debe ser de "
+									+ ConstantesDelModelo.ANCHO_1 + "x"
+									+ ConstantesDelModelo.ALTURA_1 + " ó de "
+									+ ConstantesDelModelo.ANCHO_2 + "x"
+									+ ConstantesDelModelo.ALTURA_2);
+				}
 			}
 		} catch (IOException e) {
 			logger.severe("Error validando la imágen " + e.getMessage());
