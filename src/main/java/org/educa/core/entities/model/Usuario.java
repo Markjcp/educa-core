@@ -7,37 +7,58 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.educa.core.entities.Persistible;
 
 @Entity
-@Table(name="usuario")
-public class Usuario implements Persistible{
-	
+@Table(name = "usuario")
+public class Usuario implements Persistible {
+
 	private static final long serialVersionUID = -3889488130577789067L;
 
-	@Id 
-	@Column(name="id_usuario")
-    @GeneratedValue(strategy=GenerationType.AUTO)
+	@Id
+	@Column(name = "id_usuario")
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	
-	@Column(name="nombre")
+
+	@Column(name = "nombre")
 	private String nombre;
-	
-	@Column(name="apellido")
+
+	@Column(name = "apellido")
 	private String apellido;
-	
-	@Column(name="email")
+
+	@Column(name = "email")
 	private String email;
-	
-	@Column(name="foto")
+
+	@Column(name = "foto")
 	private byte[] foto;
+
+	@ManyToOne
+	@JoinColumn(name = "id_rol_usuario", referencedColumnName = "id_rol_usuario")
+	private RolUsuario rol;
+
+	@Column(name = "password")
+	private String password;
+
+	@Column(name = "clave_activacion")
+	private String claveActivacion;
+
+	@Column(name = "id_facebook")
+	private String idFacebook;
+
+	@Column(name = "id_google")
+	private String idGoogle;
+	
+	@Column(name = "activado")
+	private Boolean activado;
 
 	@Override
 	public void setId(Long id) {
 		this.id = id;
-		
+
 	}
 
 	@Override
@@ -75,6 +96,54 @@ public class Usuario implements Persistible{
 
 	public void setFoto(byte[] foto) {
 		this.foto = foto;
+	}
+
+	public RolUsuario getRol() {
+		return rol;
+	}
+
+	public void setRol(RolUsuario rol) {
+		this.rol = rol;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getClaveActivacion() {
+		return claveActivacion;
+	}
+
+	public void setClaveActivacion(String claveActivacion) {
+		this.claveActivacion = claveActivacion;
+	}
+
+	public String getIdFacebook() {
+		return idFacebook;
+	}
+
+	public void setIdFacebook(String idFacebook) {
+		this.idFacebook = idFacebook;
+	}
+
+	public String getIdGoogle() {
+		return idGoogle;
+	}
+
+	public void setIdGoogle(String idGoogle) {
+		this.idGoogle = idGoogle;
+	}
+	
+	public Boolean getActivado() {
+		return activado;
+	}
+
+	public void setActivado(Boolean activado) {
+		this.activado = activado;
 	}
 
 	@Override
