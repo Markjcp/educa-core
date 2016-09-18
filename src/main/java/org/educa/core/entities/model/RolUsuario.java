@@ -9,7 +9,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "rol_usuario")
-public class RolUsuario implements Serializable{
+public class RolUsuario implements Serializable {
 
 	private static final long serialVersionUID = 1951076972689927697L;
 
@@ -19,6 +19,9 @@ public class RolUsuario implements Serializable{
 
 	@Column(name = "descripcion")
 	private String descripcion;
+
+	@Column(name = "acronimo")
+	private String acronimo;
 
 	public Long getId() {
 		return id;
@@ -34,6 +37,14 @@ public class RolUsuario implements Serializable{
 
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
+	}
+
+	public String getAcronimo() {
+		return acronimo;
+	}
+
+	public void setAcronimo(String acronimo) {
+		this.acronimo = acronimo;
 	}
 
 	@Override
@@ -69,7 +80,7 @@ public class RolUsuario implements Serializable{
 
 	@Override
 	public String toString() {
-		return "RolUsuario [id=" + id + ", descripcion=" + descripcion + "]";
+		return "RolUsuario [id=" + id + ", descripcion=" + descripcion + ", acronimo=" + acronimo + "]";
 	}
 
 }

@@ -27,6 +27,7 @@ DROP TABLE IF EXISTS `educa`.`rol_usuario` ;
 CREATE TABLE IF NOT EXISTS `educa`.`rol_usuario` (
   `id_rol_usuario` INT NOT NULL,
   `descripcion` VARCHAR(45) NOT NULL,
+  `acronimo` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id_rol_usuario`))
 ENGINE = InnoDB;
 
@@ -181,6 +182,33 @@ CREATE TABLE IF NOT EXISTS `educa`.`unidad` (
   CONSTRAINT `fk_unidad_curso1`
     FOREIGN KEY (`id_curso`)
     REFERENCES `educa`.`curso` (`id_curso`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `educa`.`unidad_sesion`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `educa`.`unidad_sesion` ;
+
+CREATE TABLE IF NOT EXISTS `educa`.`unidad_sesion` (
+  `numero_unidad` INT NOT NULL,
+  `id_curso` INT NOT NULL,
+  `id_sesion` INT NOT NULL,
+  `fecha_desde` DATE NULL,
+  `fecha_hasta` DATE NULL,
+  PRIMARY KEY (`numero_unidad`, `id_curso`, `id_sesion`),
+  INDEX `fk_unidad_has_sesion_sesion1_idx` (`id_sesion` ASC),
+  INDEX `fk_unidad_has_sesion_unidad1_idx` (`numero_unidad` ASC, `id_curso` ASC),
+  CONSTRAINT `fk_unidad_has_sesion_unidad1`
+    FOREIGN KEY (`numero_unidad` , `id_curso`)
+    REFERENCES `educa`.`unidad` (`numero_unidad` , `id_curso`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_unidad_has_sesion_sesion1`
+    FOREIGN KEY (`id_sesion`)
+    REFERENCES `educa`.`sesion` (`id_sesion`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

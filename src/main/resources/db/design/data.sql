@@ -5,9 +5,9 @@ INSERT INTO `categoria`(`id_categoria`,`descripcion`,`imagen`)VALUES(4,'Gestión
 INSERT INTO `categoria`(`id_categoria`,`descripcion`,`imagen`)VALUES(5,'Exactas','exactas.png');
 INSERT INTO `categoria`(`id_categoria`,`descripcion`,`imagen`)VALUES(6,'Idiomas','idiomas.png');
 
-INSERT INTO rol_usuario values (1,'ADMINISTRADOR');
-INSERT INTO rol_usuario values (2,'DOCENTE');
-INSERT INTO rol_usuario values (3,'ALUMNO');
+INSERT INTO rol_usuario values (1,'ADMINISTRADOR', 'ROL_ADMIN');
+INSERT INTO rol_usuario values (2,'DOCENTE','ROL_DOC');
+INSERT INTO rol_usuario values (3,'ALUMNO','ROL_ALM');
 
 /*  Docente  */
 INSERT INTO `usuario`(`id_usuario`,`nombre`,`apellido`,`email`,`foto`,`id_rol_usuario`)VALUES(1,'Carlos','Fontela','carlos@mail.com',null, 2);
