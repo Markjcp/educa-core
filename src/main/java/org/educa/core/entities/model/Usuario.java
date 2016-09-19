@@ -10,8 +10,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.Pattern;
 
 import org.educa.core.entities.Persistible;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 @Table(name = "usuario")
@@ -25,12 +29,19 @@ public class Usuario implements Persistible {
 	private Long id;
 
 	@Column(name = "nombre")
+	@NotEmpty(message = "Debe ingresar un nombre.")
+	@Length(max=50, message="Longitud máxima de 50 caracteres.")
 	private String nombre;
 
 	@Column(name = "apellido")
+	@NotEmpty(message = "Debe ingresar un apellido.")
+	@Length(max=50, message="Longitud máxima de 50 caracteres.")
 	private String apellido;
 
 	@Column(name = "email")
+	@NotEmpty(message = "Debe ingresar un email.")
+	@Length(max=50, message="Longitud máxima de 50 caracteres.")
+	@Pattern(regexp="(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])", message = "Email inválido")
 	private String email;
 
 	@Column(name = "foto")
@@ -41,7 +52,13 @@ public class Usuario implements Persistible {
 	private RolUsuario rol;
 
 	@Column(name = "password")
+	@NotEmpty(message = "Debe ingresar el password.")
+	@Length(min=8,max=50, message="La contraseña debe ser de entre 8 y 50 caracteres.")
 	private String password;
+	
+	@Transient
+	@NotEmpty(message = "Debe confirmar el password.")
+	private String passwordConfirmacion;
 
 	@Column(name = "clave_activacion")
 	private String claveActivacion;
@@ -112,6 +129,14 @@ public class Usuario implements Persistible {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public String getPasswordConfirmacion() {
+		return passwordConfirmacion;
+	}
+
+	public void setPasswordConfirmacion(String passwordConfirmacion) {
+		this.passwordConfirmacion = passwordConfirmacion;
 	}
 
 	public String getClaveActivacion() {

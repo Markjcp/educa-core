@@ -12,12 +12,30 @@
 </head>
 <body>
 
-	<div th:replace="views/fragments/header :: header">&nbsp;</div>
+	<div th:replace="views/fragments/header-sin-menu :: header">&nbsp;</div>
 	
 	<div class="container">
 		<div class="section">
 			<div class="row">
-				<h1 >Ingresar</h1>			    
+				<h1 >Ingresar</h1>
+			    <form action="#" th:action="@{/login}" th:object="${usuarioForm}" method="post">
+			    	<div class="col l6 s12"> 
+			    		<div class="form-group input-field">
+			    			<input type="text" th:field="*{usuario.email}" placeholder="Email" />
+			    			<p th:errors="*{usuario.email}" class="has-error-custom"></p>
+			    		</div>			    		
+			    		<div class="form-group input-field">
+			    			<input type="password" th:field="*{usuario.password}" placeholder="Password"></input>
+			    			<p th:errors="*{usuario.password}" class="has-error-custom"></p>
+			    		 </div>			    		 			    		 	                         
+			    	</div>					
+			    	<div class="col l12 s12">			    					    				
+	    				<div class="form-group">
+                         	<button type="submit" class="btn orange-effect orange darken-4">Entrar</button>
+                       		<a class="btn orange-effect orange darken-4" href="#" th:href="@{/registro}">Registrarse</a>
+                         </div>
+			    	</div>			    	
+			    </form>
 			</div>		
 		</div>		
 	</div>
