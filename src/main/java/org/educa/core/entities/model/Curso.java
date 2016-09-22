@@ -2,6 +2,7 @@ package org.educa.core.entities.model;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -73,6 +75,18 @@ public class Curso implements Persistible {
 	
 	@Column(name="fecha_estimada_prox_sesion")
 	private Date fechaEstimadaProximaSesion;
+	
+	@OneToMany
+	@JoinColumn(name="id_curso")
+	private List<Sesion> sesiones;
+	
+	@OneToMany
+	@JoinColumn(name="id_curso")
+	private List<Unidad> unidades;
+	
+	@OneToMany
+	@JoinColumn(name="id_curso")
+	private List<Critica> criticas;
 	
 	@Transient
 	private MultipartFile foto;
@@ -170,13 +184,37 @@ public class Curso implements Persistible {
 	public void setFechaEstimadaProximaSesion(Date fechaEstimadaProximaSesion) {
 		this.fechaEstimadaProximaSesion = fechaEstimadaProximaSesion;
 	}
-
+	
 	public MultipartFile getFoto() {
 		return foto;
 	}
 
 	public void setFoto(MultipartFile foto) {
 		this.foto = foto;
+	}
+	
+	public List<Sesion> getSesiones() {
+		return sesiones;
+	}
+
+	public void setSesiones(List<Sesion> sesiones) {
+		this.sesiones = sesiones;
+	}
+
+	public List<Unidad> getUnidades() {
+		return unidades;
+	}
+
+	public void setUnidades(List<Unidad> unidades) {
+		this.unidades = unidades;
+	}
+
+	public List<Critica> getCriticas() {
+		return criticas;
+	}
+
+	public void setCriticas(List<Critica> criticas) {
+		this.criticas = criticas;
 	}
 
 	@Override

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Controller
 @SessionAttributes({ "usuarioForm" })
+@RequestMapping
 public class UsuarioController {
 	
 	private static final String REGISTRO_VIEW = "views/usuario/registro";

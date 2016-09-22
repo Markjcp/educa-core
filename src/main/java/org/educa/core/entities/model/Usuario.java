@@ -31,11 +31,13 @@ public class Usuario implements Persistible {
 	@Column(name = "nombre")
 	@NotEmpty(message = "Debe ingresar un nombre.")
 	@Length(max=50, message="Longitud máxima de 50 caracteres.")
+	@Pattern(regexp="[ a-zA-ZáéíóúÁÉÍÓÚÑñ]*", message = "Nombre inválido")
 	private String nombre;
 
 	@Column(name = "apellido")
 	@NotEmpty(message = "Debe ingresar un apellido.")
 	@Length(max=50, message="Longitud máxima de 50 caracteres.")
+	@Pattern(regexp="[ a-zA-ZáéíóúÁÉÍÓÚÑñ]*", message = "Apellido inválido")
 	private String apellido;
 
 	@Column(name = "email")

@@ -13,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "sesion")
 public class Sesion implements Serializable{
@@ -38,6 +40,7 @@ public class Sesion implements Serializable{
 	
 	@ManyToOne
 	@JoinColumn(name = "id_curso", referencedColumnName = "id_curso")
+	@JsonIgnore
 	private Curso curso;
 	
 	@Column(name = "fecha_desde_inscripcion")
