@@ -37,7 +37,7 @@ public class Curso implements Persistible {
 	private Long id;
 
 	@NotEmpty(message = "Debe ingresar un nombre.")
-	@Pattern(regexp="[ a-zA-Z0-9áéíóúÁÉÍÓÚ]*", message = "Deben ser letras o números")
+	@Pattern(regexp="[ a-zA-Z0-9áéíóúñÁÉÍÓÚÑ]*", message = "Deben ser letras o números")
 	@Column(name = "nombre", nullable=false)
 	@Length(max=100, message="Longitud máxima de 100 caracteres alfanuméricos.")
 	private String nombre;
