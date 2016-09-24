@@ -2311,6 +2311,7 @@ a {
 a:active,
 a:hover {
   outline: 0;
+  border-bottom: 1px solid #26a69a;
 }
 
 /* Text-level semantics

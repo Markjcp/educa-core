@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Taller Desarrollo II - FIUBA</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    
+    <link href="../../static/css/bootstrap.css" th:href="@{/css/bootstrap.css}" rel="stylesheet" media="screen,projection" />
+	<link href="../../static/css/sb-admin-2.css" th:href="@{/css/sb-admin-2.css}" rel="stylesheet" media="screen,projection" />
+    <link href="../../static/css/materialize.css" th:href="@{/css/materialize.css}" rel="stylesheet" media="screen,projection" />
+	<link href="../../static/css/style.css" th:href="@{/css/style.css}" rel="stylesheet" media="screen,projection" />
+	<link href="../../static/css/educa.css" th:href="@{/css/educa.css}" rel="stylesheet" media="screen,projection" />
+	
+</head>
+<body>
+	<div th:replace="views/fragments/header :: header">&nbsp;</div>
+	
+	<div class="container">
+		<div class="section">
+			<div class="row">
+				<h1>Configuraci&oacute;n curso</h1>				
+			    <form action="#" th:action="@{/cursoNoAdmin/configuracionCurso}" th:object="${cursoForm}" method="post">
+			    	<div class="row">
+				    	<div class="col s5"> 
+				    		<div class="form-group input-field">
+				    			<input type="text" th:field="*{curso.nombre}" placeholder="Nombre del curso" disabled="disabled" style="color: #000; border-bottom: 1px solid #26a69a;"/>			    			
+				    		</div>
+				    	</div>
+				    	<div class="col s1"></div>
+				    	<div class="col s5">	
+				        	<div class="form-group input-field">
+				        		 <input type="text" th:field="*{curso.categoria.descripcion}" placeholder="Categor&iacute;a del curso" disabled="disabled" style="color: #000; border-bottom: 1px solid #26a69a;"/>                                                        
+	                         </div>		 			    		 	                        
+				    	</div>
+			    	</div>
+			    	
+			    	<div class="row">
+			    		<div >
+							<!-- Nav tabs -->
+							<ul class="nav nav-tabs">
+								<li class="tab col s6 active"><a href="#unidadesCurso" data-toggle="tab" aria-expanded="false">Unidades</a>
+								</li>
+								<li class="tab col s6"><a href="#sesionesCurso" data-toggle="tab" aria-expanded="false">Sesiones</a>
+								</li>								
+							</ul>
+						
+							<!-- Tab panes -->
+							<div class="tab-content">
+								<div class="tab-pane fade active in" id="unidadesCurso">
+									<h4>Home Tab</h4>
+									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+								</div>
+								<div class="tab-pane fade" id="sesionesCurso">
+									<h4>Profile Tab</h4>
+									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+								</div>								
+							</div>
+						</div>
+			    	</div>			    				    	
+			    </form>
+			</div>		
+		</div>		
+	</div>	
+	
+<!-- 	<script>
+	$(document).ready(function(){
+	    $('ul.tabs').tabs();
+	  });
+	</script>-->
+	
+	<!--  Scripts-->
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>    
+    <script src="../../static/js/bootstrap.js" th:src="@{/js/bootstrap.js}"></script>
+    <script src="../../static/js/sb-admin-2.js" th:src="@{/js/sb-admin-2.js}"></script>
+    <script src="../../static/js/materialize.js" th:src="@{/js/materialize.js}"></script>
+    <script src="../../static/js/init.js" th:src="@{/js/init.js}"></script>
+</body>
+</html>
