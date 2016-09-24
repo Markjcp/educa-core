@@ -214,6 +214,18 @@ CREATE TABLE IF NOT EXISTS `educa`.`unidad_sesion` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `educa`.`email_template`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `educa`.`email_template` ;
+
+CREATE TABLE IF NOT EXISTS `educa`.`email_template` (
+  `clave` VARCHAR(45) NOT NULL,
+  `valor` VARCHAR(1500) NOT NULL,
+  PRIMARY KEY (`clave`))
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

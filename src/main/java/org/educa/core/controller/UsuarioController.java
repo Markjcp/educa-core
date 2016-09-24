@@ -3,6 +3,8 @@ package org.educa.core.controller;
 import javax.validation.Valid;
 
 import org.educa.core.controller.forms.UsuarioForm;
+import org.educa.core.exceptions.MailException;
+import org.educa.core.services.UsuarioService;
 import org.educa.core.validator.RegistroUsuarioValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Controller
@@ -25,7 +28,10 @@ public class UsuarioController {
 	@Autowired
 	@Qualifier("registroUsuarioValidator")
 	private RegistroUsuarioValidator registroUsuarioValidator;
-
+	
+	@Autowired
+	private UsuarioService usuarioService;
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public String autenticacion(Model model) {
 		model.addAttribute("usuarioForm", new UsuarioForm());
@@ -54,8 +60,29 @@ public class UsuarioController {
 			model.addAttribute("usuarioForm", usuarioForm);
 			return REGISTRO_VIEW;
 		}
-		System.out.println("Usuario: " + usuarioForm.getUsuario().getEmail());
-		return "";
+		try {
+			usuarioService.registrarUsuario(usuarioForm.getUsuario());			
+		} catch (MailException e) {
+			model.addAttribute("usuarioForm", usuarioForm);
+			model.addAttribute("errorMail", true);			
+			return REGISTRO_VIEW;
+		}
+		model.addAttribute("mostrarMensajeMailActivacion", true);
+		return LOGIN_VIEW;
+	}
+	
+	@RequestMapping(value="/activar-cuenta",method = RequestMethod.GET)
+	public String activar(Model model,@RequestParam("clave-activacion") String claveActivacion, @RequestParam("id-usuario") String idUsuario){
+		try {
+			usuarioService.activarUsuario(claveActivacion, idUsuario);			
+		} catch (Exception e) {
+			model.addAttribute("errorActivacion", true);
+			model.addAttribute("usuarioForm", new UsuarioForm());
+			return LOGIN_VIEW;
+		}
+		model.addAttribute("usuarioForm", new UsuarioForm());
+		model.addAttribute("mostrarMensajeActivado", true);		
+		return LOGIN_VIEW;
 	}
 	
 
