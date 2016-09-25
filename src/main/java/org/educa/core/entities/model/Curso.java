@@ -3,7 +3,10 @@ package org.educa.core.entities.model;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,6 +22,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.educa.core.entities.Persistible;
+import org.hibernate.annotations.OrderBy;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.web.multipart.MultipartFile;
@@ -80,9 +84,10 @@ public class Curso implements Persistible {
 	@JoinColumn(name="id_curso")
 	private List<Sesion> sesiones;
 	
-	@OneToMany
+	@OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH})
 	@JoinColumn(name="id_curso")
-	private List<Unidad> unidades;
+	@OrderBy(clause = "id.numero ASC")
+	private SortedSet<Unidad> unidades;
 	
 	@OneToMany
 	@JoinColumn(name="id_curso")
@@ -201,11 +206,11 @@ public class Curso implements Persistible {
 		this.sesiones = sesiones;
 	}
 
-	public List<Unidad> getUnidades() {
+	public SortedSet<Unidad> getUnidades() {
 		return unidades;
 	}
 
-	public void setUnidades(List<Unidad> unidades) {
+	public void setUnidades(SortedSet<Unidad> unidades) {
 		this.unidades = unidades;
 	}
 
@@ -215,6 +220,14 @@ public class Curso implements Persistible {
 
 	public void setCriticas(List<Critica> criticas) {
 		this.criticas = criticas;
+	}
+	
+	public void addUnidad(Unidad unidad){
+		if(this.unidades == null){
+			this.unidades = new TreeSet<Unidad>();
+		}
+		
+		this.unidades.add(unidad);
 	}
 
 	@Override

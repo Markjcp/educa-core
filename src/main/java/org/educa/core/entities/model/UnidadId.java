@@ -10,7 +10,7 @@ public class UnidadId implements Serializable {
 
 	private static final long serialVersionUID = 3040390215434698515L;
 
-	@Column(name = "numero_unidad")
+	@Column(name = "numero_unidad", updatable=true)
 	private Integer numero;
 
 	@Column(name = "id_curso")

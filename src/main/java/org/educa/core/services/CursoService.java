@@ -17,4 +17,7 @@ public interface CursoService {
 	List<Curso> obtenerCursosDocente(long legajo);
 
 	List<Curso> obtenerCursosDocente(long legajo, String nombreCurso);
+	
+	void guardarCurso(Curso curso);
+
 }

@@ -19,6 +19,10 @@ public class Parametro implements Serializable{
 	
 	@Column(name="value")
 	private String valor;
+	
+	public Parametro() {
+		super();
+	}
 
 	public String getClave() {
 		return clave;

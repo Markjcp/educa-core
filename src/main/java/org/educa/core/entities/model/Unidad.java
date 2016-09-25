@@ -2,36 +2,50 @@ package org.educa.core.entities.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "unidad")
-public class Unidad implements Serializable {
+public class Unidad implements Serializable, Comparable<Unidad> {
 
 	private static final long serialVersionUID = -5474791836068191980L;
 
-	@EmbeddedId
+	@EmbeddedId	
 	private UnidadId id;
 
-	@ManyToOne
+	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.REFRESH})
 	@JoinColumn(name = "id_curso", referencedColumnName = "id_curso", insertable = false, updatable = false)
 	@JsonIgnore
 	private Curso curso;
 
 	@Column(name = "titulo")
+	@NotEmpty(message = "Debe ingresar un título.")
+	@Length(max=100, message="La longitud máxima para el título es de {max} caracteres.")
 	private String titulo;
 
 	@Column(name = "descripcion")
+	@NotEmpty(message = "Debe ingresar una descripción.")
+	@Length(max=255, message="La longitud máxima para la descripción es de {max} caracteres.")
 	private String descripcion;
 
 	@Column(name = "duracion_estimada")
+	@NotNull(message = "Debe ingresar una duración estimada.")
+	@Min(value = 1, message = "Debe de ingresar un número entero mayor a 0.")
+	@Max(value = 9999, message = "La duración estimada no puede ser mayor a {value} horas.")	
 	private Integer duracionEstimada;
 
 	public UnidadId getId() {
@@ -73,6 +87,10 @@ public class Unidad implements Serializable {
 	public void setDuracionEstimada(Integer duracionEstimada) {
 		this.duracionEstimada = duracionEstimada;
 	}
+	
+	public String getDescripcionLarga() {
+		return "Unidad Nro. " + (getId().getNumero() == null ? "" : getId().getNumero())  + ": " + getTitulo();
+	}
 
 	@Override
 	public int hashCode() {
@@ -103,6 +121,20 @@ public class Unidad implements Serializable {
 	public String toString() {
 		return "Unidad [id=" + id + ", curso=" + curso + ", titulo=" + titulo + ", descripcion=" + descripcion
 				+ ", duracionEstimada=" + duracionEstimada + "]";
+	}
+
+	@Override
+	public int compareTo(Unidad unaUnidad) {
+		if(this.getId() == null){
+			return -1;
+		}
+		
+		if(unaUnidad == null || unaUnidad.getId() == null){
+			return 1; 
+		}
+		
+		//Orden ascendente
+		return this.getId().getNumero().compareTo(unaUnidad.getId().getNumero());
 	}
 
 }
