@@ -25,7 +25,7 @@ public class Unidad implements Serializable, Comparable<Unidad> {
 	private static final long serialVersionUID = -5474791836068191980L;
 
 	@EmbeddedId	
-	private UnidadId id;
+	private ComponenteId id;
 
 	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.REFRESH})
 	@JoinColumn(name = "id_curso", referencedColumnName = "id_curso", insertable = false, updatable = false)
@@ -48,11 +48,15 @@ public class Unidad implements Serializable, Comparable<Unidad> {
 	@Max(value = 9999, message = "La duración estimada no puede ser mayor a {value} horas.")	
 	private Integer duracionEstimada;
 
-	public UnidadId getId() {
+	public Unidad() {
+		super();
+	}
+
+	public ComponenteId getId() {
 		return id;
 	}
 
-	public void setId(UnidadId id) {
+	public void setId(ComponenteId id) {
 		this.id = id;
 	}
 

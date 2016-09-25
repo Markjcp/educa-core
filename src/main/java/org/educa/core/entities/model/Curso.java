@@ -82,7 +82,8 @@ public class Curso implements Persistible {
 	
 	@OneToMany
 	@JoinColumn(name="id_curso")
-	private List<Sesion> sesiones;
+	@OrderBy(clause = "id.numero ASC")
+	private SortedSet<Sesion> sesiones;
 	
 	@OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH})
 	@JoinColumn(name="id_curso")
@@ -196,13 +197,13 @@ public class Curso implements Persistible {
 
 	public void setFoto(MultipartFile foto) {
 		this.foto = foto;
-	}
-	
-	public List<Sesion> getSesiones() {
+	}		
+
+	public SortedSet<Sesion> getSesiones() {
 		return sesiones;
 	}
 
-	public void setSesiones(List<Sesion> sesiones) {
+	public void setSesiones(SortedSet<Sesion> sesiones) {
 		this.sesiones = sesiones;
 	}
 
@@ -228,6 +229,14 @@ public class Curso implements Persistible {
 		}
 		
 		this.unidades.add(unidad);
+	}
+	
+	public void addSesion(Sesion sesion) {
+		if(this.sesiones == null){
+			this.sesiones = new TreeSet<Sesion>();
+		}
+		
+		this.sesiones.add(sesion);
 	}
 
 	@Override

@@ -4,11 +4,10 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -17,14 +16,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "sesion")
-public class Sesion implements Serializable{
+public class Sesion implements Serializable, Comparable<Sesion> {
 
 	private static final long serialVersionUID = -219703370172178413L;
-	
-	@Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name = "id_sesion")
-	private Long id;
+		
+	@EmbeddedId	
+	private ComponenteId id;
 	
 	@Column(name = "fecha_desde")
 	private Date fechaDesde;
@@ -38,8 +35,8 @@ public class Sesion implements Serializable{
 	@Column(name = "costo")
 	private BigDecimal costo;
 	
-	@ManyToOne
-	@JoinColumn(name = "id_curso", referencedColumnName = "id_curso")
+	@ManyToOne ///(cascade = {CascadeType.DETACH, CascadeType.REFRESH})  TODO [ediaz] ver si va o lo saco. probar
+	@JoinColumn(name = "id_curso", referencedColumnName = "id_curso", insertable = false, updatable = false)
 	@JsonIgnore
 	private Curso curso;
 	
@@ -49,11 +46,15 @@ public class Sesion implements Serializable{
 	@Column(name = "fecha_hasta_inscripcion")
 	private Date fechaHastaInscripcion;
 
-	public Long getId() {
+	public Sesion() {
+		super();
+	}
+
+	public ComponenteId getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(ComponenteId id) {
 		this.id = id;
 	}
 
@@ -112,6 +113,10 @@ public class Sesion implements Serializable{
 	public void setFechaHastaInscripcion(Date fechaHastaInscripcion) {
 		this.fechaHastaInscripcion = fechaHastaInscripcion;
 	}
+	
+	public String getDescripcionLarga() {
+		return "Sesión Nro. " + (this.getId().getNumero() == null ? "" : this.getId().getNumero())  + ": Inicia el " + this.getFechaDesde();
+	}
 
 	@Override
 	public int hashCode() {
@@ -143,5 +148,19 @@ public class Sesion implements Serializable{
 		return "Sesion [id=" + id + ", fechaDesde=" + fechaDesde + ", fechaHasta=" + fechaHasta + ", cupos=" + cupos
 				+ ", costo=" + costo + ", curso=" + curso + ", fechaDesdeInscripcion=" + fechaDesdeInscripcion
 				+ ", fechaHastaInscripcion=" + fechaHastaInscripcion + "]";
+	}
+
+	@Override
+	public int compareTo(Sesion unaSesion) {
+		if(this.getId() == null){
+			return -1;
+		}
+		
+		if(unaSesion == null || unaSesion.getId() == null){
+			return 1; 
+		}
+		
+		//Orden ascendente
+		return this.getId().getNumero().compareTo(unaSesion.getId().getNumero());
 	}
 }

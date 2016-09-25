@@ -3,6 +3,7 @@ package org.educa.core.controller.forms;
 import javax.validation.Valid;
 
 import org.educa.core.entities.model.Curso;
+import org.educa.core.entities.model.Sesion;
 import org.educa.core.entities.model.Unidad;
 
 public class CursoForm {
@@ -13,7 +14,10 @@ public class CursoForm {
 	private boolean editar;
 	
 	@Valid
-	private Unidad nuevaUnidad;	
+	private Unidad nuevaUnidad;
+	
+	@Valid
+	private Sesion nuevaSesion;
 	
 	public CursoForm() {
 		super();
@@ -42,5 +46,13 @@ public class CursoForm {
 
 	public void setNuevaUnidad(Unidad nuevaUnidad) {
 		this.nuevaUnidad = nuevaUnidad;
+	}
+
+	public Sesion getNuevaSesion() {
+		return nuevaSesion;
+	}
+
+	public void setNuevaSesion(Sesion nuevaSesion) {
+		this.nuevaSesion = nuevaSesion;
 	}	
 }

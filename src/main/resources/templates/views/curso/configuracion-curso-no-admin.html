@@ -11,8 +11,9 @@
     <link href="../../static/css/metisMenu.css" th:href="@{/css/metisMenu.css}" rel="stylesheet" media="screen,projection" />    
 	<link href="../../static/css/sb-admin-2.css" th:href="@{/css/sb-admin-2.css}" rel="stylesheet" media="screen,projection" />
     <link href="../../static/css/materialize.css" th:href="@{/css/materialize.css}" rel="stylesheet" media="screen,projection" />
-	<link href="../../static/css/style.css" th:href="@{/css/style.css}" rel="stylesheet" media="screen,projection" />
+	<link href="../../static/css/style.css" th:href="@{/css/style.css}" rel="stylesheet" media="screen,projection" />	
 	<link href="../../static/css/educa.css" th:href="@{/css/educa.css}" rel="stylesheet" media="screen,projection" />
+	<link href="../../static/css/bootstrap-datetimepicker.css" th:href="@{/css/bootstrap-datetimepicker.css}" rel="stylesheet" media="screen,projection" />
 	
 </head>
 <body>
@@ -36,166 +37,322 @@
 	                         </div>		 			    		 	                        
 				    	</div>
 			    	</div>
-			    </form>
-			    <!-- <form action="#" th:action="@{/cursoNoAdmin/configuracionCurso}" th:object="${cursoForm}" method="post"> -->
+			    </form>			  
 			    
-			    	<div class="row">
-			    		<div >
-							<!-- Nav tabs -->
-							<ul class="nav nav-tabs">
-								<li class="tab col s6 active"><a href="#unidadesCurso" data-toggle="tab" aria-expanded="false">Unidades</a>
-								</li>
-								<li class="tab col s6"><a href="#sesionesCurso" data-toggle="tab" aria-expanded="false">Sesiones</a>
-								</li>								
-							</ul>
-						
-							<!-- Tab panes -->
-							<div class="tab-content">
-								<div class="tab-pane fade active in" id="unidadesCurso">
-									<br></br><br></br>
-									
-									<!-- Mensajes de alta -->								
-									<div th:if="${mostrarMensajeAltaUnidad} == true" class="alert alert-success alert-dismissable">
-					                   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-					                   <a href="#" class="alert-link">Bien Hecho!</a> El unidad se cre&oacute; con &eacute;xito.	                   
-					                </div>
-					                <!-- FIN de Mensajes de alta -->
-					                
-					                <!-- Mensajes de actualizacion -->
-					                <div th:if="${mostrarMensajeActualizacionUnidad} == true" class="alert alert-success alert-dismissable">
-					                   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-					                   <a href="#" class="alert-link">Bien Hecho!</a> El unidad se modific&oacute; con &eacute;xito.	                   
-					                </div>
-					                
-					                <div th:if="${mostrarMensajeErrorActualizacion} == true" class="alert alert-danger alert-dismissable">
-					                   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-					                   <a href="#" class="alert-link">Error!</a> La unidad &apos;<a href="#" class="alert-link"><span th:text="${descripcionUnidadModificada}"></span></a>&apos; que se intent&oacute; 
-					                   		modificar contiene errores de validaci&oacute;n, por lo que los cambios no se realizaron.
-					                   
-					                   <div th:if="${erroresActualizacion}">
-					                   		<br></br><br></br>
-					                   		<a href="#" class="alert-link">Errores:</a>
-					                   		<br></br><br></br>
-					                   		<ol>
-  												<li th:each="err : ${erroresActualizacion}"><p th:text="${err}"></p></li>
-  											</ol>										        
-										</div>
-					                                      
-					                </div>
-					                <!-- FIN de Mensajes de actualizacion -->
-					                
-					                <!-- Mensajes de eliminacion -->
-					                <div th:if="${mostrarMensajeEliminarUnidad} == true" class="alert alert-success alert-dismissable">
-					                   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-					                   <a href="#" class="alert-link">Bien Hecho!</a> El unidad se elimin&oacute; con &eacute;xito.	                   
-					                </div>
-					                <!-- FIN de Mensajes de eliminacion -->
-					                
-					                					                
-					                <!-- Se listan las unidades si alguna fue dada de alta. -->					                
-				                	<div th:if="${cursoForm.curso.unidades} != null">
-					                	<div th:if="${not #lists.isEmpty(cursoForm.curso.unidades)}">
-					                		<form action="#" th:action="@{/cursoNoAdmin/actualizarUnidad/{idCurso}(idCurso=${cursoForm.curso.id})}" th:object="${unidad}" method="post">
-						                		<ul class="collapsible popout collapsible-accordion" data-collapsible="accordion">
-						                		
-												  <li th:each="unidadPropia : ${cursoForm.curso.unidades}">												  
-													<div class="collapsible-header">
-														<i class="fa fa-file-text-o" aria-hidden="true"></i>&nbsp; 
-														<span th:text="${unidadPropia.descripcionLarga}">&nbsp;</span>
-													</div>
-													<div class="collapsible-body" style="">													
-														<div id="formularioModificacionUnidad">
-															<input type="hidden" th:name="id.idCurso" th:value="${unidadPropia.id.idCurso}"/>
-															<input type="hidden" th:name="id.numero" th:value="${unidadPropia.id.numero}"/>
-													    	<div class="col l6 s12"> 
-													    		<div class="form-group input-field">
-													    			<input type="text" th:name="titulo" th:value="${unidadPropia.titulo}" maxlength="100" size="100" placeholder="T&iacute;tulo de la unidad" />
-													    		</div>							        	                      
-										                        <div class="form-group input-field">
-													    			<textarea class="materialize-textarea" maxlength="255" th:field="*{descripcion}" th:text="${unidadPropia.descripcion}" th:value="${unidadPropia.descripcion}" placeholder="Descripci&oacute;n de la unidad" th:inline="text">
-													    				[[${unidadPropia.descripcion}]]
-													    			</textarea>
-													    		</div>		 			    		 	                         
-													    	</div>
-													    	<div class="col l6 s12">
-													    		<div class="form-group input-field">
-													    			<input type="number" min="1" maxlength="4" size="4" th:name="duracionEstimada" th:value="${unidadPropia.duracionEstimada}" placeholder="Duraci&oacute;n estimada de la unidad (en horas)" />													    			
-													    		</div>        									    		
-													    	</div>
-													    </div>
-													    
-													    <div class="row">        		
-															<div class="col-xs-12">
-														    	<hr></hr>
-															</div>
-														</div>
-													    	
-												    	<div class="form-group" style="margin-left: 10px;">
-												    		<button type="submit" class="btn orange-effect orange">Actualizar</button>
-								                         	<a class="btn orange-effect orange" href="#" th:href="@{/cursoNoAdmin/eliminarUnidad/{idCurso}/{idUnidad}/{numeroUnidad}(idCurso=${cursoForm.curso.id}, idUnidad=${unidadPropia.id.idCurso}, numeroUnidad=${unidadPropia.id.numero})}">Eliminar</a>
-								                         </div>										    											    												   												   
-													</div>
-												  </li>											  
-												</ul>
-											</form>
-					                	</div>
-					                </div>
-		                								               
-					                					               
-					                
-					                <div th:if="${#lists.isEmpty(cursoForm.curso.unidades)}">
-								    	<div class="alert alert-warning">
-					                        No hay unidades creadas para mostrar.
-					                    </div>
-								    </div>
-								    
-								    <form action="#" th:action="@{/cursoNoAdmin/configuracionCurso}" th:object="${cursoForm}" method="post">
-								    	<div id="formularioAltaUnidad">
-									    	<div class="col l6 s12"> 
-									    		<div class="form-group input-field">
-									    			<input type="text" th:field="*{nuevaUnidad.titulo}" placeholder="T&iacute;tulo de la nueva unidad" />
-									    			<p th:errors="*{nuevaUnidad.titulo}" class="has-error-custom"></p>
-									    		</div>							        	                      
-						                        <div class="form-group input-field">
-									    			<textarea class="materialize-textarea" th:field="*{nuevaUnidad.descripcion}" placeholder="Descripci&oacute;n de la nueva unidad"></textarea>
-									    			<p th:errors="*{nuevaUnidad.descripcion}" class="has-error-custom"></p>
-									    		</div>		 			    		 	                         
-									    	</div>
-									    	<div class="col l6 s12">
-									    		<div class="form-group input-field">
-									    			<input type="number" min="1" th:field="*{nuevaUnidad.duracionEstimada}" placeholder="Duraci&oacute;n estimada de la nueva unidad (en horas)" />
-									    			<p th:errors="*{nuevaUnidad.duracionEstimada}" class="has-error-custom"></p>
-									    		</div>                         									    		
-									    	</div>
-									    </div>
-									    
-									    <div class="row">
-											<div class="col-xs-12">
-										    	<hr></hr>
-											</div>
-										</div>
-										
-								    	<div class="col l12 s12">			    					    				
-						    				<div class="form-group">
-					                         	<button type="submit" class="btn orange-effect orange darken-4">Guardar</button>                       		
-					                         	<a class="btn orange-effect orange darken-4" href="#" th:href="@{/cursoNoAdmin}">Salir</a>
-					                         </div>
-								    	</div>
-									    
-								    </form>								    								    
+				<div class="row">
+					<div >
+						<!-- Nav tabs -->
+						<ul class="nav nav-tabs">
+							<li class="tab col s6 active"><a href="#unidadesCurso" data-toggle="tab" aria-expanded="false">Unidades</a>
+							</li>
+							<li class="tab col s6"><a href="#sesionesCurso" data-toggle="tab" aria-expanded="false">Sesiones</a>
+							</li>								
+						</ul>
+					
+						<!-- Tab panes -->
+						<div class="tab-content">
+							<div class="tab-pane fade active in" id="unidadesCurso">
+								<br></br><br></br>
+								
+								<!-- Mensajes de alta -->								
+								<div th:if="${mostrarMensajeAltaUnidad} == true" class="alert alert-success alert-dismissable">
+								   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+								   <a href="#" class="alert-link">Bien Hecho!</a> La unidad se cre&oacute; con &eacute;xito.	                   
 								</div>
-								<div class="tab-pane fade" id="sesionesCurso">
-									<h4>Profile Tab</h4>
-									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-								</div>								
+								<!-- FIN de Mensajes de alta -->
+								
+								<!-- Mensajes de actualizacion -->
+								<div th:if="${mostrarMensajeActualizacionUnidad} == true" class="alert alert-success alert-dismissable">
+								   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+								   <a href="#" class="alert-link">Bien Hecho!</a> La unidad se modific&oacute; con &eacute;xito.	                   
+								</div>
+								
+								<div th:if="${mostrarMensajeErrorActualizacionUnidad} == true" class="alert alert-danger alert-dismissable">
+								   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+								   <a href="#" class="alert-link">Error!</a> La unidad &apos;<a href="#" class="alert-link"><span th:text="${descripcionUnidadModificada}"></span></a>&apos; que se intent&oacute; 
+										modificar contiene errores de validaci&oacute;n, por lo que los cambios no se realizaron.
+								   
+								   <div th:if="${erroresActualizacionUnidad}">
+										<br></br><br></br>
+										<a href="#" class="alert-link">Errores:</a>
+										<br></br><br></br>
+										<ol>
+											<li th:each="err : ${erroresActualizacionUnidad}"><p th:text="${err}"></p></li>
+										</ol>										        
+									</div>
+													  
+								</div>
+								<!-- FIN de Mensajes de actualizacion -->
+								
+								<!-- Mensajes de eliminacion -->
+								<div th:if="${mostrarMensajeEliminarUnidad} == true" class="alert alert-success alert-dismissable">
+								   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+								   <a href="#" class="alert-link">Bien Hecho!</a> La unidad se elimin&oacute; con &eacute;xito.	                   
+								</div>
+								<!-- FIN de Mensajes de eliminacion -->
+								
+																	
+								<!-- Se listan las unidades si alguna fue dada de alta. -->					                
+								<div th:if="${cursoForm.curso.unidades} != null">
+									<div th:if="${not #lists.isEmpty(cursoForm.curso.unidades)}">
+										<form action="#" th:action="@{/cursoNoAdmin/actualizarUnidad/{idCurso}(idCurso=${cursoForm.curso.id})}" th:object="${unidad}" method="post">
+											<ul class="collapsible popout collapsible-accordion" data-collapsible="accordion">
+											
+											  <li th:each="unidadPropia : ${cursoForm.curso.unidades}">												  
+												<div class="collapsible-header">
+													<i class="fa fa-file-text-o" aria-hidden="true"></i>&nbsp; 
+													<span th:text="${unidadPropia.descripcionLarga}">&nbsp;</span>
+												</div>
+												<div class="collapsible-body" style="">													
+													<div id="formularioModificacionUnidad">
+														<input type="hidden" th:name="id.idCurso" th:value="${unidadPropia.id.idCurso}"/>
+														<input type="hidden" th:name="id.numero" th:value="${unidadPropia.id.numero}"/>
+														<div class="col l6 s12"> 
+															<div class="form-group input-field">
+																<input type="text" th:name="titulo" th:value="${unidadPropia.titulo}" maxlength="100" size="100" placeholder="T&iacute;tulo de la unidad" />
+															</div>							        	                      
+															<div class="form-group input-field">
+																<textarea class="materialize-textarea" maxlength="255" th:field="*{descripcion}" th:text="${unidadPropia.descripcion}" th:value="${unidadPropia.descripcion}" placeholder="Descripci&oacute;n de la unidad" th:inline="text">
+																	[[${unidadPropia.descripcion}]]
+																</textarea>
+															</div>		 			    		 	                         
+														</div>
+														<div class="col l6 s12">
+															<div class="form-group input-field">
+																<input type="number" min="1" maxlength="4" size="4" th:name="duracionEstimada" th:value="${unidadPropia.duracionEstimada}" placeholder="Duraci&oacute;n estimada de la unidad (en horas)" />													    			
+															</div>        									    		
+														</div>
+													</div>
+													
+													<div class="row">        		
+														<div class="col-xs-12">
+															<hr></hr>
+														</div>
+													</div>
+														
+													<div class="form-group" style="margin-left: 10px;">
+														<button type="submit" class="btn orange-effect orange">Actualizar</button>
+														<a class="btn orange-effect orange" href="#" th:href="@{/cursoNoAdmin/eliminarUnidad/{idCurso}/{idUnidad}/{numeroUnidad}(idCurso=${cursoForm.curso.id}, idUnidad=${unidadPropia.id.idCurso}, numeroUnidad=${unidadPropia.id.numero})}">Eliminar</a>
+													 </div>										    											    												   												   
+												</div>
+											  </li>											  
+											</ul>
+										</form>
+									</div>
+								</div>
+								
+								<div th:if="${#lists.isEmpty(cursoForm.curso.unidades)}">
+									<div class="alert alert-warning">
+										No hay unidades creadas para mostrar.
+									</div>
+								</div>
+								
+								<form action="#" th:action="@{/cursoNoAdmin/configuracionUnidadCurso}" th:object="${cursoForm}" method="post">
+									<div id="formularioAltaUnidad">
+										<div class="col l6 s12"> 
+											<div class="form-group input-field">
+												<input type="text" th:field="*{nuevaUnidad.titulo}" placeholder="T&iacute;tulo de la nueva unidad" length="100"/>
+												<p th:errors="*{nuevaUnidad.titulo}" class="has-error-custom"></p>
+											</div>							        	                      
+											<div class="form-group input-field">
+												<textarea class="materialize-textarea" th:field="*{nuevaUnidad.descripcion}" placeholder="Descripci&oacute;n de la nueva unidad" length="255"></textarea>
+												<p th:errors="*{nuevaUnidad.descripcion}" class="has-error-custom"></p>
+											</div>		 			    		 	                         
+										</div>
+										<div class="col l6 s12">
+											<div class="form-group input-field">
+												<input type="number" min="1" th:field="*{nuevaUnidad.duracionEstimada}" placeholder="Duraci&oacute;n estimada de la nueva unidad (en horas)" length="4" />
+												<p th:errors="*{nuevaUnidad.duracionEstimada}" class="has-error-custom"></p>
+											</div>                         									    		
+										</div>
+									</div>
+									
+									<div class="row">
+										<div class="col-xs-12">
+											<hr></hr>
+										</div>
+									</div>
+									
+									<div class="col l12 s12">			    					    				
+										<div class="form-group">
+											<button type="submit" class="btn orange-effect orange darken-4">Guardar</button>                       		
+											<a class="btn orange-effect orange darken-4" href="#" th:href="@{/cursoNoAdmin}">Salir</a>
+										 </div>
+									</div>									
+								</form>								    								    
 							</div>
+							<!-- FIN - TAB DE UNIDADES -->
+							
+							<!-- TAB DE SESIONES -->
+							<div class="tab-pane fade" id="sesionesCurso">								
+								<br></br><br></br>
+								
+								<!-- Mensajes de alta -->								
+								<div th:if="${mostrarMensajeAltaSesion} == true" class="alert alert-success alert-dismissable">
+								   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+								   <a href="#" class="alert-link">Bien Hecho!</a> La sesi&oacute;n se cre&oacute; con &eacute;xito.	                   
+								</div>
+								<!-- FIN de Mensajes de alta -->
+								
+								<!-- Mensajes de actualizacion -->
+								<div th:if="${mostrarMensajeActualizacionSesion} == true" class="alert alert-success alert-dismissable">
+								   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+								   <a href="#" class="alert-link">Bien Hecho!</a> La sesi&oacute;n se modific&oacute; con &eacute;xito.	                   
+								</div>
+								
+								<div th:if="${mostrarMensajeErrorActualizacionSesion} == true" class="alert alert-danger alert-dismissable">
+								   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+								   <a href="#" class="alert-link">Error!</a> La sesi&oacute;n &apos;<a href="#" class="alert-link"><span th:text="${descripcionSesionModificada}"></span></a>&apos; que se intent&oacute; 
+										modificar contiene errores de validaci&oacute;n, por lo que los cambios no se realizaron.
+								   
+								   <div th:if="${erroresActualizacionSesion}">
+										<br></br><br></br>
+										<a href="#" class="alert-link">Errores:</a>
+										<br></br><br></br>
+										<ol>
+											<li th:each="err : ${erroresActualizacionSesion}"><p th:text="${err}"></p></li>
+										</ol>										        
+									</div>
+													  
+								</div>
+								<!-- FIN de Mensajes de actualizacion -->
+								
+								<!-- Mensajes de eliminacion -->
+								<div th:if="${mostrarMensajeEliminarSesion} == true" class="alert alert-success alert-dismissable">
+								   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+								   <a href="#" class="alert-link">Bien Hecho!</a> La sesi&oacute;n se elimin&oacute; con &eacute;xito.	                   
+								</div>
+								<!-- FIN de Mensajes de eliminacion -->
+																													               
+								<div th:if="${cursoForm.curso.sesiones} != null">
+									<div th:if="${not #lists.isEmpty(cursoForm.curso.sesiones)}">
+										<form action="#" th:action="@{/cursoNoAdmin/actualizarSesion/{idCurso}(idCurso=${cursoForm.curso.id})}" th:object="${sesion}" method="post">
+											<ul class="collapsible popout collapsible-accordion" data-collapsible="accordion">
+											
+											  <li th:each="sesionPropia : ${cursoForm.curso.sesiones}">												  
+												<div class="collapsible-header">
+													<i class="fa fa-file-text-o" aria-hidden="true"></i>&nbsp; 
+													<span th:text="${sesionPropia.descripcionLarga}">&nbsp;</span>
+												</div>
+												<div class="collapsible-body" style="">													
+													<div id="formularioModificacionSesion">
+														<input type="hidden" th:name="id.idCurso" th:value="${sesionPropia.id.idCurso}"/>
+														<input type="hidden" th:name="id.numero" th:value="${sesionPropia.id.numero}"/>
+														<div class="col l6 s12">																														
+															<div class="form-group input-group input-field date" id="fechaDesdeInscripcionActualizadar">
+																<label for="fechaDesdeInscripcion" class="">Fecha de inicio de inscripci&oacute;n</label>
+																<input th:name="fechaDesdeInscripcion" th:field="${sesionPropia.fechaDesdeInscripcion}" type="text" class="form-control"/>														
+																<span class="input-group-addon" style="border: none; background-color: #f8f8f8;">
+												                    <span class="glyphicon glyphicon-calendar">
+												                    </span>
+												                </span>
+															</div>															
+															<div class="form-group input-group input-field date" id="fechaDesdeActualizadar">
+																<label for="fechaDesde" class="">Fecha de inicio de la sesi&oacute;n</label>
+																<input th:name="fechaDesde" th:field="${sesionPropia.fechaDesde}" type="text" class="form-control"/>														
+																<span class="input-group-addon" style="border: none; background-color: #f8f8f8;">
+												                    <span class="glyphicon glyphicon-calendar">
+												                    </span>
+												                </span>
+															</div>																 			    		 	                         
+														</div>
+														<div class="col l6 s12">
+															<div class="form-group input-group input-field date" id="fechaHastaActualizadar">
+																<label for="fechaDesde" class="">Fecha de fin de la sesi&oacute;n</label>
+																<input th:name="fechaHasta" th:field="${nuevaSesion.fechaHasta}" type="text" class="form-control"/>														
+																<span class="input-group-addon" style="border: none; background-color: #f8f8f8;">
+												                    <span class="glyphicon glyphicon-calendar">
+												                    </span>
+												                </span>
+															</div>     									    		
+														</div>
+													</div>
+													
+													<div class="row">        		
+														<div class="col-xs-12">
+															<hr></hr>
+														</div>
+													</div>
+														
+													<div class="form-group" style="margin-left: 10px;">
+														<button type="submit" class="btn orange-effect orange">Actualizar</button>
+														<a class="btn orange-effect orange" href="#" th:href="@{/cursoNoAdmin/eliminarSesion/{idCurso}/{idSesion}/{numeroSesion}(idCurso=${cursoForm.curso.id}, idSesion=${sesionPropia.id.idCurso}, numeroSesion=${sesionPropia.id.numero})}">Eliminar</a>
+													 </div>										    											    												   												   
+												</div>
+											  </li>											  
+											</ul>
+										</form>
+									</div>
+								</div>
+								
+								<!-- Esta seccion se muestra solo si hay unidades creadas (las sesiones no se pueden dar de alta si no se creo ni una unidad) -->
+								<div th:if="${#lists.isEmpty(cursoForm.curso.unidades)} and ${#bools.isTrue(mostrarMensajeErrorCrearSesionSinUnidad)}">
+									<div class="alert alert-danger">
+										<a href="#" class="alert-link">Unidades sin cargar!</a> Para poder dar de alta una sesi&oacute;n, al menos una unidad debe de ser dada de alta en el curso.
+									</div>
+								</div>								
+								
+								<div th:if="${cursoForm.curso.unidades} != null">
+									<div th:if="${not #lists.isEmpty(cursoForm.curso.unidades)}">
+										<form action="#" th:action="@{/cursoNoAdmin/configuracionSesionCurso}" th:object="${cursoForm}" method="post">
+											<div id="formularioAltaUnidad">
+												<div class="col l6 s12">													
+													<div class="form-group input-group input-field date" id="fechaDesdeInscripcion">
+														<label for="fechaDesdeInscripcion" class="">Fecha de inicio de inscripci&oacute;n</label>
+														<input th:field="*{nuevaSesion.fechaDesde}" type="text" class="form-control"/>														
+														<span class="input-group-addon" style="border: none; background-color: #f8f8f8;">
+										                    <span class="glyphicon glyphicon-calendar">
+										                    </span>
+										                </span>
+										                <p th:errors="*{nuevaSesion.fechaDesde}" class="has-error-custom"></p>
+													</div>
+													<br></br><br></br>																
+													<div class="form-group input-group input-field date" id="fechaDesde">
+														<label for="fechaDesde" class="">Fecha de inicio de la nueva sesi&oacute;n</label>
+														<input th:field="*{nuevaSesion.fechaDesde}" type="text" class="form-control"/>														
+														<span class="input-group-addon" style="border: none; background-color: #f8f8f8;">
+										                    <span class="glyphicon glyphicon-calendar">
+										                    </span>
+										                </span>
+										                <p th:errors="*{nuevaSesion.fechaDesde}" class="has-error-custom"></p>
+													</div>																																					
+												</div>
+												<div class="col l6 s12">													
+													<div class="form-group input-group input-field date" id="fechaHasta">
+														<label for="fechaHasta" class="">Fecha de fin de la nueva sesi&oacute;n</label>
+														<input th:field="*{nuevaSesion.fechaHasta}" type="text" class="form-control"/>														
+														<span class="input-group-addon" style="border: none; background-color: #f8f8f8;">
+										                    <span class="glyphicon glyphicon-calendar">
+										                    </span>
+										                </span>
+										                <p th:errors="*{nuevaSesion.fechaHasta}" class="has-error-custom"></p>
+													</div>
+																									                         									    		
+												</div>
+											</div>
+											
+											<div class="row">
+												<div class="col-xs-12">
+													<hr></hr>
+												</div>
+											</div>
+											
+											<div class="col l12 s12">			    					    				
+												<div class="form-group">
+													<button type="submit" class="btn orange-effect orange darken-4">Guardar</button>                       		
+													<a class="btn orange-effect orange darken-4" href="#" th:href="@{/cursoNoAdmin}">Salir</a>
+												 </div>
+											</div>									
+										</form>
+									</div>
+								</div>								
+							</div>								
 						</div>
-			    	</div>
-			    	  	
-			  <!--   </form>  -->
+					</div>
+				</div>			    	  	
 			</div>		
 		</div>		
-	</div>	
+	</div>
 	
 	<!--  Scripts-->
     <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>    
@@ -203,6 +360,42 @@
     <script src="../../static/js/metisMenu.js" th:src="@{/js/metisMenu.js}"></script>
     <script src="../../static/js/sb-admin-2.js" th:src="@{/js/sb-admin-2.js}"></script>
     <script src="../../static/js/materialize.js" th:src="@{/js/materialize.js}"></script>
-    <script src="../../static/js/init.js" th:src="@{/js/init.js}"></script>
+    <script src="../../static/js/init.js" th:src="@{/js/init.js}"></script>   
+    <script src="../../static/js/moment-with-locales.js" th:src="@{/js/moment-with-locales.js}"></script>
+    <script src="../../static/js/moment.js" th:src="@{/js/moment.js}"></script>
+    <script src="../../static/js/locale/es.js" th:src="@{/js/locale/es.js}"></script>    
+    <script src="../../static/js/bootstrap-datetimepicker.min.js" th:src="@{/js/bootstrap-datetimepicker.min.js}"></script>
+    
+    <script type="text/javascript">	   
+	    $(function () {
+	    	$('#fechaDesdeInscripcion').datetimepicker({            
+	            format: 'DD/MM/YYYY',
+	            locale: 'es'
+	        });
+	        $('#fechaDesde').datetimepicker({            
+	            format: 'DD/MM/YYYY',
+	            locale: 'es'
+	        });
+	        $('#fechaHasta').datetimepicker({            
+	            format: 'DD/MM/YYYY',
+	            locale: 'es'
+	        });
+	    });
+	    
+	    $(function () {
+	    	$('#fechaDesdeInscripcionActualizadar').datetimepicker({            
+	            format: 'DD/MM/YYYY',
+	            locale: 'es'
+	        });
+	        $('#fechaDesdeActualizadar').datetimepicker({            
+	            format: 'DD/MM/YYYY',
+	            locale: 'es'
+	        });
+	        $('#fechaHastaActualizadar').datetimepicker({            
+	            format: 'DD/MM/YYYY',
+	            locale: 'es'
+	        });
+	    });	    
+	</script>
 </body>
 </html>

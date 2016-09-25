@@ -6,11 +6,11 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class UnidadId implements Serializable {
-
+public class ComponenteId implements Serializable {
+//UnidadId
 	private static final long serialVersionUID = 3040390215434698515L;
 
-	@Column(name = "numero_unidad", updatable=true)
+	@Column(name = "numero_componente", updatable=true)
 	private Integer numero;
 
 	@Column(name = "id_curso")
@@ -49,7 +49,7 @@ public class UnidadId implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		UnidadId other = (UnidadId) obj;
+		ComponenteId other = (ComponenteId) obj;
 		if (idCurso == null) {
 			if (other.idCurso != null)
 				return false;
@@ -67,5 +67,4 @@ public class UnidadId implements Serializable {
 	public String toString() {
 		return "UnidadId [numero=" + numero + ", idCurso=" + idCurso + "]";
 	}
-
 }
