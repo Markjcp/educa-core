@@ -18,7 +18,7 @@
 	<div class="container">
 		<div class="section">
 			<div class="row">
-				<h1>Listado de cursos</h1>
+				<h1>Mi bandeja de cursos</h1>
 				
                 <!-- div th:if="${mostrarMensajeAlta} == true" class="alert alert-success alert-dismissable">
                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
@@ -35,9 +35,11 @@
                    <a href="#" class="alert-link">Bien Hecho!</a> El curso se elimin&oacute; correctamente.	                   
                 </div-->
                 <div id="buscadorCurso">
-                	<form>
-                		<label for="buscador">Nombre de curso</label>
-                		<input id="buscador" type="text"></input>
+                	<form id="burcarForm" th:attr="action=@{|/docente/${legajo}/bandeja-cursos|}" method="GET">
+                		<label for="nombreCurso">Nombre de curso</label>
+                		<input id="nombreCurso" name="nombreCurso" type="text" maxlength="40" th:value='${nombreCurso}' ></input>
+                		<button type="submit" class="btn orange-effect orange darken-4">Buscar</button>
+                		<a type="button" class="btn btn-default btn-educa-basico" th:href="@{|/docente/${legajo}/bandeja-cursos|}">Reiniciar</a>
                 	</form>
                 </div>
                 
@@ -55,9 +57,9 @@
 			                                </tr>
 			                            </thead>
 			                            <tbody>			                                
-			                                <tr th:each="curso : ${cursos}" class="gradeA odd" role="row">			                                	
+			                                <tr th:each="curso : ${cursos.pageList}" class="gradeA odd" role="row">			                                	
 										        <td th:text="${curso.nombre}">&nbsp;</td>
-										        <td >ROL</td>
+										        <td >Docente</td>
 										        <td>										        	
 										        	<a type="button" class="btn btn-default btn-educa-basico" th:href="@{/cursoAdmin/altaCurso/{cursoId}(cursoId=${curso.id})}">Editar</a>
 										        </td>
@@ -71,6 +73,40 @@
 			            <!-- /.table-responsive -->
 			        </div>
 			        <!-- /.panel-body -->
+			        <div  class="col-md-12 text-center">
+			        	<div  class='pagination pagination-centered'>
+			        		<ul class="pagination">
+			        			<li th:class="${currentIndex == 1}? 'disabled' : ''"><span
+									th:if='${currentIndex == 1}'>First</span> <a
+									th:if='${currentIndex != 1}' th:href="@{|${baseUrl}1|}">First</a>
+								</li>
+									<li th:class="${currentIndex != 1}? '' : 'disabled'"><span
+									th:if='${currentIndex == 1}'>«</span> <a
+									th:if='${currentIndex != 1}'
+									th:href="@{|${baseUrl}${currentIndex-1}|}"
+									title='Go to previous page'>«</a>
+								</li>
+								<li th:each="item : ${#numbers.sequence(beginIndex,endIndex)}"
+									th:class="${item == currentIndex ? 'active' : '' }"><span
+									th:if='${item == currentIndex}' th:text='${item}'>1</span> <a
+									th:if='${item != currentIndex}' th:href="@{|${baseUrl}${item}|}">
+										<span th:text='${item}'>1</span>
+									</a>
+								</li>
+								<li th:class="${currentIndex != totalPageCount}? '' : 'disabled'">
+									<span th:if='${currentIndex == totalPageCount}'>»</span> <a
+									th:if='${currentIndex != totalPageCount}'
+									th:href="@{|${baseUrl}${currentIndex+1}|}"
+									title='Go to next page'>»</a>
+								</li>
+								<li th:class="${currentIndex == totalPageCount}? 'disabled' : ''">
+									<span th:if='${currentIndex == totalPageCount}'>Last</span> <a
+									th:if='${currentIndex != totalPageCount}'
+									th:href="@{|${baseUrl}${totalPageCount}|}">Last</a>
+								</li>
+			        		</ul>
+			        	</div>
+			        </div>
 			    </div>
 			    
 			    <div th:if="${#lists.isEmpty(cursos)}">
@@ -78,6 +114,7 @@
                         No hay cursos creados para mostrar.
                     </div>
 			    </div>
+			    
 			    
                                 
 			</div>

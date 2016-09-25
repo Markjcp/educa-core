@@ -23,4 +23,26 @@ public class CursoDaoImpl extends GeneralDaoSupport<Curso>implements CursoDao {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Curso> findByLegajo(long legajo) {
+		EntityManager em = getEntityManager();
+		return (List<Curso>) em
+				.createQuery(
+						"SELECT c FROM Curso c JOIN c.docente d WHERE d.id = :legajo")
+				.setParameter("legajo", legajo).getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Curso> findByLegajoAndNombreCurso(long legajo, String nombreCurso) {
+		EntityManager em = getEntityManager();
+		String nombre= "%" + nombreCurso + "%";
+		return (List<Curso>) em
+				.createQuery(
+						"SELECT c FROM Curso c JOIN c.docente d "
+						+ "WHERE d.id = :legajo and c.nombre LIKE :nombreCurso")
+				.setParameter("legajo", legajo).setParameter("nombreCurso", nombre).getResultList();
+	}
+
 }

@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("docente")
@@ -28,32 +29,45 @@ public class DocenteController {
 	private CursoService cursoService;
 	
 	@RequestMapping(value="/{id}/bandeja-cursos", method = RequestMethod.GET)
-	public String misCursos(HttpServletRequest request, @PathVariable("id") long idUsuario, Model model) {
-		request.getSession().setAttribute("listaCursos", null);
+	public String misCursos(HttpServletRequest request, 
+				@PathVariable("id") long idUsuario, 
+				Model model,
+				RedirectAttributes redirectAttributes) {
 		
-
-		return "redirect:/" + idUsuario + "/bandeja-cursos/1";
+		request.getSession().setAttribute("listaCursos", null);
+		String nombreCurso = request.getParameter("nombreCurso");
+		if (nombreCurso != null) {
+			redirectAttributes.addFlashAttribute("nombreCurso", nombreCurso);
+		}
+		return "redirect:/docente/" + idUsuario + "/bandeja-cursos/1";
 	}
 	
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@RequestMapping(value="/{id}/bandeja-cursos/{numeroPagina}", method = RequestMethod.GET)
 	public String misCursosPagina(HttpServletRequest request, 
+			@PathVariable("id") long legajo,
+			Model model,
 			@PathVariable Integer numeroPagina, 
 			Model uiModel) {
+		
+		String nombreCurso = (String)model.asMap().get("nombreCurso");
+		if (nombreCurso == null) {
+			nombreCurso = "";
+		}
 
-		
-		PagedListHolder<?> pagedListHolder = 
-			(PagedListHolder<?>)request.getSession().getAttribute("listaCursos");
-		
+		PagedListHolder<Curso> pagedListHolder = 
+			(PagedListHolder<Curso>)request.getSession().getAttribute("listaCursos");
 		if (pagedListHolder == null) {
-			
-			pagedListHolder = new PagedListHolder(cursoService.obtenerTodos());
+			if (!nombreCurso.equals("")) {
+				pagedListHolder = new PagedListHolder(cursoService.obtenerCursosDocente(legajo, nombreCurso));
+			} else {
+				pagedListHolder = new PagedListHolder(cursoService.obtenerCursosDocente(legajo));
+			}
 			pagedListHolder.setPageSize(PRODUCT_LIST_PAGE_SIZE);
 		} else {
 			final int irAPagina = numeroPagina - 1;
 			if (irAPagina <= pagedListHolder.getPageCount() && irAPagina >= 0) {
-				pagedListHolder.setPage(irAPagina);
-				
+				pagedListHolder.setPage(irAPagina);				
 			}
 		}
 		
@@ -64,11 +78,13 @@ public class DocenteController {
 		int begin = Math.max(1, current - PRODUCT_LIST_PAGE_SIZE);
 		int end = Math.min(begin+5, pagedListHolder.getPageCount());
 		int totalPageCount = pagedListHolder.getPageCount();
-		String baseUrl = PRODUCT_LIST_BASEURL;
+		String baseUrl = "/docente/" + legajo +"/bandeja-cursos/";
 		
+		uiModel.addAttribute("legajo", legajo);
+		uiModel.addAttribute("nombreCurso", nombreCurso);
 		uiModel.addAttribute("beginIndex", begin);
 		uiModel.addAttribute("endIndex", end);
-		uiModel.addAttribute("currentIntex", current);
+		uiModel.addAttribute("currentIndex", current);
 		uiModel.addAttribute("totalPageCount", totalPageCount);
 		uiModel.addAttribute("baseUrl", baseUrl);
 		uiModel.addAttribute(MODELO_ATRIBUTO_CURSOS, pagedListHolder);

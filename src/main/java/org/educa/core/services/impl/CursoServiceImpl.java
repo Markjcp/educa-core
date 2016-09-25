@@ -51,4 +51,15 @@ public class CursoServiceImpl implements CursoService {
 		}
 	}
 
+	@Override
+	public List<Curso> obtenerCursosDocente(long legajo) {
+		return this.cursoDao.findByLegajo(legajo);
+	}
+
+	@Override
+	public List<Curso> obtenerCursosDocente(long legajo, String nombreCurso) {
+		return this.cursoDao.findByLegajoAndNombreCurso(legajo, nombreCurso);
+	}
+	
+
 }

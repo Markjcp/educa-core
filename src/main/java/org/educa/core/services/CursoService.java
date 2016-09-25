@@ -13,4 +13,8 @@ public interface CursoService {
 	List<Curso> obtenerTodos();
 	
 	void eliminarCurso(long id);
+
+	List<Curso> obtenerCursosDocente(long legajo);
+
+	List<Curso> obtenerCursosDocente(long legajo, String nombreCurso);
 }
