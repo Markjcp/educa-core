@@ -9,4 +9,8 @@ public interface CursoDao extends GeneralDao<Curso> {
 	
 	List<Curso> obtenerProximosCursos(Date desde, Date hasta);
 
+	List<Curso> findByLegajo(long legajo);
+
+	List<Curso> findByLegajoAndNombreCurso(long legajo, String nombreCurso);
+
 }
