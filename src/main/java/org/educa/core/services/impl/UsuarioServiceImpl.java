@@ -1,7 +1,9 @@
 package org.educa.core.services.impl;
 
+import org.educa.core.dao.DocenteRepository;
 import org.educa.core.dao.RolUsuarioRepository;
 import org.educa.core.dao.UsuarioRepository;
+import org.educa.core.entities.model.Docente;
 import org.educa.core.entities.model.RolUsuario;
 import org.educa.core.entities.model.Usuario;
 import org.educa.core.exceptions.ActivacionException;
@@ -29,6 +31,9 @@ public class UsuarioServiceImpl implements UsuarioService{
 	
 	@Autowired
 	private RolUsuarioRepository rolUsuarioRepository;
+	
+	@Autowired
+	private DocenteRepository docenteRepository;
 
 	@Override
 	public void registrarUsuario(Usuario usuario) {
@@ -42,6 +47,10 @@ public class UsuarioServiceImpl implements UsuarioService{
 		GeneradorClaveIdentificacion generador = new GeneradorClaveIdentificacion();
 		usuario.setClaveActivacion(generador.proximoId());
 		usuarioRepository.save(usuario);
+		Docente docente = new Docente();
+		usuario.setPasswordConfirmacion("-");
+		docente.setUsuario(usuario);
+		docenteRepository.save(docente);
 		notificacionService.enviarActivacion(usuario);
 		
 	}
