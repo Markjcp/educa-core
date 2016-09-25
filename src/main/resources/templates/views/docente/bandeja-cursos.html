@@ -1,0 +1,94 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head> 
+    <title>Mi bandeja de cursos</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+	
+	<link href="css/bootstrap.css" th:href="@{/css/bootstrap.css}" rel="stylesheet" media="screen,projection" />
+	<link href="css/sb-admin-2.css" th:href="@{/css/sb-admin-2.css}" rel="stylesheet" media="screen,projection" />
+	<link href="css/materialize.css" th:href="@{/css/materialize.css}" rel="stylesheet" media="screen,projection" />
+	<link href="css/style.css" th:href="@{/css/style.css}" rel="stylesheet" media="screen,projection" />
+	<link href="css/style.css" th:href="@{/css/educa.css}" rel="stylesheet" media="screen,projection" />
+</head>
+<body>
+	<div th:replace="views/fragments/header :: header">&nbsp;</div>
+	 
+	<div class="container">
+		<div class="section">
+			<div class="row">
+				<h1>Listado de cursos</h1>
+				
+                <!-- div th:if="${mostrarMensajeAlta} == true" class="alert alert-success alert-dismissable">
+                   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                   <a href="#" class="alert-link">Bien Hecho!</a> El nuevo curso se cre&oacute; correctamente.	                   
+                </div>
+                
+                <div th:if="${mostrarMensajeModificar} == true" class="alert alert-success alert-dismissable">
+                   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                   <a href="#" class="alert-link">Bien Hecho!</a> El curso se modific&oacute; correctamente.	                   
+                </div>
+                
+                <div th:if="${mostrarMensajeEliminar} == true" class="alert alert-success alert-dismissable">
+                   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                   <a href="#" class="alert-link">Bien Hecho!</a> El curso se elimin&oacute; correctamente.	                   
+                </div-->
+                <div id="buscadorCurso">
+                	<form>
+                		<label for="buscador">Nombre de curso</label>
+                		<input id="buscador" type="text"></input>
+                	</form>
+                </div>
+                
+                <div th:if="${not #lists.isEmpty(cursos)}" class="panel panel-default">				    
+				    <div class="panel-body">
+				        <div id="dataTables-example_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">				            
+			                <div class="row">
+			                    <div class="col-sm-12">
+			                        <table class="table" id="dataTables-example" role="grid" aria-describedby="dataTables-example_info">
+			                            <thead>
+			                                <tr role="row">
+			                                    <th tabindex="0" aria-controls="dataTables-example">Nombre Curso</th>
+			                                    <th tabindex="0" aria-controls="dataTables-example">Rol</th>
+			                                    <th>&nbsp;</th>			                                    
+			                                </tr>
+			                            </thead>
+			                            <tbody>			                                
+			                                <tr th:each="curso : ${cursos}" class="gradeA odd" role="row">			                                	
+										        <td th:text="${curso.nombre}">&nbsp;</td>
+										        <td >ROL</td>
+										        <td>										        	
+										        	<a type="button" class="btn btn-default btn-educa-basico" th:href="@{/cursoAdmin/altaCurso/{cursoId}(cursoId=${curso.id})}">Editar</a>
+										        </td>
+										    </tr>
+			                                
+			                            </tbody>
+			                        </table>
+			                    </div>
+			                </div>			                
+			            </div>
+			            <!-- /.table-responsive -->
+			        </div>
+			        <!-- /.panel-body -->
+			    </div>
+			    
+			    <div th:if="${#lists.isEmpty(cursos)}">
+			    	<div class="alert alert-warning">
+                        No hay cursos creados para mostrar.
+                    </div>
+			    </div>
+			    
+                                
+			</div>
+		</div>
+	</div>
+	
+	<!--  Scripts-->
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="js/bootstrap.js" th:src="@{/js/bootstrap.js}"></script>
+    <script src="js/sb-admin-2.js" th:src="@{/js/sb-admin-2.js}"></script>
+    <script src="js/materialize.js" th:src="@{/js/materialize.js}"></script>
+    <script src="js/init.js" th:src="@{/js/init.js}"></script>    
+</body>
+</html>
