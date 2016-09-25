@@ -13,4 +13,6 @@ public interface CursoService {
 	List<Curso> obtenerTodos();
 	
 	void eliminarCurso(long id);
+	
+	void guardarCurso(Curso curso);
 }

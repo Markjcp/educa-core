@@ -26,7 +26,6 @@ public class CursoServiceImpl implements CursoService {
 	public void crearCurso(Curso curso) {
 		// Se guarda el curso en la base de datos y se le envia notificacion al
 		// profesor asignado al curso.
-		this.cursoDao.save(curso);
 		curso.setLinkImagen(ConstantesDelModelo.PREFIJO_IMAGEN + "/" + curso.getId()
 				+ ConstantesDelModelo.SEPARADOR_DE_IMAGEN + curso.getFoto().getOriginalFilename());
 		this.cursoDao.save(curso);
@@ -51,4 +50,8 @@ public class CursoServiceImpl implements CursoService {
 		}
 	}
 
+	@Override
+	public void guardarCurso(Curso curso) {
+		this.cursoDao.save(curso);
+	}	
 }
