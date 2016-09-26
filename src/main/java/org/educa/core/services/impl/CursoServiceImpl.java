@@ -130,39 +130,17 @@ public class CursoServiceImpl implements CursoService {
 				}
 			}
 			
-			if(encontrado){
-				//PRUEBA
-				curso.setUnidades(unidades);
-				this.unidadRepository.delete(unidadEliminar);
-				// FIN DE PRUEBA
+			if(encontrado){				
+				int nroUnidad = unidadEliminar.getId().getNumero();
+				this.cursoDao.deleteUnidad(unidadEliminar);
 				
-				
-//				int nroUnidad = unidadEliminar.getId().getNumero();		
-//				this.unidadRepository.delete(unidadEliminar);
-//				
-//				curso = this.encontrarCursoPorId(curso.getId());
-//				
-//				//TODO Elimino las unidades porque sino no me deja actualizarle el nro de unidad (OjO con esto, no esta bien; hay que arreglarlo para los proximos sprint [ediaz])
-//				/*for(Unidad unidad : unidades){
-//					this.unidadRepository.delete(unidad);
-//				}
-//				si tengo q dejar esto => debo de crear primero las unidades para asignarselas al curso!
-//				*/
-//				
-//				//Actualizo el numero de unidad
-//				SortedSet<Unidad> unidadesNroOk = new TreeSet<Unidad>();
-//				for(Unidad unidad : unidades){
-//					if(unidad.getId().getNumero() > nroUnidad){
-//						unidad.getId().setNumero(nroUnidad);
-//						nroUnidad++;
-//					}
-//					
-//					Unidad unidadPersistida = this.unidadRepository.save(unidad);
-//					unidadesNroOk.add(unidadPersistida);
-//				}
-//				
-//				curso.setUnidades(unidadesNroOk);
-//				this.guardarCurso(curso);
+				//Actualizo el numero de unidad				
+				for(Unidad unidad : unidades){
+					if(unidad.getId().getNumero() > nroUnidad){
+						this.cursoDao.updateNumeroUnidad(unidad, nroUnidad);						
+						nroUnidad++;
+					}										
+				}
 				
 				return true;
 			}
@@ -220,43 +198,31 @@ public class CursoServiceImpl implements CursoService {
 			}
 			
 			if(encontrado){
-				//PRUEBA
-				//curso.setSesiones(sesiones);
-				this.sesionRepository.delete(sesionEliminar);
-				// FIN DE PRUEBA
+				int nroSesion = sesionEliminar.getId().getNumero();
+				this.cursoDao.deleteSesion(sesionEliminar);
 				
+				//Actualizo el numero de unidad				
+				for(Sesion sesion : sesiones){
+					if(sesion.getId().getNumero() > nroSesion){
+						this.cursoDao.updateNumeroSesion(sesion, nroSesion);						
+						nroSesion++;
+					}										
+				}
 				
-//						int nroUnidad = unidadEliminar.getId().getNumero();		
-//						this.unidadRepository.delete(unidadEliminar);
-//						
-//						curso = this.encontrarCursoPorId(curso.getId());
-//						
-//						//TODO Elimino las unidades porque sino no me deja actualizarle el nro de unidad (OjO con esto, no esta bien; hay que arreglarlo para los proximos sprint [ediaz])
-//						/*for(Unidad unidad : unidades){
-//							this.unidadRepository.delete(unidad);
-//						}
-//						si tengo q dejar esto => debo de crear primero las unidades para asignarselas al curso!
-//						*/
-//						
-//						//Actualizo el numero de unidad
-//						SortedSet<Unidad> unidadesNroOk = new TreeSet<Unidad>();
-//						for(Unidad unidad : unidades){
-//							if(unidad.getId().getNumero() > nroUnidad){
-//								unidad.getId().setNumero(nroUnidad);
-//								nroUnidad++;
-//							}
-//							
-//							Unidad unidadPersistida = this.unidadRepository.save(unidad);
-//							unidadesNroOk.add(unidadPersistida);
-//						}
-//						
-//						curso.setUnidades(unidadesNroOk);
-//						this.guardarCurso(curso);
-				
-				return true;
+				return true;				
 			}
 		}
 		
 		return false;
+	}
+
+	@Override
+	public Curso encontrarCursoPorIdHidratado(long idCurso) {
+		try {
+			return this.cursoDao.findCursoByIdHidratado(idCurso);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

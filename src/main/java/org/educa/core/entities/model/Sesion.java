@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -39,7 +40,7 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	@Column(name = "costo")
 	private BigDecimal costo;
 	
-	@ManyToOne ///(cascade = {CascadeType.DETACH, CascadeType.REFRESH})  TODO [ediaz] ver si va o lo saco. probar
+	@ManyToOne(cascade = {CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.PERSIST})
 	@JoinColumn(name = "id_curso", referencedColumnName = "id_curso", insertable = false, updatable = false)
 	@JsonIgnore
 	private Curso curso;
@@ -187,7 +188,7 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	private String cadenaFechaDDMMYYYY(Date fechaBase){
 		String fechaDesdeFormateada = "";
 		if(fechaBase != null){
-			SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+			SimpleDateFormat format = getSimpleDateFormat();
 			fechaDesdeFormateada = format.format(fechaBase);
 		}
 		

@@ -29,4 +29,6 @@ public interface CursoService {
 	void crearSesion(Curso curso, Sesion sesionNueva);
 
 	boolean eliminarSesionCurso(Curso curso, long idSesion, int numeroSesion);
+
+	Curso encontrarCursoPorIdHidratado(long idCurso);
 }

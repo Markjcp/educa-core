@@ -1,6 +1,7 @@
 package org.educa.core.controller;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -76,7 +77,7 @@ public class CursoNoAdminController {
 		
 		//Determino si se creo una nueva unidad
 		Unidad unidadNueva = cursoForm.getNuevaUnidad();		
-		if(unidadNueva != null){
+		if(unidadNueva != null){			
 			this.cursoService.crearUnidad(curso, unidadNueva);			
 			cargarValoresBasicosParaUnidad(model, true, false, false, false);			
 		}
@@ -135,7 +136,7 @@ public class CursoNoAdminController {
 			eliminada = this.cursoService.eliminarUnidadCurso(curso, idUnidad, numeroUnidad);			
 		}
 		
-		Curso cursoHidratado = this.cursoService.encontrarCursoPorId(idCurso);		
+		Curso cursoHidratado = this.cursoService.encontrarCursoPorIdHidratado(idCurso);		
 		//Seteo los nuevos valores		
 		CursoForm cursoForm = new CursoForm();
 		cursoForm.setCurso(cursoHidratado);
@@ -164,6 +165,18 @@ public class CursoNoAdminController {
 		//Determino si se creo una nueva sesion
 		Sesion sesionNueva = cursoForm.getNuevaSesion();	
 		if(sesionNueva != null){
+			//Validar fechas
+			boolean valido = validarFechasSesion(sesionNueva, bindingResult);
+			if(!valido){
+				model.addAttribute("cursoForm", cursoForm);
+				cargarValoresBasicosParaUnidad(model, false, false, false, false);
+				cargarValoresBasicosParaSesion(curso, model, false, false, false, false);
+				
+				return CONFIGURACION_CURSO;
+			}
+			
+			//Calendar calendar = 
+			
 			this.cursoService.crearSesion(curso, sesionNueva);
 			
 			cursoHidratado = this.cursoService.encontrarCursoPorId(curso.getId());
@@ -223,7 +236,7 @@ public class CursoNoAdminController {
 			eliminada = this.cursoService.eliminarSesionCurso(curso, idSesion, numeroSesion);			
 		}
 		
-		Curso cursoHidratado = this.cursoService.encontrarCursoPorId(idCurso);		
+		Curso cursoHidratado = this.cursoService.encontrarCursoPorIdHidratado(idCurso);		
 		//Seteo los nuevos valores		
 		CursoForm cursoForm = new CursoForm();
 		cursoForm.setCurso(cursoHidratado);
@@ -254,5 +267,32 @@ public class CursoNoAdminController {
 		model.addAttribute("mostrarMensajeActualizacionSesion", actualizacion);
 		model.addAttribute("mostrarMensajeErrorActualizacionSesion", actualizacionError);
 		model.addAttribute("mostrarMensajeEliminarSesion", elimacion);		
+	}
+	
+	private boolean validarFechasSesion(Sesion sesionNueva, BindingResult bindingResult) {
+		// TODO Auto-generated method stub
+		boolean valida = true;
+		if(sesionNueva.getFechaDesdeInscripcion().compareTo(sesionNueva.getFechaDesde()) > 0 
+				|| sesionNueva.getFechaDesdeInscripcion().compareTo(sesionNueva.getFechaHasta()) > 0){
+			//Deberia de ser menor
+			bindingResult.resolveMessageCodes("La fecha de inscripcion debe de ser menor al resto de las fechas.", "nuevaSesion.fechaDesdeInscripcion");
+			valida = false;
+		}
+		
+		if(sesionNueva.getFechaDesde().compareTo(sesionNueva.getFechaHasta()) > 0 ){
+			//Deberia de ser menor
+			bindingResult.resolveMessageCodes("La fecha de inicio del curso debe de ser menor a la de finalizacion.", "nuevaSesion.fechaDesde");
+			valida = false;
+		}
+		
+		//TODO FALTA ESTA
+//		Calendar fechaActual = Calendar.getInstance();
+//		if(sesionNueva.getFechaDesde().compareTo(sesionNueva.getFechaHasta()) > 0 ){
+//			//Deberia de ser menor
+//			bindingResult.resolveMessageCodes("La fecha de inicio del curso debe de ser menor a la de finalizacion.", "nuevaSesion.fechaDesde");
+//			valida = false;
+//		}
+		
+		return valida;
 	}
 }

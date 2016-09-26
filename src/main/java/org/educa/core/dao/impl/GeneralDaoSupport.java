@@ -60,4 +60,8 @@ public abstract class GeneralDaoSupport<T extends Persistible> implements Genera
 	public EntityManager getEntityManager() {
 		return entityManager;
 	}
+	
+	public Class<T> getEntityClass(){
+		return this.entityClass;
+	}
 }

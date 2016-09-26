@@ -27,7 +27,7 @@ public class Unidad implements Serializable, Comparable<Unidad> {
 	@EmbeddedId	
 	private ComponenteId id;
 
-	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.REFRESH})
+	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.REFRESH, CascadeType.PERSIST})
 	@JoinColumn(name = "id_curso", referencedColumnName = "id_curso", insertable = false, updatable = false)
 	@JsonIgnore
 	private Curso curso;

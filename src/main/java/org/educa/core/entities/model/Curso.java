@@ -80,12 +80,12 @@ public class Curso implements Persistible {
 	@Column(name="fecha_estimada_prox_sesion")
 	private Date fechaEstimadaProximaSesion;
 	
-	@OneToMany
+	@OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.PERSIST})
 	@JoinColumn(name="id_curso")
 	@OrderBy(clause = "id.numero ASC")
 	private SortedSet<Sesion> sesiones;
 	
-	@OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH})
+	@OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.PERSIST})
 	@JoinColumn(name="id_curso")
 	@OrderBy(clause = "id.numero ASC")
 	private SortedSet<Unidad> unidades;
