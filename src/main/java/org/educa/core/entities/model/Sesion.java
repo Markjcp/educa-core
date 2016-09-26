@@ -2,7 +2,6 @@ package org.educa.core.entities.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -12,7 +11,9 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
+import org.educa.core.util.FechaUtil;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -27,10 +28,12 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	private ComponenteId id;
 	
 	@Column(name = "fecha_desde")
+	@NotNull(message = "Debe de ingresar una fecha de inicio de sesión.")
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date fechaDesde;
 	
 	@Column(name = "fecha_hasta")
+	@NotNull(message = "Debe de ingresar una fecha de finalización de sesión.")
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date fechaHasta;
 	
@@ -46,10 +49,11 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	private Curso curso;
 	
 	@Column(name = "fecha_desde_inscripcion")
+	@NotNull(message = "Debe de ingresar una fecha de inicio de inscripción a la sesión.")
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date fechaDesdeInscripcion;
 	
-	@Column(name = "fecha_hasta_inscripcion")
+	@Column(name = "fecha_hasta_inscripcion")	
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date fechaHastaInscripcion;
 
@@ -66,7 +70,7 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	}
 
 	public Date getFechaDesde() {
-		return formateFechaDDMMYYYY(fechaDesde);		
+		return FechaUtil.formateFechaDDMMYYYYEs(fechaDesde);		
 	}
 
 	public void setFechaDesde(Date fechaDesde) {		
@@ -74,7 +78,7 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	}
 
 	public Date getFechaHasta() {
-		return formateFechaDDMMYYYY(fechaHasta);
+		return FechaUtil.formateFechaDDMMYYYYEs(fechaHasta);
 	}
 
 	public void setFechaHasta(Date fechaHasta) {
@@ -106,7 +110,7 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	}
 
 	public Date getFechaDesdeInscripcion() {
-		return formateFechaDDMMYYYY(fechaDesdeInscripcion);
+		return FechaUtil.formateFechaDDMMYYYYEs(fechaDesdeInscripcion);
 	}
 
 	public void setFechaDesdeInscripcion(Date fechaDesdeInscripcion) {
@@ -114,7 +118,7 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	}
 
 	public Date getFechaHastaInscripcion() {
-		return formateFechaDDMMYYYY(fechaHastaInscripcion);
+		return FechaUtil.formateFechaDDMMYYYYEs(fechaHastaInscripcion);
 	}
 
 	public void setFechaHastaInscripcion(Date fechaHastaInscripcion) {
@@ -122,7 +126,11 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	}
 	
 	public String getDescripcionLarga() {		
-		return "Sesión Nro. " + (this.getId().getNumero() == null ? "" : this.getId().getNumero())  + ": Inicia el " + cadenaFechaDDMMYYYY(this.fechaDesde);
+		return "Sesión Nro. " + (this.getId().getNumero() == null ? "" : this.getId().getNumero())  + ": Inicia el " + FechaUtil.cadenaFechaDDMMYYYYEs(this.fechaDesde);
+	}
+	
+	public String getDescripcionLargaError() {		
+		return "Sesión Nro. " + (this.getId().getNumero() == null ? "" : this.getId().getNumero()) ;
 	}
 
 	@Override
@@ -169,33 +177,5 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 		
 		//Orden ascendente
 		return this.getId().getNumero().compareTo(unaSesion.getId().getNumero());
-	}
-	
-	private Date formateFechaDDMMYYYY(Date fechaBase){
-		SimpleDateFormat format = getSimpleDateFormat();
-		String cadenaFecha = cadenaFechaDDMMYYYY(fechaBase);		
-		Date fecha = null;
-		
-		try {
-			fecha = format.parse(cadenaFecha);
-		} catch (Exception ex) {
-			//Nada		
-		}
-
-		return fecha;
-	}
-	
-	private String cadenaFechaDDMMYYYY(Date fechaBase){
-		String fechaDesdeFormateada = "";
-		if(fechaBase != null){
-			SimpleDateFormat format = getSimpleDateFormat();
-			fechaDesdeFormateada = format.format(fechaBase);
-		}
-		
-		return fechaDesdeFormateada;
-	}
-	
-	private SimpleDateFormat getSimpleDateFormat(){
-		return new SimpleDateFormat("dd-MM-yyyy");
 	}
 }

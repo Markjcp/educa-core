@@ -95,6 +95,10 @@ public class Unidad implements Serializable, Comparable<Unidad> {
 	public String getDescripcionLarga() {
 		return "Unidad Nro. " + (getId().getNumero() == null ? "" : getId().getNumero())  + ": " + getTitulo();
 	}
+	
+	public String getDescripcionLargaError() {
+		return "Unidad Nro. " + (getId().getNumero() == null ? "" : getId().getNumero());
+	}
 
 	@Override
 	public int hashCode() {

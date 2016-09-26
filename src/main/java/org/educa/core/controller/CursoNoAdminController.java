@@ -2,6 +2,7 @@ package org.educa.core.controller;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -13,6 +14,7 @@ import org.educa.core.entities.model.Curso;
 import org.educa.core.entities.model.Sesion;
 import org.educa.core.entities.model.Unidad;
 import org.educa.core.services.CursoService;
+import org.educa.core.util.FechaUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -28,7 +30,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @Controller
 @RequestMapping("/cursoNoAdmin")
 @SessionAttributes({ "cursoForm" })
-// @Secured("ROLE_USER") -- TODO [ediaz] VER ESTO XQ CAPAZ NOS SIRVE
 public class CursoNoAdminController {
 	
 	private static final String CONFIGURACION_CURSO = "views/curso/configuracion-curso-no-admin";
@@ -59,6 +60,7 @@ public class CursoNoAdminController {
 		}
 		
 		model.addAttribute("cursoForm", cursoForm);
+		model.addAttribute("mostrarTabUnidad", true);
 		
 		return CONFIGURACION_CURSO;
 	}
@@ -66,9 +68,9 @@ public class CursoNoAdminController {
 	@RequestMapping(value = "/configuracionUnidadCurso", method = RequestMethod.POST)
 	public String guardarUnidadCurso(@ModelAttribute @Valid CursoForm cursoForm, BindingResult bindingResult, Model model) {
 		Curso curso = cursoForm.getCurso();
-		//if (bindingResult.hasErrors()) {
-		if (bindingResult.hasFieldErrors("nuevaUnidad.*")) {		
-			model.addAttribute("cursoForm", cursoForm);
+		model.addAttribute("mostrarTabUnidad", true);
+		if (bindingResult.hasFieldErrors("nuevaUnidad.*")) {
+			model.addAttribute("cursoForm", cursoForm);			
 			cargarValoresBasicosParaUnidad(model, false, false, false, false);
 			cargarValoresBasicosParaSesion(curso, model, false, false, false, false);
 			
@@ -82,7 +84,7 @@ public class CursoNoAdminController {
 			cargarValoresBasicosParaUnidad(model, true, false, false, false);			
 		}
 		
-		Curso cursoHidratado = this.cursoService.encontrarCursoPorId(curso.getId());
+		Curso cursoHidratado = this.cursoService.encontrarCursoPorIdHidratado(curso.getId());
 		//Seteo los nuevos valores
 		cursoForm = new CursoForm();
 		cursoForm.setCurso(cursoHidratado);
@@ -98,6 +100,7 @@ public class CursoNoAdminController {
 		Curso curso = this.cursoService.encontrarCursoPorId(idCurso);
 		CursoForm cursoForm = new CursoForm();
 		cursoForm.setCurso(curso);
+		model.addAttribute("mostrarTabUnidad", true);
 		
 		if (bindingResult.hasErrors()) {			
 			cargarValoresBasicosParaUnidad(model, false, false, true, false);
@@ -109,7 +112,7 @@ public class CursoNoAdminController {
 				errores.add(error.getDefaultMessage());				
 			}
 			
-			model.addAttribute("descripcionUnidadModificada", unidad.getDescripcionLarga());
+			model.addAttribute("descripcionUnidadModificada", unidad.getDescripcionLargaError());
 			model.addAttribute("erroresActualizacionUnidad", errores);
 			
 			return CONFIGURACION_CURSO;
@@ -117,7 +120,7 @@ public class CursoNoAdminController {
 		
 		unidad.setCurso(curso);
 		this.unidadRepository.save(unidad);
-		Curso cursoHidratado = this.cursoService.encontrarCursoPorId(curso.getId());		
+		Curso cursoHidratado = this.cursoService.encontrarCursoPorIdHidratado(curso.getId());		
 		cursoForm.setCurso(cursoHidratado);
 		
 		model.addAttribute("cursoForm", cursoForm);
@@ -131,6 +134,7 @@ public class CursoNoAdminController {
 	@RequestMapping(value = "/eliminarUnidad/{idCurso}/{idUnidad}/{numeroUnidad}", method = RequestMethod.GET)
 	public String eliminarUnidad(@PathVariable("idCurso") long idCurso, @PathVariable("idUnidad") long idUnidad, @PathVariable("numeroUnidad") int numeroUnidad, Model model) {
 		Curso curso = this.cursoService.encontrarCursoPorId(idCurso);
+		model.addAttribute("mostrarTabUnidad", true);
 		boolean eliminada = false;
 		if(curso != null && curso.getUnidades() != null){
 			eliminada = this.cursoService.eliminarUnidadCurso(curso, idUnidad, numeroUnidad);			
@@ -152,8 +156,10 @@ public class CursoNoAdminController {
 	@RequestMapping(value = "/configuracionSesionCurso", method = RequestMethod.POST)
 	public String guardarSesionCurso(@ModelAttribute @Valid CursoForm cursoForm, BindingResult bindingResult, Model model) {
 		Curso curso = cursoForm.getCurso();
-		//if (bindingResult.hasErrors()) {
+		model.addAttribute("mostrarTabUnidad", false);
+		
 		if (bindingResult.hasFieldErrors("nuevaSesion.*")) {
+			validarFechasSesion(cursoForm.getNuevaSesion(), bindingResult);
 			model.addAttribute("cursoForm", cursoForm);
 			cargarValoresBasicosParaUnidad(model, false, false, false, false);
 			cargarValoresBasicosParaSesion(curso, model, false, false, false, false);
@@ -174,12 +180,11 @@ public class CursoNoAdminController {
 				
 				return CONFIGURACION_CURSO;
 			}
-			
-			//Calendar calendar = 
-			
+			 
+			sesionNueva = cargarFechasFinSesion(sesionNueva);
 			this.cursoService.crearSesion(curso, sesionNueva);
 			
-			cursoHidratado = this.cursoService.encontrarCursoPorId(curso.getId());
+			cursoHidratado = this.cursoService.encontrarCursoPorIdHidratado(curso.getId());
 			cargarValoresBasicosParaSesion(cursoHidratado, model, true, false, false, false);
 		}
 				
@@ -198,8 +203,10 @@ public class CursoNoAdminController {
 		Curso curso = this.cursoService.encontrarCursoPorId(idCurso);
 		CursoForm cursoForm = new CursoForm();
 		cursoForm.setCurso(curso);
+		model.addAttribute("mostrarTabUnidad", false);
 		
-		if (bindingResult.hasErrors()) {			
+		if (bindingResult.hasErrors()) {
+			validarFechasSesion(sesion, bindingResult);
 			cargarValoresBasicosParaUnidad(model, false, false, false, false);
 			cargarValoresBasicosParaSesion(curso, model, false, false, true, false);			
 			model.addAttribute("cursoForm", cursoForm);
@@ -209,15 +216,16 @@ public class CursoNoAdminController {
 				errores.add(error.getDefaultMessage());				
 			}
 			
-			model.addAttribute("descripcionSesionModificada", sesion.getDescripcionLarga());
+			model.addAttribute("descripcionSesionModificada", sesion.getDescripcionLargaError());
 			model.addAttribute("erroresActualizacionSesion", errores);
 			
 			return CONFIGURACION_CURSO;
 		}
 		
+		sesion = cargarFechasFinSesion(sesion);
 		sesion.setCurso(curso);
 		this.sesionRepository.save(sesion);
-		Curso cursoHidratado = this.cursoService.encontrarCursoPorId(curso.getId());		
+		Curso cursoHidratado = this.cursoService.encontrarCursoPorIdHidratado(curso.getId());		
 		cursoForm.setCurso(cursoHidratado);
 		
 		model.addAttribute("cursoForm", cursoForm);
@@ -230,6 +238,7 @@ public class CursoNoAdminController {
 	
 	@RequestMapping(value = "/eliminarSesion/{idCurso}/{idSesion}/{numeroSesion}", method = RequestMethod.GET)
 	public String eliminarSesion(@PathVariable("idCurso") long idCurso, @PathVariable("idSesion") long idSesion, @PathVariable("numeroSesion") int numeroSesion, Model model) {
+		model.addAttribute("mostrarTabUnidad", false);
 		Curso curso = this.cursoService.encontrarCursoPorId(idCurso);
 		boolean eliminada = false;
 		if(curso != null && curso.getUnidades() != null){
@@ -270,29 +279,54 @@ public class CursoNoAdminController {
 	}
 	
 	private boolean validarFechasSesion(Sesion sesionNueva, BindingResult bindingResult) {
-		// TODO Auto-generated method stub
+		if(sesionNueva == null || bindingResult == null){
+			return false;
+		}
 		boolean valida = true;
-		if(sesionNueva.getFechaDesdeInscripcion().compareTo(sesionNueva.getFechaDesde()) > 0 
-				|| sesionNueva.getFechaDesdeInscripcion().compareTo(sesionNueva.getFechaHasta()) > 0){
+		if(sesionNueva.getFechaDesdeInscripcion() != null && sesionNueva.getFechaDesde() != null && sesionNueva.getFechaHasta() != null && ( sesionNueva.getFechaDesdeInscripcion().compareTo(sesionNueva.getFechaDesde()) > 0 
+				|| sesionNueva.getFechaDesdeInscripcion().compareTo(sesionNueva.getFechaHasta()) > 0)){
 			//Deberia de ser menor
-			bindingResult.resolveMessageCodes("La fecha de inscripcion debe de ser menor al resto de las fechas.", "nuevaSesion.fechaDesdeInscripcion");
+			bindingResult.rejectValue("nuevaSesion.fechaDesdeInscripcion", "ERROR-FECHA INSCRIPCION", "La fecha de inscripcion debe de ser menor al resto de las fechas.");
 			valida = false;
 		}
 		
-		if(sesionNueva.getFechaDesde().compareTo(sesionNueva.getFechaHasta()) > 0 ){
+		if(sesionNueva.getFechaDesde() != null && sesionNueva.getFechaHasta() != null && sesionNueva.getFechaDesde().compareTo(sesionNueva.getFechaHasta()) > 0 ){
 			//Deberia de ser menor
-			bindingResult.resolveMessageCodes("La fecha de inicio del curso debe de ser menor a la de finalizacion.", "nuevaSesion.fechaDesde");
+			bindingResult.rejectValue("nuevaSesion.fechaDesde", "ERROR-FECHA INICIO" ,"La fecha de inicio del curso debe de ser menor a la de finalizacion.");
 			valida = false;
 		}
 		
-		//TODO FALTA ESTA
-//		Calendar fechaActual = Calendar.getInstance();
-//		if(sesionNueva.getFechaDesde().compareTo(sesionNueva.getFechaHasta()) > 0 ){
-//			//Deberia de ser menor
-//			bindingResult.resolveMessageCodes("La fecha de inicio del curso debe de ser menor a la de finalizacion.", "nuevaSesion.fechaDesde");
-//			valida = false;
-//		}
+		Calendar fechaActual = Calendar.getInstance();
+		Date fechaActualFormateada = FechaUtil.formateFechaDDMMYYYYEs(fechaActual.getTime());
+		if(sesionNueva.getFechaDesdeInscripcion() != null && sesionNueva.getFechaDesdeInscripcion().compareTo(fechaActualFormateada) < 0 ){
+			//Deberia de ser menor
+			bindingResult.rejectValue("nuevaSesion.fechaDesdeInscripcion", "ERROR-FECHA INSCRIPCION-ACTUAL", "La fecha de inscripcion no puede ser anterior a la fecha actual.");
+			valida = false;
+		}
+		
+		if(sesionNueva.getFechaDesde() != null && sesionNueva.getFechaDesde().compareTo(fechaActualFormateada) < 0 ){
+			//Deberia de ser menor
+			bindingResult.rejectValue("nuevaSesion.fechaDesde", "ERROR-FECHA INICIO-ACTUAL", "La fecha de inicio del curso no puede ser anterior a la fecha actual.");
+			valida = false;
+		}
+		
+		if(sesionNueva.getFechaHasta() != null && sesionNueva.getFechaHasta().compareTo(fechaActualFormateada) < 0 ){
+			//Deberia de ser menor
+			bindingResult.rejectValue("nuevaSesion.fechaHasta", "ERROR-FECHA HASTA-ACTUAL", "La fecha de fin del curso no puede ser anterior a la fecha actual.");
+			valida = false;
+		}
 		
 		return valida;
+	}
+	
+	private Sesion cargarFechasFinSesion(Sesion sesionNueva){		
+		//Fecha de fin de inscripcion
+		Calendar fecha = Calendar.getInstance();
+		fecha.setTime(sesionNueva.getFechaDesde());
+		fecha.add(Calendar.DATE, -1); //el -1 indica que se le restara 1 dias 
+		Date fechaHastaInscripcion = FechaUtil.formateFechaDDMMYYYYEs(fecha.getTime());
+		sesionNueva.setFechaHastaInscripcion(fechaHastaInscripcion);		
+		
+		return sesionNueva;
 	}
 }

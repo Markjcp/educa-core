@@ -1,7 +1,6 @@
 package org.educa.core.dao.impl;
 
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
@@ -18,6 +17,7 @@ import org.educa.core.entities.model.Curso;
 import org.educa.core.entities.model.Docente;
 import org.educa.core.entities.model.Sesion;
 import org.educa.core.entities.model.Unidad;
+import org.educa.core.util.FechaUtil;
 import org.springframework.stereotype.Repository;
 
 @Repository(value = "cursoDao")
@@ -118,17 +118,18 @@ public class CursoDaoImpl extends GeneralDaoSupport<Curso>implements CursoDao {
 				Docente docente = new Docente();
 				docente.setId(((BigInteger) fila[3]).longValue());
 				docente.setIdUsuario(((BigInteger) fila[4]).longValue());
+				curso.setDocente(docente);
 				
 				Categoria categoria = new Categoria();
 				categoria.setId(((Integer) fila[5]).longValue());
 				categoria.setDescripcion((String) fila[6]);
 				curso.setCategoria(categoria);
+				curso.setCategoriaId(categoria.getId());
 				
 				curso.setImagen((byte[]) fila[7]);
 				curso.setLinkImagen((String) fila[8]);
 				curso.setValoracionesPromedio(((Integer) fila[9]).intValue());
-				//curso.setFechaEstimadaProximaSesion();
-						
+				//curso.setFechaEstimadaProximaSesion();						
 			}
 			
 			
@@ -137,8 +138,7 @@ public class CursoDaoImpl extends GeneralDaoSupport<Curso>implements CursoDao {
 		} catch (Exception e) {
 			throw e;
 		}
-		
-		
+				
 		//Le actualizo las unidades		
 		query = new StringBuilder();
 		query.append(" select numero_componente, id_curso, titulo, descripcion, duracion_estimada  ");		
@@ -194,15 +194,15 @@ public class CursoDaoImpl extends GeneralDaoSupport<Curso>implements CursoDao {
 					idComponente.setIdCurso(((Integer) fila[1]).longValue());
 					
 					sesion.setId(idComponente);
-					sesion.setFechaDesde(formateFechaDDMMYYYY((Date) fila[2]));
-					sesion.setFechaHasta(formateFechaDDMMYYYY((Date) fila[3]));
+					sesion.setFechaDesde(FechaUtil.formateFechaDDMMYYYYUsa((Date) fila[2]));
+					sesion.setFechaHasta(FechaUtil.formateFechaDDMMYYYYUsa((Date) fila[3]));
 					/* Estos hay q llenarlos cuando los usemos 
 					 sesion.setCupos(((BigInteger) fila[4]).intValue());
 					sesion.setCosto(new BigDecimal());
 					*/
 					
-					sesion.setFechaDesdeInscripcion(formateFechaDDMMYYYY((Date) fila[6]));
-					sesion.setFechaHastaInscripcion(formateFechaDDMMYYYY((Date) fila[7]));
+					sesion.setFechaDesdeInscripcion(FechaUtil.formateFechaDDMMYYYYUsa((Date) fila[6]));
+					sesion.setFechaHastaInscripcion(FechaUtil.formateFechaDDMMYYYYUsa((Date) fila[7]));
 					
 					sesiones.add(sesion);
 				}
@@ -252,31 +252,18 @@ public class CursoDaoImpl extends GeneralDaoSupport<Curso>implements CursoDao {
 		}
 	}
 	
-	private Date formateFechaDDMMYYYY(Date fechaBase){
-		SimpleDateFormat format = getSimpleDateFormat();
-		String cadenaFecha = cadenaFechaDDMMYYYY(fechaBase);		
-		Date fecha = null;
-		
-		try {
-			fecha = format.parse(cadenaFecha);
-		} catch (Exception ex) {
-			//Nada		
+	@Override
+	public void deleteCurso(Curso curso) {
+		if(curso != null && curso.getId() != null){
+			StringBuilder query = new StringBuilder();
+			query.append(" delete from curso ");
+			query.append(" where id_curso = " + curso.getId());
+			
+			System.out.println("QUERY - deleteCurso: " + query.toString());
+			
+			Query q = this.getEntityManager().createNativeQuery(query.toString());
+			
+			q.executeUpdate();			
 		}
-
-		return fecha;
-	}
-	
-	private String cadenaFechaDDMMYYYY(Date fechaBase){
-		String fechaDesdeFormateada = "";
-		if(fechaBase != null){
-			SimpleDateFormat format = getSimpleDateFormat();
-			fechaDesdeFormateada = format.format(fechaBase);
-		}
-		
-		return fechaDesdeFormateada;
-	}
-	
-	private SimpleDateFormat getSimpleDateFormat(){
-		return new SimpleDateFormat("dd-MM-yyyy");
 	}
 }

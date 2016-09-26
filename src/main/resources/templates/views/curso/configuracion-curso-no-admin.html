@@ -13,8 +13,8 @@
     <link href="../../static/css/materialize.css" th:href="@{/css/materialize.css}" rel="stylesheet" media="screen,projection" />
 	<link href="../../static/css/style.css" th:href="@{/css/style.css}" rel="stylesheet" media="screen,projection" />	
 	<link href="../../static/css/educa.css" th:href="@{/css/educa.css}" rel="stylesheet" media="screen,projection" />
-	<link href="../../static/css/bootstrap-datetimepicker.css" th:href="@{/css/bootstrap-datetimepicker.css}" rel="stylesheet" media="screen,projection" />
-	
+	<link href="../../static/css/bootstrap-datetimepicker.css" th:href="@{/css/bootstrap-datetimepicker.css}" rel="stylesheet" media="screen,projection" />	
+	<link href="../../static/css/font-awesome.css" th:href="@{/css/font-awesome.css}" rel="stylesheet" media="screen,projection" />	 
 </head>
 <body>
 	<div th:replace="views/fragments/header :: header">&nbsp;</div>
@@ -43,15 +43,15 @@
 					<div >
 						<!-- Nav tabs -->
 						<ul class="nav nav-tabs">
-							<li class="tab col s6 active"><a href="#unidadesCurso" data-toggle="tab" aria-expanded="false">Unidades</a>
+							<li th:class="${mostrarTabUnidad} ? 'tab col s6 active' : 'tab col s6'"><a href="#unidadesCurso" data-toggle="tab" aria-expanded="false">Unidades</a>
 							</li>
-							<li class="tab col s6"><a href="#sesionesCurso" data-toggle="tab" aria-expanded="false">Sesiones</a>
+							<li th:class="${mostrarTabUnidad} ? 'tab col s6' : 'tab col s6 active'"><a href="#sesionesCurso" data-toggle="tab" aria-expanded="false">Sesiones</a>
 							</li>								
 						</ul>
 					
 						<!-- Tab panes -->
 						<div class="tab-content">
-							<div class="tab-pane fade active in" id="unidadesCurso">
+							<div th:class="${mostrarTabUnidad} ? 'tab-pane fade active in' : 'tab-pane fade'" id="unidadesCurso">
 								<br></br><br></br>
 								
 								<!-- Mensajes de alta -->								
@@ -90,36 +90,34 @@
 								   <a href="#" class="alert-link">Bien Hecho!</a> La unidad se elimin&oacute; con &eacute;xito.	                   
 								</div>
 								<!-- FIN de Mensajes de eliminacion -->
-								
-																	
+																									
 								<!-- Se listan las unidades si alguna fue dada de alta. -->					                
 								<div th:if="${cursoForm.curso.unidades} != null">
-									<div th:if="${not #lists.isEmpty(cursoForm.curso.unidades)}">
-										<form action="#" th:action="@{/cursoNoAdmin/actualizarUnidad/{idCurso}(idCurso=${cursoForm.curso.id})}" th:object="${unidad}" method="post">
-											<ul class="collapsible popout collapsible-accordion" data-collapsible="accordion">
-											
-											  <li th:each="unidadPropia : ${cursoForm.curso.unidades}">												  
-												<div class="collapsible-header">
-													<i class="fa fa-file-text-o" aria-hidden="true"></i>&nbsp; 
-													<span th:text="${unidadPropia.descripcionLarga}">&nbsp;</span>
-												</div>
-												<div class="collapsible-body" style="">													
+									<div th:if="${not #lists.isEmpty(cursoForm.curso.unidades)}">										
+										<ul class="collapsible popout collapsible-accordion" data-collapsible="accordion">										
+										  <li th:each="unidadPropia : ${cursoForm.curso.unidades}" th:id="'unidadPropia-' + ${unidadPropia.id.numero}" onclick="abrioTag('UNIDAD')">												  
+											<div class="collapsible-header">
+												<i class="fa fa-file-text-o" aria-hidden="true"></i>&nbsp; 
+												<span th:text="${unidadPropia.descripcionLarga}">&nbsp;</span>
+											</div>
+											<div class="collapsible-body" style="">
+												<form action="#" th:action="@{/cursoNoAdmin/actualizarUnidad/{idCurso}(idCurso=${cursoForm.curso.id})}" th:object="${unidad}" method="post">													
 													<div id="formularioModificacionUnidad">
 														<input type="hidden" th:name="id.idCurso" th:value="${unidadPropia.id.idCurso}"/>
 														<input type="hidden" th:name="id.numero" th:value="${unidadPropia.id.numero}"/>
 														<div class="col l6 s12"> 
 															<div class="form-group input-field">
-																<input type="text" th:name="titulo" th:value="${unidadPropia.titulo}" maxlength="100" size="100" placeholder="T&iacute;tulo de la unidad" />
+																<input type="text" th:name="titulo" th:value="${unidadPropia.titulo}" maxlength="100" size="100" length="100" placeholder="T&iacute;tulo de la unidad" />
 															</div>							        	                      
 															<div class="form-group input-field">
-																<textarea class="materialize-textarea" maxlength="255" th:field="*{descripcion}" th:text="${unidadPropia.descripcion}" th:value="${unidadPropia.descripcion}" placeholder="Descripci&oacute;n de la unidad" th:inline="text">
+																<textarea class="materialize-textarea" maxlength="255" length="255" th:field="*{descripcion}" th:text="${unidadPropia.descripcion}" th:value="${unidadPropia.descripcion}" placeholder="Descripci&oacute;n de la unidad" th:inline="text">
 																	[[${unidadPropia.descripcion}]]
 																</textarea>
 															</div>		 			    		 	                         
 														</div>
 														<div class="col l6 s12">
 															<div class="form-group input-field">
-																<input type="number" min="1" maxlength="4" size="4" th:name="duracionEstimada" th:value="${unidadPropia.duracionEstimada}" placeholder="Duraci&oacute;n estimada de la unidad (en horas)" />													    			
+																<input type="number" min="1" max="9999" maxlength="4" size="4" length="4" th:name="duracionEstimada" th:value="${unidadPropia.duracionEstimada}" placeholder="Duraci&oacute;n estimada de la unidad (en horas)" />													    			
 															</div>        									    		
 														</div>
 													</div>
@@ -133,11 +131,11 @@
 													<div class="form-group" style="margin-left: 10px;">
 														<button type="submit" class="btn orange-effect orange">Actualizar</button>
 														<a class="btn orange-effect orange" href="#" th:href="@{/cursoNoAdmin/eliminarUnidad/{idCurso}/{idUnidad}/{numeroUnidad}(idCurso=${cursoForm.curso.id}, idUnidad=${unidadPropia.id.idCurso}, numeroUnidad=${unidadPropia.id.numero})}">Eliminar</a>
-													 </div>										    											    												   												   
-												</div>
-											  </li>											  
-											</ul>
-										</form>
+													 </div>
+												 </form>								    											    												   												   
+											</div>
+										  </li>											  
+										</ul>
 									</div>
 								</div>
 								
@@ -147,8 +145,8 @@
 									</div>
 								</div>
 								
-								<form action="#" th:action="@{/cursoNoAdmin/configuracionUnidadCurso}" th:object="${cursoForm}" method="post">
-									<div id="formularioAltaUnidad">
+								<form action="#" th:action="@{/cursoNoAdmin/configuracionUnidadCurso}" th:object="${cursoForm}" method="post" id="formularioAltaUnidad">
+									<div id="formularioAltaUnidadDetalle">
 										<div class="col l6 s12"> 
 											<div class="form-group input-field">
 												<input type="text" th:field="*{nuevaUnidad.titulo}" placeholder="T&iacute;tulo de la nueva unidad" length="100"/>
@@ -184,7 +182,7 @@
 							<!-- FIN - TAB DE UNIDADES -->
 							
 							<!-- TAB DE SESIONES -->
-							<div class="tab-pane fade" id="sesionesCurso">								
+							<div th:class="${mostrarTabUnidad} ? 'tab-pane fade' : 'tab-pane fade active in'" id="sesionesCurso">								
 								<br></br><br></br>
 								
 								<!-- Mensajes de alta -->								
@@ -225,17 +223,16 @@
 								<!-- FIN de Mensajes de eliminacion -->
 																													               
 								<div th:if="${cursoForm.curso.sesiones} != null">
-									<div th:if="${not #lists.isEmpty(cursoForm.curso.sesiones)}">
-										<form action="#" th:action="@{/cursoNoAdmin/actualizarSesion/{idCurso}(idCurso=${cursoForm.curso.id})}" th:object="${sesion}" method="post">
-											<ul class="collapsible popout collapsible-accordion" data-collapsible="accordion">
-											
-											  <li th:each="sesionPropia : ${cursoForm.curso.sesiones}">												  
-												<div class="collapsible-header">
-													<i class="fa fa-file-text-o" aria-hidden="true"></i>&nbsp; 
-													<span th:text="${sesionPropia.descripcionLarga}">&nbsp;</span>
-												</div>
-												<div class="collapsible-body" style="">													
-													<div id="formularioModificacionSesion">
+									<div th:if="${not #lists.isEmpty(cursoForm.curso.sesiones)}">										
+										<ul class="collapsible popout collapsible-accordion" data-collapsible="accordion">											
+										  <li th:each="sesionPropia : ${cursoForm.curso.sesiones}" onclick="abrioTag('SESION')">												  
+											<div class="collapsible-header">
+												<i class="fa fa-book" aria-hidden="true"></i>&nbsp; 
+												<span th:text="${sesionPropia.descripcionLarga}">&nbsp;</span>
+											</div>
+											<div class="collapsible-body" style="">
+												<form action="#" th:action="@{/cursoNoAdmin/actualizarSesion/{idCurso}(idCurso=${cursoForm.curso.id})}" th:object="${sesion}" method="post" id="formularioModificacionSesion">												
+													<div id="formularioModificacionSesionDetalle">
 														<input type="hidden" th:name="id.idCurso" th:value="${sesionPropia.id.idCurso}"/>
 														<input type="hidden" th:name="id.numero" th:value="${sesionPropia.id.numero}"/>
 														<br></br><br></br>
@@ -279,11 +276,11 @@
 													<div class="form-group" style="margin-left: 10px;">
 														<button type="submit" class="btn orange-effect orange">Actualizar</button>
 														<a class="btn orange-effect orange" href="#" th:href="@{/cursoNoAdmin/eliminarSesion/{idCurso}/{idSesion}/{numeroSesion}(idCurso=${cursoForm.curso.id}, idSesion=${sesionPropia.id.idCurso}, numeroSesion=${sesionPropia.id.numero})}">Eliminar</a>
-													 </div>										    											    												   												   
-												</div>
-											  </li>											  
-											</ul>
-										</form>
+													 </div>
+												 </form>									    											    												   												   
+											</div>
+										  </li>											  
+										</ul>										
 									</div>
 								</div>
 								
@@ -296,8 +293,8 @@
 								
 								<div th:if="${cursoForm.curso.unidades} != null">
 									<div th:if="${not #lists.isEmpty(cursoForm.curso.unidades)}">
-										<form action="#" th:action="@{/cursoNoAdmin/configuracionSesionCurso}" th:object="${cursoForm}" method="post">
-											<div id="formularioAltaUnidad">
+										<form action="#" th:action="@{/cursoNoAdmin/configuracionSesionCurso}" th:object="${cursoForm}" method="post" id="formularioAltaSesion">
+											<div id="formularioAltaSesionDetalle">
 												<div class="col l6 s12">													
 													<div class="form-group input-group input-field date" id="fechaDesdeInscripcion">
 														<label for="fechaDesdeInscripcion" class="">Fecha de inicio de inscripci&oacute;n</label>
@@ -305,8 +302,10 @@
 														<span class="input-group-addon" style="border: none; background-color: #f8f8f8;">
 										                    <span class="glyphicon glyphicon-calendar">
 										                    </span>
-										                </span>
-										                <p th:errors="*{nuevaSesion.fechaDesde}" class="has-error-custom"></p>
+										                </span>										               										                
+													</div>
+													<div class="form-group input-group input-field date" id="fechaDesdeInscripcionError">
+														<p th:errors="*{nuevaSesion.fechaDesdeInscripcion}" class="has-error-custom"></p>
 													</div>
 													<br></br><br></br>
 													<div class="form-group input-group input-field date" id="fechaDesde">
@@ -315,8 +314,10 @@
 														<span class="input-group-addon" style="border: none; background-color: #f8f8f8;">
 										                    <span class="glyphicon glyphicon-calendar">
 										                    </span>
-										                </span>
-										                <p th:errors="*{nuevaSesion.fechaDesde}" class="has-error-custom"></p>
+										                </span>										                
+													</div>
+													<div class="form-group input-group input-field date" id="fechaDesdeError">
+														<p th:errors="*{nuevaSesion.fechaDesde}" class="has-error-custom"></p>
 													</div>																																					
 												</div>
 												<div class="col l6 s12">													
@@ -326,10 +327,11 @@
 														<span class="input-group-addon" style="border: none; background-color: #f8f8f8;">
 										                    <span class="glyphicon glyphicon-calendar">
 										                    </span>
-										                </span>
-										                <p th:errors="*{nuevaSesion.fechaHasta}" class="has-error-custom"></p>
+										                </span>										                
 													</div>
-																									                         									    		
+													<div class="form-group input-group input-field date" id="fechaHastaError">
+														<p th:errors="*{nuevaSesion.fechaHasta}" class="has-error-custom"></p>
+													</div>											                         									    		
 												</div>
 											</div>
 											
@@ -357,7 +359,7 @@
 	</div>
 	
 	<!--  Scripts-->
-    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>    
+    <script src="../../static/js/jquery-2.1.1.js" th:src="@{/js/jquery-2.1.1.js}"></script> 
     <script src="../../static/js/bootstrap.js" th:src="@{/js/bootstrap.js}"></script>
     <script src="../../static/js/metisMenu.js" th:src="@{/js/metisMenu.js}"></script>
     <script src="../../static/js/sb-admin-2.js" th:src="@{/js/sb-admin-2.js}"></script>
@@ -397,7 +399,28 @@
 	            format: 'DD-MM-YYYY',
 	            locale: 'es'
 	        });
-	    });	    
+	    });
+	    
+	    function abrioTag(grupo){
+	    	if(grupo == "UNIDAD") {
+	    		var esVisible = $("#formularioAltaUnidad").is(":visible");
+	    		
+	    		if(esVisible){
+	    			$("#formularioAltaUnidad").hide();
+	    		} else {
+	    			$("#formularioAltaUnidad").show();
+	    		}	    		
+	    	} else if(grupo == "SESION") {
+	    		//Es Sesion	    		
+				var esVisible = $("#formularioAltaSesion").is(":visible");
+	    		
+	    		if(esVisible){
+	    			$("#formularioAltaSesion").hide();
+	    		} else {
+	    			$("#formularioAltaSesion").show();
+	    		}
+	    	}	    	
+	    }
 	</script>
 </body>
 </html>

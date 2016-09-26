@@ -43,6 +43,7 @@ public class CursoServiceImpl implements CursoService {
 	public void crearCurso(Curso curso) {
 		// Se guarda el curso en la base de datos y se le envia notificacion al
 		// profesor asignado al curso.
+		this.cursoDao.save(curso);
 		curso.setLinkImagen(ConstantesDelModelo.PREFIJO_IMAGEN + "/" + curso.getId()
 				+ ConstantesDelModelo.SEPARADOR_DE_IMAGEN + curso.getFoto().getOriginalFilename());
 		this.cursoDao.save(curso);
@@ -63,7 +64,19 @@ public class CursoServiceImpl implements CursoService {
 	public void eliminarCurso(long id) {
 		Curso curso = this.cursoDao.findById(id);
 		if (curso != null) {
-			this.cursoDao.remove(curso);
+			if(curso.getUnidades() != null){
+				for(Unidad unidad : curso.getUnidades()){
+					this.cursoDao.deleteUnidad(unidad);
+				}				
+			}
+			
+			if(curso.getSesiones() != null){
+				for(Sesion sesion : curso.getSesiones()){
+					this.cursoDao.deleteSesion(sesion);
+				}				
+			}
+			
+			this.cursoDao.deleteCurso(curso);
 		}
 	}
 
@@ -114,7 +127,6 @@ public class CursoServiceImpl implements CursoService {
 
 	@Override
 	public boolean eliminarUnidadCurso(Curso curso, long idUnidad, int numeroUnidad) {
-		// TODO [ediaz] VER XQ ESTO NO ANDA BIEN - BUG CUANDO HAY MAS DE UNA UNIDAD CARGADA EN EL CURSO Y SE QUIERE ELIMINAR UNA
 		if(curso != null && curso.getUnidades() != null){			
 			SortedSet<Unidad> unidades = new TreeSet<Unidad>();
 			boolean encontrado = false;
@@ -181,7 +193,6 @@ public class CursoServiceImpl implements CursoService {
 
 	@Override
 	public boolean eliminarSesionCurso(Curso curso, long idSesion, int numeroSesion) {
-		// TODO [ediaz] VER XQ ESTO NO ANDA BIEN - BUG CUANDO HAY MAS DE UNA UNIDAD CARGADA EN EL CURSO Y SE QUIERE ELIMINAR UNA
 		if(curso != null && curso.getSesiones() != null){			
 			SortedSet<Sesion> sesiones = new TreeSet<Sesion>();
 			boolean encontrado = false;

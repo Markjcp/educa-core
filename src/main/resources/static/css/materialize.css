@@ -5915,7 +5915,8 @@ textarea.materialize-textarea + label:after {
 
 .input-field label {
   color: #9e9e9e;
-  position: absolute;
+  /*Se saca porque en firebox se ve mal el label*/
+  /*position: absolute;*/
   top: 0.8rem;
   font-size: 1rem;
   cursor: text;

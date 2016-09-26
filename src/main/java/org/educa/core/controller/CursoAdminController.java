@@ -167,6 +167,7 @@ public class CursoAdminController {
 	
 	@RequestMapping(value = "/eliminarCurso/{id}", method = RequestMethod.GET)
 	public String eliminarCurso(@PathVariable("id") long id, Model model) {
+
 		this.cursoService.eliminarCurso(id);
 		cargaInicialListado(model, false, false, true);
 		

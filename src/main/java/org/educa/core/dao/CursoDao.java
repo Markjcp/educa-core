@@ -25,4 +25,6 @@ public interface CursoDao extends GeneralDao<Curso> {
 
 	void updateNumeroSesion(Sesion sesion, int nuevoNumero);
 
+	void deleteCurso(Curso curso);
+
 }
