@@ -39,6 +39,7 @@ dependencies {
 	compile group: 'org.jasypt', name: 'jasypt', version: '1.9.2'
 	compile group: 'javax.mail', name: 'mail', version: '1.4.1'
 	compile group: 'org.antlr', name: 'stringtemplate', version: '4.0'
+	compile group: 'org.springframework.security', name: 'spring-security-taglibs', version: '4.1.2.RELEASE'
 }
 
 task wrapper(type: Wrapper) {

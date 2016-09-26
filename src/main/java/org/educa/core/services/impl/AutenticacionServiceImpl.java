@@ -25,5 +25,7 @@ public class AutenticacionServiceImpl implements UserDetailsService{
 		}
 		return new UsuarioSeguridad(usuarios.iterator().next());
 	}
+	
+	
 
 }
