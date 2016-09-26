@@ -26,6 +26,9 @@ public class Docente implements Persistible {
 	@ManyToOne
 	@JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
 	private Usuario usuario;
+	
+	@Column(name = "id_usuario", insertable = false, updatable = false)
+	private Long idUsuario;
 
 	@Transient
 	private String identificacion;
@@ -60,6 +63,14 @@ public class Docente implements Persistible {
 		}
 
 		return this.identificacion;
+	}
+	
+	public Long getIdUsuario() {
+		return idUsuario;
+	}
+
+	public void setIdUsuario(Long idUsuario) {
+		this.idUsuario = idUsuario;
 	}
 
 	@Override

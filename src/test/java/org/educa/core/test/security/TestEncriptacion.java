@@ -13,6 +13,8 @@ public class TestEncriptacion {
 	
 	String passwordIncorrecto= "password1";
 	
+	String encriptadoCorrecto = "VIyIwyC5YYs0fVrl/Wsl4XdUgqpFgNVG";
+	
 	@Test
 	public void testAutenticacionDebePasar(){
 		BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
@@ -27,6 +29,12 @@ public class TestEncriptacion {
 		String encryptedPassword = passwordEncryptor.encryptPassword(passwordCorrecto);
 		System.out.println(encryptedPassword);
 		assertEquals(passwordEncryptor.checkPassword(passwordIncorrecto, encryptedPassword),false);		
+	}
+	
+	@Test
+	public void testDesinscripcionDebePasar(){
+		BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
+		assertEquals(passwordEncryptor.checkPassword(passwordCorrecto, encriptadoCorrecto),true);		
 	}
 	
 	public static void main(String[] args) {

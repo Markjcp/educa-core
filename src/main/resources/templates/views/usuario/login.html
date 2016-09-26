@@ -43,17 +43,29 @@
 						aria-hidden="true">×</button>
 					<a href="#" class="alert-link">Error</a> No pudimos activar tu cuenta. Intente m&aacute;s tarde.
 				</div>
+				<div th:if="${errorLogin} == true"
+					class="alert alert-danger alert-dismissable">
+					<button type="button" class="close" data-dismiss="alert"
+						aria-hidden="true">×</button>
+					<a href="#" class="alert-link">Error al autenticar usuario</a> Email o clave inv&aacute;lida.
+				</div>
+				<div th:if="${errorActivo} == true"
+					class="alert alert-danger alert-dismissable">
+					<button type="button" class="close" data-dismiss="alert"
+						aria-hidden="true">×</button>
+					<a href="#" class="alert-link">Error</a> El usuario no fue activado.
+				</div>
 				<form action="#" th:action="@{/login}" th:object="${usuarioForm}"
 					method="post">
 					<div class="col l6 s12">
 						<div class="form-group input-field">
-							<input type="text" th:field="*{usuario.email}"
+							<input type="text" name="email" th:field="*{usuario.email}"
 								placeholder="Email" />
 							<p th:errors="*{usuario.email}" class="has-error-custom"></p>
 						</div>
 						<div class="form-group input-field">
 							<input type="password" th:field="*{usuario.password}"
-								placeholder="Password"></input>
+								placeholder="Clave"></input>
 							<p th:errors="*{usuario.password}" class="has-error-custom"></p>
 						</div>
 					</div>

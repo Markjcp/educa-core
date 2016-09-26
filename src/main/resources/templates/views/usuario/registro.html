@@ -8,6 +8,7 @@
     <link href="../../../resources/css/core.css" rel="stylesheet" media="screen" th:href="@{/resources/css/core.css}" />
     <script src="http://code.jquery.com/jquery-latest.js"></script>
     <script src="../../../resources/js/bootstrap.min.js" th:src="@{/resources/js/bootstrap.min.js}"></script> -->
+<script src="https://www.google.com/recaptcha/api.js"></script>
 
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
 	rel="stylesheet" />
@@ -37,6 +38,12 @@
 						aria-hidden="true">×</button>
 					<a href="#" class="alert-link">Error</a> No pudimos enviarte el email de activacion. Intente m&aacute;s tarde.
 				</div>
+				<div th:if="${errorCaptcha} == true"
+					class="alert alert-danger alert-dismissable">
+					<button type="button" class="close" data-dismiss="alert"
+						aria-hidden="true">×</button>
+					<a href="#" class="alert-link">Error</a> Debe completar el captcha para continuar.
+				</div>
 				<form action="#" th:action="@{/registro}" th:object="${usuarioForm}"
 					method="post">
 					<div class="col l6 s12">
@@ -47,13 +54,13 @@
 						</div>
 						<div class="form-group input-field">
 							<input type="password" th:field="*{usuario.password}"
-								placeholder="Password"></input>
+								placeholder="Clave"></input>
 							<p th:errors="*{usuario.password}" class="has-error-custom"></p>
 						</div>
 						
 						<div class="form-group input-field">
 							<input type="password" th:field="*{usuario.passwordConfirmacion}"
-								placeholder="Confirmar password"></input>
+								placeholder="Confirmar clave"></input>
 							<p th:errors="*{usuario.passwordConfirmacion}" class="has-error-custom"></p>
 						</div>
 					</div>
@@ -68,6 +75,7 @@
 								placeholder="Apellido" />
 							<p th:errors="*{usuario.apellido}" class="has-error-custom"></p>
 						</div>
+						<div class="g-recaptcha" data-sitekey="6LcnlgcUAAAAAIeKA1mm8AaMVRbjClTfMp-xivUa"></div>
 					</div>
 					<div class="col l12 s12">
 						<div class="form-group">

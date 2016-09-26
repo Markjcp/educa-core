@@ -23,6 +23,7 @@ import org.educa.core.validator.DimensionImagenValidator;
 import org.educa.core.validator.NombreRepetidoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -35,7 +36,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @Controller
 @RequestMapping("/cursoAdmin")
 @SessionAttributes({ "cursoForm" })
-// @Secured("ROLE_USER") -- TODO [ediaz] VER ESTO XQ CAPAZ NOS SIRVE
 public class CursoAdminController {
 
 	private static final String FECHA_DEFAULT_KEY = "FECHA_DEFAUL_PROX_CURSO";
@@ -78,6 +78,7 @@ public class CursoAdminController {
 		return LISTADO_CURSOS;
 	}
 	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(value = "/altaCurso", method = RequestMethod.GET)
 	public String altaCurso(Model model) {
 		cargaInicialAlta(model, null);

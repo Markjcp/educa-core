@@ -224,3 +224,43 @@ CREATE TABLE IF NOT EXISTS `educa`.`email_template` (
   `valor` VARCHAR(1500) NOT NULL,
   PRIMARY KEY (`clave`))
 ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS `educa`.`unidad_sesion` ;
+
+DROP TABLE IF EXISTS `educa`.`sesion` ;
+
+CREATE TABLE IF NOT EXISTS `educa`.`sesion` (
+  `numero_componente` INT NOT NULL,
+  `id_curso` INT NOT NULL,
+  `fecha_desde` DATE NULL,
+  `fecha_hasta` DATE NULL,
+  `cupos` INT NULL,
+  `costo` DECIMAL NULL,
+  `fecha_desde_inscripcion` DATE NULL,
+  `fecha_hasta_inscripcion` DATE NULL,
+  PRIMARY KEY (`numero_componente`, `id_curso`),
+  INDEX `fk_sesion_curso_idx` (`id_curso` ASC),
+  CONSTRAINT `fk_sesion_curso`
+    FOREIGN KEY (`id_curso`)
+    REFERENCES `educa`.`curso` (`id_curso`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS `educa`.`unidad` ;
+
+CREATE TABLE IF NOT EXISTS `educa`.`unidad` (
+  `numero_componente` INT NOT NULL,
+  `id_curso` INT NOT NULL,
+  `titulo` VARCHAR(45) NOT NULL,
+  `descripcion` VARCHAR(45) NOT NULL,
+  `duracion_estimada` INT NOT NULL,
+  PRIMARY KEY (`numero_componente`, `id_curso`),
+  INDEX `fk_unidad_curso1_idx` (`id_curso` ASC),
+  CONSTRAINT `fk_unidad_curso1`
+    FOREIGN KEY (`id_curso`)
+    REFERENCES `educa`.`curso` (`id_curso`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
