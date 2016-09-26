@@ -238,6 +238,7 @@
 													<div id="formularioModificacionSesion">
 														<input type="hidden" th:name="id.idCurso" th:value="${sesionPropia.id.idCurso}"/>
 														<input type="hidden" th:name="id.numero" th:value="${sesionPropia.id.numero}"/>
+														<br></br><br></br>
 														<div class="col l6 s12">																														
 															<div class="form-group input-group input-field date" id="fechaDesdeInscripcionActualizadar">
 																<label for="fechaDesdeInscripcion" class="">Fecha de inicio de inscripci&oacute;n</label>
@@ -250,7 +251,7 @@
 															<br></br><br></br>															
 															<div class="form-group input-group input-field date" id="fechaDesdeActualizadar">
 																<label for="fechaDesde" class="">Fecha de inicio de la sesi&oacute;n</label>
-																<input th:name="fechaDesde" th:value="${sesionPropia.fechaDesde}" type="text" class="form-control"/>														
+																<input th:name="fechaDesde" th:value="${#dates.format(sesionPropia.fechaDesde, 'dd-MM-yyyy')}" type="text" class="form-control"/>														
 																<span class="input-group-addon" style="border: none; background-color: #f8f8f8;">
 												                    <span class="glyphicon glyphicon-calendar">
 												                    </span>
@@ -260,7 +261,7 @@
 														<div class="col l6 s12">
 															<div class="form-group input-group input-field date" id="fechaHastaActualizadar">
 																<label for="fechaDesde" class="">Fecha de fin de la sesi&oacute;n</label>
-																<input th:name="fechaHasta" th:value="${sesionPropia.fechaHasta}" type="text" class="form-control"/>														
+																<input th:name="fechaHasta" th:value="${#dates.format(sesionPropia.fechaHasta, 'dd-MM-yyyy')}" type="text" class="form-control"/>														
 																<span class="input-group-addon" style="border: none; background-color: #f8f8f8;">
 												                    <span class="glyphicon glyphicon-calendar">
 												                    </span>

@@ -65,7 +65,7 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	}
 
 	public Date getFechaDesde() {
-		return fechaDesde;
+		return formateFechaDDMMYYYY(fechaDesde);		
 	}
 
 	public void setFechaDesde(Date fechaDesde) {		
@@ -73,7 +73,7 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	}
 
 	public Date getFechaHasta() {
-		return fechaHasta;
+		return formateFechaDDMMYYYY(fechaHasta);
 	}
 
 	public void setFechaHasta(Date fechaHasta) {
@@ -105,7 +105,7 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	}
 
 	public Date getFechaDesdeInscripcion() {
-		return fechaDesdeInscripcion;
+		return formateFechaDDMMYYYY(fechaDesdeInscripcion);
 	}
 
 	public void setFechaDesdeInscripcion(Date fechaDesdeInscripcion) {
@@ -113,21 +113,15 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	}
 
 	public Date getFechaHastaInscripcion() {
-		return fechaHastaInscripcion;
+		return formateFechaDDMMYYYY(fechaHastaInscripcion);
 	}
 
 	public void setFechaHastaInscripcion(Date fechaHastaInscripcion) {
 		this.fechaHastaInscripcion = fechaHastaInscripcion;
 	}
 	
-	public String getDescripcionLarga() {
-		String fechaDesdeFormateada = "";
-		if(this.getFechaDesde() != null){
-			SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-			fechaDesdeFormateada = format.format(this.getFechaDesde());
-		}
-				
-		return "Sesión Nro. " + (this.getId().getNumero() == null ? "" : this.getId().getNumero())  + ": Inicia el " + fechaDesdeFormateada;
+	public String getDescripcionLarga() {		
+		return "Sesión Nro. " + (this.getId().getNumero() == null ? "" : this.getId().getNumero())  + ": Inicia el " + cadenaFechaDDMMYYYY(this.fechaDesde);
 	}
 
 	@Override
@@ -174,5 +168,33 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 		
 		//Orden ascendente
 		return this.getId().getNumero().compareTo(unaSesion.getId().getNumero());
+	}
+	
+	private Date formateFechaDDMMYYYY(Date fechaBase){
+		SimpleDateFormat format = getSimpleDateFormat();
+		String cadenaFecha = cadenaFechaDDMMYYYY(fechaBase);		
+		Date fecha = null;
+		
+		try {
+			fecha = format.parse(cadenaFecha);
+		} catch (Exception ex) {
+			//Nada		
+		}
+
+		return fecha;
+	}
+	
+	private String cadenaFechaDDMMYYYY(Date fechaBase){
+		String fechaDesdeFormateada = "";
+		if(fechaBase != null){
+			SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+			fechaDesdeFormateada = format.format(fechaBase);
+		}
+		
+		return fechaDesdeFormateada;
+	}
+	
+	private SimpleDateFormat getSimpleDateFormat(){
+		return new SimpleDateFormat("dd-MM-yyyy");
 	}
 }
