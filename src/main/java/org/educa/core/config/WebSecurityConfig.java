@@ -17,6 +17,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests().antMatchers("/", "/login", "/registro", "/activar-cuenta").permitAll().
+		antMatchers("/js/**").permitAll().
+		antMatchers("/css/**").permitAll().
 		antMatchers("/api/**").permitAll().
 		antMatchers("/cursoAdmin/**").hasAuthority("ROL_ADMIN").
 		antMatchers("/cursoNoAdmin/**").hasAuthority("ROL_DOC").
