@@ -29,8 +29,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @SessionAttributes({ "cursoForm" })
 // @Secured("ROLE_USER") -- TODO [ediaz] VER ESTO XQ CAPAZ NOS SIRVE
 public class CursoNoAdminController {
-
-	private static final String LISTADO_CURSO = "views/curso/listado-no-admin";
+	
 	private static final String CONFIGURACION_CURSO = "views/curso/configuracion-curso-no-admin";
 	
 	@Autowired
@@ -43,12 +42,6 @@ public class CursoNoAdminController {
 	@Autowired
 	@Qualifier("sesionRepository")
 	private SesionRepository sesionRepository;
-	
-	@RequestMapping(method = RequestMethod.GET)
-	public String index(Model model) {
-		
-		return LISTADO_CURSO;
-	}
 	
 	@RequestMapping(value = "/configuracionCurso/{id}", method = RequestMethod.GET)
 	public String configuracionCurso(@PathVariable("id") long id, Model model) {
@@ -72,7 +65,8 @@ public class CursoNoAdminController {
 	@RequestMapping(value = "/configuracionUnidadCurso", method = RequestMethod.POST)
 	public String guardarUnidadCurso(@ModelAttribute @Valid CursoForm cursoForm, BindingResult bindingResult, Model model) {
 		Curso curso = cursoForm.getCurso();
-		if (bindingResult.hasErrors()) {
+		//if (bindingResult.hasErrors()) {
+		if (bindingResult.hasFieldErrors("nuevaUnidad.*")) {		
 			model.addAttribute("cursoForm", cursoForm);
 			cargarValoresBasicosParaUnidad(model, false, false, false, false);
 			cargarValoresBasicosParaSesion(curso, model, false, false, false, false);
@@ -157,7 +151,8 @@ public class CursoNoAdminController {
 	@RequestMapping(value = "/configuracionSesionCurso", method = RequestMethod.POST)
 	public String guardarSesionCurso(@ModelAttribute @Valid CursoForm cursoForm, BindingResult bindingResult, Model model) {
 		Curso curso = cursoForm.getCurso();
-		if (bindingResult.hasErrors()) {
+		//if (bindingResult.hasErrors()) {
+		if (bindingResult.hasFieldErrors("nuevaSesion.*")) {
 			model.addAttribute("cursoForm", cursoForm);
 			cargarValoresBasicosParaUnidad(model, false, false, false, false);
 			cargarValoresBasicosParaSesion(curso, model, false, false, false, false);

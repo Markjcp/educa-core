@@ -221,7 +221,7 @@ public class CursoServiceImpl implements CursoService {
 			
 			if(encontrado){
 				//PRUEBA
-				curso.setSesiones(sesiones);
+				//curso.setSesiones(sesiones);
 				this.sesionRepository.delete(sesionEliminar);
 				// FIN DE PRUEBA
 				

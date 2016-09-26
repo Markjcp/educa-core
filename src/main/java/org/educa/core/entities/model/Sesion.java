@@ -2,15 +2,17 @@ package org.educa.core.entities.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -24,9 +26,11 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	private ComponenteId id;
 	
 	@Column(name = "fecha_desde")
+	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date fechaDesde;
 	
 	@Column(name = "fecha_hasta")
+	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date fechaHasta;
 	
 	@Column(name = "cupos")
@@ -41,9 +45,11 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	private Curso curso;
 	
 	@Column(name = "fecha_desde_inscripcion")
+	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date fechaDesdeInscripcion;
 	
 	@Column(name = "fecha_hasta_inscripcion")
+	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date fechaHastaInscripcion;
 
 	public Sesion() {
@@ -62,7 +68,7 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 		return fechaDesde;
 	}
 
-	public void setFechaDesde(Date fechaDesde) {
+	public void setFechaDesde(Date fechaDesde) {		
 		this.fechaDesde = fechaDesde;
 	}
 
@@ -115,7 +121,13 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	}
 	
 	public String getDescripcionLarga() {
-		return "Sesión Nro. " + (this.getId().getNumero() == null ? "" : this.getId().getNumero())  + ": Inicia el " + this.getFechaDesde();
+		String fechaDesdeFormateada = "";
+		if(this.getFechaDesde() != null){
+			SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+			fechaDesdeFormateada = format.format(this.getFechaDesde());
+		}
+				
+		return "Sesión Nro. " + (this.getId().getNumero() == null ? "" : this.getId().getNumero())  + ": Inicia el " + fechaDesdeFormateada;
 	}
 
 	@Override

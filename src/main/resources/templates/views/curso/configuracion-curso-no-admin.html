@@ -241,15 +241,16 @@
 														<div class="col l6 s12">																														
 															<div class="form-group input-group input-field date" id="fechaDesdeInscripcionActualizadar">
 																<label for="fechaDesdeInscripcion" class="">Fecha de inicio de inscripci&oacute;n</label>
-																<input th:name="fechaDesdeInscripcion" th:field="${sesionPropia.fechaDesdeInscripcion}" type="text" class="form-control"/>														
+																<input th:name="fechaDesdeInscripcion" th:value="${#dates.format(sesionPropia.fechaDesdeInscripcion, 'dd-MM-yyyy')}" type="text" class="form-control"/>																													
 																<span class="input-group-addon" style="border: none; background-color: #f8f8f8;">
 												                    <span class="glyphicon glyphicon-calendar">
 												                    </span>
 												                </span>
-															</div>															
+															</div>
+															<br></br><br></br>															
 															<div class="form-group input-group input-field date" id="fechaDesdeActualizadar">
 																<label for="fechaDesde" class="">Fecha de inicio de la sesi&oacute;n</label>
-																<input th:name="fechaDesde" th:field="${sesionPropia.fechaDesde}" type="text" class="form-control"/>														
+																<input th:name="fechaDesde" th:value="${sesionPropia.fechaDesde}" type="text" class="form-control"/>														
 																<span class="input-group-addon" style="border: none; background-color: #f8f8f8;">
 												                    <span class="glyphicon glyphicon-calendar">
 												                    </span>
@@ -259,7 +260,7 @@
 														<div class="col l6 s12">
 															<div class="form-group input-group input-field date" id="fechaHastaActualizadar">
 																<label for="fechaDesde" class="">Fecha de fin de la sesi&oacute;n</label>
-																<input th:name="fechaHasta" th:field="${nuevaSesion.fechaHasta}" type="text" class="form-control"/>														
+																<input th:name="fechaHasta" th:value="${sesionPropia.fechaHasta}" type="text" class="form-control"/>														
 																<span class="input-group-addon" style="border: none; background-color: #f8f8f8;">
 												                    <span class="glyphicon glyphicon-calendar">
 												                    </span>
@@ -299,14 +300,14 @@
 												<div class="col l6 s12">													
 													<div class="form-group input-group input-field date" id="fechaDesdeInscripcion">
 														<label for="fechaDesdeInscripcion" class="">Fecha de inicio de inscripci&oacute;n</label>
-														<input th:field="*{nuevaSesion.fechaDesde}" type="text" class="form-control"/>														
+														<input th:field="*{nuevaSesion.fechaDesdeInscripcion}" type="text" class="form-control"/>														
 														<span class="input-group-addon" style="border: none; background-color: #f8f8f8;">
 										                    <span class="glyphicon glyphicon-calendar">
 										                    </span>
 										                </span>
 										                <p th:errors="*{nuevaSesion.fechaDesde}" class="has-error-custom"></p>
 													</div>
-													<br></br><br></br>																
+													<br></br><br></br>
 													<div class="form-group input-group input-field date" id="fechaDesde">
 														<label for="fechaDesde" class="">Fecha de inicio de la nueva sesi&oacute;n</label>
 														<input th:field="*{nuevaSesion.fechaDesde}" type="text" class="form-control"/>														
@@ -369,30 +370,30 @@
     <script type="text/javascript">	   
 	    $(function () {
 	    	$('#fechaDesdeInscripcion').datetimepicker({            
-	            format: 'DD/MM/YYYY',
+	            format: 'DD-MM-YYYY',
 	            locale: 'es'
 	        });
 	        $('#fechaDesde').datetimepicker({            
-	            format: 'DD/MM/YYYY',
+	            format: 'DD-MM-YYYY',
 	            locale: 'es'
 	        });
 	        $('#fechaHasta').datetimepicker({            
-	            format: 'DD/MM/YYYY',
+	            format: 'DD-MM-YYYY',
 	            locale: 'es'
 	        });
 	    });
 	    
 	    $(function () {
 	    	$('#fechaDesdeInscripcionActualizadar').datetimepicker({            
-	            format: 'DD/MM/YYYY',
+	            format: 'DD-MM-YYYY',
 	            locale: 'es'
 	        });
 	        $('#fechaDesdeActualizadar').datetimepicker({            
-	            format: 'DD/MM/YYYY',
+	            format: 'DD-MM-YYYY',
 	            locale: 'es'
 	        });
 	        $('#fechaHastaActualizadar').datetimepicker({            
-	            format: 'DD/MM/YYYY',
+	            format: 'DD-MM-YYYY',
 	            locale: 'es'
 	        });
 	    });	    
