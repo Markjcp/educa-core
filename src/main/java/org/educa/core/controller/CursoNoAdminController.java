@@ -49,8 +49,8 @@ public class CursoNoAdminController {
 	public String configuracionCurso(@PathVariable("id") long id, Model model) {
 		Curso curso = this.cursoService.encontrarCursoPorId(id);
 		
-		cargarValoresBasicosParaUnidad(model, false, false, false, false);
-		cargarValoresBasicosParaSesion(curso, model, false, false, false, false);
+		cargarValoresBasicosParaUnidad(model, false, false, false, false, false);
+		cargarValoresBasicosParaSesion(curso, model, false, false, false, false, false);
 		
 		CursoForm cursoForm = new CursoForm();
 		cursoForm.setCurso(curso);
@@ -60,7 +60,7 @@ public class CursoNoAdminController {
 		}
 		
 		model.addAttribute("cursoForm", cursoForm);
-		model.addAttribute("mostrarTabUnidad", true);
+		model.addAttribute("mostrarTabUnidad", true);		
 		
 		return CONFIGURACION_CURSO;
 	}
@@ -71,8 +71,8 @@ public class CursoNoAdminController {
 		model.addAttribute("mostrarTabUnidad", true);
 		if (bindingResult.hasFieldErrors("nuevaUnidad.*")) {
 			model.addAttribute("cursoForm", cursoForm);			
-			cargarValoresBasicosParaUnidad(model, false, false, false, false);
-			cargarValoresBasicosParaSesion(curso, model, false, false, false, false);
+			cargarValoresBasicosParaUnidad(model, false, false, false, false, true);
+			cargarValoresBasicosParaSesion(curso, model, false, false, false, false, false);			
 			
 			return CONFIGURACION_CURSO;
 		}
@@ -81,7 +81,7 @@ public class CursoNoAdminController {
 		Unidad unidadNueva = cursoForm.getNuevaUnidad();		
 		if(unidadNueva != null){			
 			this.cursoService.crearUnidad(curso, unidadNueva);			
-			cargarValoresBasicosParaUnidad(model, true, false, false, false);			
+			cargarValoresBasicosParaUnidad(model, true, false, false, false, true);			
 		}
 		
 		Curso cursoHidratado = this.cursoService.encontrarCursoPorIdHidratado(curso.getId());
@@ -90,7 +90,7 @@ public class CursoNoAdminController {
 		cursoForm.setCurso(cursoHidratado);
 		
 		model.addAttribute("cursoForm", cursoForm);
-		cargarValoresBasicosParaSesion(cursoHidratado, model, false, false, false, false);
+		cargarValoresBasicosParaSesion(cursoHidratado, model, false, false, false, false, false);
 		
 		return CONFIGURACION_CURSO;
 	}
@@ -103,8 +103,8 @@ public class CursoNoAdminController {
 		model.addAttribute("mostrarTabUnidad", true);
 		
 		if (bindingResult.hasErrors()) {			
-			cargarValoresBasicosParaUnidad(model, false, false, true, false);
-			cargarValoresBasicosParaSesion(curso, model, false, false, false, false);			
+			cargarValoresBasicosParaUnidad(model, false, false, true, false, false);
+			cargarValoresBasicosParaSesion(curso, model, false, false, false, false, false);			
 			model.addAttribute("cursoForm", cursoForm);
 			
 			List<String> errores = new ArrayList<String>();
@@ -125,8 +125,8 @@ public class CursoNoAdminController {
 		
 		model.addAttribute("cursoForm", cursoForm);
 		
-		cargarValoresBasicosParaUnidad(model, false, true, false, false);
-		cargarValoresBasicosParaSesion(cursoHidratado, model, false, false, false, false);
+		cargarValoresBasicosParaUnidad(model, false, true, false, false, false);
+		cargarValoresBasicosParaSesion(cursoHidratado, model, false, false, false, false, false);
 		
 		return CONFIGURACION_CURSO;		
 	}
@@ -147,8 +147,8 @@ public class CursoNoAdminController {
 		
 		model.addAttribute("cursoForm", cursoForm);
 		
-		cargarValoresBasicosParaUnidad(model, false, false, false, eliminada);
-		cargarValoresBasicosParaSesion(cursoHidratado, model, false, false, false, false);
+		cargarValoresBasicosParaUnidad(model, false, false, false, eliminada, false);
+		cargarValoresBasicosParaSesion(cursoHidratado, model, false, false, false, false, false);
 				
 		return CONFIGURACION_CURSO;
 	}
@@ -161,8 +161,8 @@ public class CursoNoAdminController {
 		if (bindingResult.hasFieldErrors("nuevaSesion.*")) {
 			validarFechasSesion(cursoForm.getNuevaSesion(), bindingResult);
 			model.addAttribute("cursoForm", cursoForm);
-			cargarValoresBasicosParaUnidad(model, false, false, false, false);
-			cargarValoresBasicosParaSesion(curso, model, false, false, false, false);
+			cargarValoresBasicosParaUnidad(model, false, false, false, false, false);
+			cargarValoresBasicosParaSesion(curso, model, false, false, false, false, true);
 			
 			return CONFIGURACION_CURSO;
 		}
@@ -175,8 +175,8 @@ public class CursoNoAdminController {
 			boolean valido = validarFechasSesion(sesionNueva, bindingResult);
 			if(!valido){
 				model.addAttribute("cursoForm", cursoForm);
-				cargarValoresBasicosParaUnidad(model, false, false, false, false);
-				cargarValoresBasicosParaSesion(curso, model, false, false, false, false);
+				cargarValoresBasicosParaUnidad(model, false, false, false, false, false);
+				cargarValoresBasicosParaSesion(curso, model, false, false, false, false, true);
 				
 				return CONFIGURACION_CURSO;
 			}
@@ -185,7 +185,7 @@ public class CursoNoAdminController {
 			this.cursoService.crearSesion(curso, sesionNueva);
 			
 			cursoHidratado = this.cursoService.encontrarCursoPorIdHidratado(curso.getId());
-			cargarValoresBasicosParaSesion(cursoHidratado, model, true, false, false, false);
+			cargarValoresBasicosParaSesion(cursoHidratado, model, true, false, false, false, true);
 		}
 				
 		//Seteo los nuevos valores
@@ -193,7 +193,7 @@ public class CursoNoAdminController {
 		cursoForm.setCurso(cursoHidratado);
 		
 		model.addAttribute("cursoForm", cursoForm);		
-		cargarValoresBasicosParaUnidad(model, false, false, false, false);		
+		cargarValoresBasicosParaUnidad(model, false, false, false, false, false);		
 		
 		return CONFIGURACION_CURSO;
 	}
@@ -207,8 +207,8 @@ public class CursoNoAdminController {
 		
 		if (bindingResult.hasErrors()) {
 			validarFechasSesion(sesion, bindingResult);
-			cargarValoresBasicosParaUnidad(model, false, false, false, false);
-			cargarValoresBasicosParaSesion(curso, model, false, false, true, false);			
+			cargarValoresBasicosParaUnidad(model, false, false, false, false, false);
+			cargarValoresBasicosParaSesion(curso, model, false, false, true, false, false);			
 			model.addAttribute("cursoForm", cursoForm);
 			
 			List<String> errores = new ArrayList<String>();
@@ -230,8 +230,8 @@ public class CursoNoAdminController {
 		
 		model.addAttribute("cursoForm", cursoForm);
 		
-		cargarValoresBasicosParaUnidad(model, false, false, false, false);
-		cargarValoresBasicosParaSesion(cursoHidratado, model, false, true, false, false);
+		cargarValoresBasicosParaUnidad(model, false, false, false, false, false);
+		cargarValoresBasicosParaSesion(cursoHidratado, model, false, true, false, false, false);
 		
 		return CONFIGURACION_CURSO;		
 	}
@@ -252,21 +252,22 @@ public class CursoNoAdminController {
 		
 		model.addAttribute("cursoForm", cursoForm);
 		
-		cargarValoresBasicosParaUnidad(model, false, false, false, false);
-		cargarValoresBasicosParaSesion(cursoHidratado, model, false, false, false, eliminada);
+		cargarValoresBasicosParaUnidad(model, false, false, false, false, false);
+		cargarValoresBasicosParaSesion(cursoHidratado, model, false, false, false, eliminada, false);
 				
 		return CONFIGURACION_CURSO;
 	}
 	
-	private void cargarValoresBasicosParaUnidad(Model model, boolean alta, boolean actualizacion, boolean actualizacionError, boolean elimacion){
+	private void cargarValoresBasicosParaUnidad(Model model, boolean alta, boolean actualizacion, boolean actualizacionError, boolean elimacion, boolean mostrarErroresUnidad){
 		model.addAttribute("unidad", new Unidad());
 		model.addAttribute("mostrarMensajeAltaUnidad", alta);
 		model.addAttribute("mostrarMensajeErrorActualizacionUnidad", actualizacionError);
 		model.addAttribute("mostrarMensajeActualizacionUnidad", actualizacion);
-		model.addAttribute("mostrarMensajeEliminarUnidad", elimacion);		
+		model.addAttribute("mostrarMensajeEliminarUnidad", elimacion);
+		model.addAttribute("mostrarErroresUnidad", mostrarErroresUnidad);		
 	}
 	
-	private void cargarValoresBasicosParaSesion(Curso curso, Model model, boolean alta, boolean actualizacion, boolean actualizacionError, boolean elimacion){
+	private void cargarValoresBasicosParaSesion(Curso curso, Model model, boolean alta, boolean actualizacion, boolean actualizacionError, boolean elimacion, boolean mostrarErroresSesion){
 		if(curso == null || curso.getUnidades() == null || curso.getUnidades().isEmpty()){
 			model.addAttribute("mostrarMensajeErrorCrearSesionSinUnidad", true);			
 		}
@@ -275,7 +276,8 @@ public class CursoNoAdminController {
 		model.addAttribute("mostrarMensajeAltaSesion", alta);
 		model.addAttribute("mostrarMensajeActualizacionSesion", actualizacion);
 		model.addAttribute("mostrarMensajeErrorActualizacionSesion", actualizacionError);
-		model.addAttribute("mostrarMensajeEliminarSesion", elimacion);		
+		model.addAttribute("mostrarMensajeEliminarSesion", elimacion);
+		model.addAttribute("mostrarErroresSesion", mostrarErroresSesion);
 	}
 	
 	private boolean validarFechasSesion(Sesion sesionNueva, BindingResult bindingResult) {
