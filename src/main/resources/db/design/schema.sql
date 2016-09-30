@@ -186,6 +186,7 @@ CREATE TABLE IF NOT EXISTS `educa`.`unidad` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+
 -- -----------------------------------------------------
 -- Table `educa`.`email_template`
 -- -----------------------------------------------------
@@ -195,6 +196,31 @@ CREATE TABLE IF NOT EXISTS `educa`.`email_template` (
   `clave` VARCHAR(45) NOT NULL,
   `valor` VARCHAR(1500) NOT NULL,
   PRIMARY KEY (`clave`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `educa`.`sesion_usuario`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `educa`.`sesion_usuario` ;
+
+CREATE TABLE IF NOT EXISTS `educa`.`sesion_usuario` (
+  `numero_componente` INT NOT NULL,
+  `id_curso` INT NOT NULL,
+  `id_usuario` BIGINT NOT NULL,
+  PRIMARY KEY (`numero_componente`, `id_curso`, `id_usuario`),
+  INDEX `fk_sesion_has_usuario_usuario1_idx` (`id_usuario` ASC),
+  INDEX `fk_sesion_has_usuario_sesion1_idx` (`numero_componente` ASC, `id_curso` ASC),
+  CONSTRAINT `fk_sesion_has_usuario_sesion1`
+    FOREIGN KEY (`numero_componente` , `id_curso`)
+    REFERENCES `educa`.`sesion` (`numero_componente` , `id_curso`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sesion_has_usuario_usuario1`
+    FOREIGN KEY (`id_usuario`)
+    REFERENCES `educa`.`usuario` (`id_usuario`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
