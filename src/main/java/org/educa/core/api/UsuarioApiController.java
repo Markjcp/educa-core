@@ -108,6 +108,17 @@ public class UsuarioApiController {
 		}		
 	}
 	
+	@RequestMapping(method = RequestMethod.GET, value = "mis-sesiones/{idUsuario}")
+	public ResponseEntity<List<SesionUsuarioId>> misSesiones(@PathVariable Long idUsuario){
+		List<SesionUsuarioId> resultado = new ArrayList<SesionUsuarioId>();
+		try {
+			resultado = usuarioDao.obtenerMisSesiones(idUsuario);
+			return new ResponseEntity<List<SesionUsuarioId>>(resultado,HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<List<SesionUsuarioId>>(resultado,HttpStatus.NOT_FOUND);
+		}		
+	}
+	
 	
 	
 	private Usuario buildUsuario(List<Usuario> usuarios){

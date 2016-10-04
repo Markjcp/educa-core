@@ -7,6 +7,7 @@ import javax.persistence.PersistenceContext;
 
 import org.educa.core.dao.UsuarioDao;
 import org.educa.core.entities.model.Curso;
+import org.educa.core.entities.model.SesionUsuarioId;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +39,13 @@ public class UsuarioDaoImpl implements UsuarioDao {
 		return em.createQuery("select su.curso from SesionUsuario su where su.id.id = :usuarioId")
 				.setParameter("usuarioId", usuarioId).getResultList();
 
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<SesionUsuarioId> obtenerMisSesiones(Long usuarioId) {
+		return em.createQuery("select su.id from SesionUsuario su where su.id.id = :usuarioId")
+				.setParameter("usuarioId", usuarioId).getResultList();
 	}
 
 }
