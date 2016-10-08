@@ -224,6 +224,89 @@ CREATE TABLE IF NOT EXISTS `educa`.`sesion_usuario` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `educa`.`video_unidad`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `educa`.`video_unidad` ;
+
+CREATE TABLE IF NOT EXISTS `educa`.`video_unidad` (
+  `numero_componente` INT NOT NULL,
+  `id_curso` INT NOT NULL,
+  `numero_video` INT NOT NULL,
+  `video` BLOB NOT NULL,
+  `titulo` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`numero_componente`, `id_curso`, `numero_video`),
+  INDEX `fk_video_unidad_unidad1_idx` (`numero_componente` ASC, `id_curso` ASC),
+  CONSTRAINT `fk_video_unidad_unidad1`
+    FOREIGN KEY (`numero_componente` , `id_curso`)
+    REFERENCES `educa`.`unidad` (`numero_componente` , `id_curso`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `educa`.`material_unidad`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `educa`.`material_unidad` ;
+
+CREATE TABLE IF NOT EXISTS `educa`.`material_unidad` (
+  `numero_componente` INT NOT NULL,
+  `id_curso` INT NOT NULL,
+  `numero_material` INT NOT NULL,
+  `material` BLOB NOT NULL,
+  PRIMARY KEY (`numero_componente`, `id_curso`, `numero_material`),
+  CONSTRAINT `fk_material_unidad_unidad1`
+    FOREIGN KEY (`numero_componente` , `id_curso`)
+    REFERENCES `educa`.`unidad` (`numero_componente` , `id_curso`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `educa`.`examen_unidad`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `educa`.`examen_unidad` ;
+
+CREATE TABLE IF NOT EXISTS `educa`.`examen_unidad` (
+  `numero_componente` INT NOT NULL,
+  `id_curso` INT NOT NULL,
+  `numero_examen` INT NOT NULL,
+  `enunciado` VARCHAR(500) NOT NULL,
+  `cant_preguntas_alumno` INT NOT NULL,
+  `multiple_choice` TINYINT(1) NOT NULL,
+  `respuesta` VARCHAR(200) NULL,
+  PRIMARY KEY (`numero_componente`, `id_curso`, `numero_examen`),
+  CONSTRAINT `fk_examen_unidad_unidad1`
+    FOREIGN KEY (`numero_componente` , `id_curso`)
+    REFERENCES `educa`.`unidad` (`numero_componente` , `id_curso`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `educa`.`opcion_examen_unidad`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `educa`.`opcion_examen_unidad` ;
+
+CREATE TABLE IF NOT EXISTS `educa`.`opcion_examen_unidad` (
+  `numero_componente` INT NOT NULL,
+  `id_curso` INT NOT NULL,
+  `numero_examen` INT NOT NULL,
+  `orden` INT NOT NULL,
+  `texto` VARCHAR(500) NOT NULL,
+  `es_correcta` TINYINT(1) NOT NULL,
+  PRIMARY KEY (`numero_componente`, `id_curso`, `numero_examen`, `orden`),
+  CONSTRAINT `fk_opcion_examen_unidad_examen_unidad1`
+    FOREIGN KEY (`numero_componente` , `id_curso` , `numero_examen`)
+    REFERENCES `educa`.`examen_unidad` (`numero_componente` , `id_curso` , `numero_examen`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
