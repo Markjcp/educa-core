@@ -9,6 +9,8 @@ import java.util.TreeSet;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -97,8 +99,13 @@ public class Curso implements Persistible {
 	@Transient
 	private MultipartFile foto;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "estado_curso")
+	private EstadoCurso estadoCurso;//TODO ESTO FALTA EN LOS SCRIPTS PARA Q VAYA A LA BASE BIEN
+
 	public Curso() {
 		super();
+		this.estadoCurso = EstadoCurso.NO_PUBLICADO;
 	}
 
 	@Override
@@ -239,6 +246,14 @@ public class Curso implements Persistible {
 		this.sesiones.add(sesion);
 	}
 
+	public EstadoCurso getEstadoCurso() {
+		return estadoCurso;
+	}
+
+	public void setEstadoCurso(EstadoCurso estadoCurso) {
+		this.estadoCurso = estadoCurso;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -267,8 +282,10 @@ public class Curso implements Persistible {
 	@Override
 	public String toString() {
 		return "Curso [id=" + id + ", nombre=" + nombre + ", categoria=" + categoria + ", categoriaId=" + categoriaId
-				+ ", descripcion=" + descripcion + ", imagen=" + Arrays.toString(imagen) + ", docente=" + docente
-				+ ", valoracionesPromedio=" + valoracionesPromedio + ", cantidadValoraciones=" + cantidadValoraciones
-				+ ", fechaEstimadaProximaSesion=" + fechaEstimadaProximaSesion + "]";
+				+ ", descripcion=" + descripcion + ", imagen=" + Arrays.toString(imagen) + ", linkImagen=" + linkImagen
+				+ ", docente=" + docente + ", valoracionesPromedio=" + valoracionesPromedio + ", cantidadValoraciones="
+				+ cantidadValoraciones + ", fechaEstimadaProximaSesion=" + fechaEstimadaProximaSesion + ", sesiones="
+				+ sesiones + ", unidades=" + unidades + ", criticas=" + criticas + ", foto=" + foto + ", estadoCurso="
+				+ estadoCurso + "]";
 	}
 }

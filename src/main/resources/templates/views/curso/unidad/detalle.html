@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Taller Desarrollo II - FIUBA</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    
+    <link href="../../static/css/bootstrap.css" th:href="@{/css/bootstrap.css}" rel="stylesheet" media="screen,projection" />
+    <link href="../../static/css/metisMenu.css" th:href="@{/css/metisMenu.css}" rel="stylesheet" media="screen,projection" />    
+	<link href="../../static/css/sb-admin-2.css" th:href="@{/css/sb-admin-2.css}" rel="stylesheet" media="screen,projection" />
+    <link href="../../static/css/materialize.css" th:href="@{/css/materialize.css}" rel="stylesheet" media="screen,projection" />
+	<link href="../../static/css/style.css" th:href="@{/css/style.css}" rel="stylesheet" media="screen,projection" />	
+	<link href="../../static/css/educa.css" th:href="@{/css/educa.css}" rel="stylesheet" media="screen,projection" />
+	<link href="../../static/css/bootstrap-datetimepicker.css" th:href="@{/css/bootstrap-datetimepicker.css}" rel="stylesheet" media="screen,projection" />	
+	<link href="../../static/css/font-awesome.css" th:href="@{/css/font-awesome.css}" rel="stylesheet" media="screen,projection" />	 
+</head>
+<body>
+	<div th:replace="views/fragments/header :: header">&nbsp;</div>
+	
+	<div class="container">
+		<div class="section">
+			<div class="row">
+				<h1>Configuraci&oacute;n de unidad</h1>				
+			    <form action="#" th:object="${unidadForm}">
+			    	<div class="row">
+				    	<div class="col s4"> 
+				    		<div class="form-group input-field">
+				    			<input type="text" th:field="*{curso.nombre}" placeholder="Nombre del curso" disabled="disabled" style="color: #000; border-bottom: 1px solid #26a69a;"/>			    			
+				    		</div>
+				    	</div>
+				    	<div class="col s1"></div>
+				    	<div class="col s3">	
+				        	<div class="form-group input-field">
+				        		 <input type="text" th:field="*{curso.categoria.descripcion}" placeholder="Categor&iacute;a del curso" disabled="disabled" style="color: #000; border-bottom: 1px solid #26a69a;"/>                                                        
+	                         </div>		 			    		 	                        
+				    	</div>
+				    	<div class="col s1"></div>
+				    	<div class="col s3">	
+				        	<div class="form-group input-field">
+				        		 <!-- Switch -->
+		                         <div class="switch" style="color: #000; border-bottom: 1px solid #26a69a; width: 100%; height: 3rem;">	                         	                         	
+								    <label style="position: absolute; color: #000; font: inherit;">
+								      No publicado
+								      <input type="checkbox" th:checked="*{publicado}" th:onclick="@{/detalleUnidad/cambiarEstado}"/>
+								      <span class="lever"></span>
+								      Publicado
+								    </label>
+								  </div>                                                        
+	                         </div>	                         	 			    		 	                        
+				    	</div>
+			    	</div>
+			    </form>			  
+			    
+				<div class="row">
+					<div >
+						<!-- Nav tabs -->
+						<ul class="nav nav-tabs">
+							<li th:class="${mostrarTabMaterialTeorico} ? 'tab col s3 active' : 'tab col s3'"><a href="#materialTeoricoUnidad" data-toggle="tab" aria-expanded="false">Material te&oacute;rico</a>
+							</li>
+							<li th:class="${mostrarTabVideo} ? 'tab col s3 active' : 'tab col s3'"><a href="#videoUnidad" data-toggle="tab" aria-expanded="false">Video</a>
+							</li>
+							<li th:class="${mostrarTabPracticas} ? 'tab col s3 active' : 'tab col s3'"><a href="#practicasUnidad" data-toggle="tab" aria-expanded="false">Pr&aacute;cticas</a>
+							</li>
+							<li th:class="${mostrarTabExamen} ? 'tab col s3 active' : 'tab col s3'"><a href="#examenUnidad" data-toggle="tab" aria-expanded="false">Examen</a>
+							</li>
+						</ul>
+					
+						<!-- Tab panes -->
+						<div class="tab-content">
+							<!-- FIN - TAB DE MATERIAL TEORICO -->
+							<div th:class="${mostrarTabMaterialTeorico} ? 'tab-pane fade active in' : 'tab-pane fade'" id="materialTeoricoUnidad">
+								<br></br><br></br>														    								    
+							</div>
+							<!-- FIN - TAB DE MATERIAL TEORICO -->
+							
+							<!-- TAB DE VIDEO -->
+							<div th:class="${mostrarTabVideo} ? 'tab-pane fade active in' : 'tab-pane fade'" id="videoUnidad">								
+								<br></br><br></br>																
+							</div>
+							<!-- FIN - TAB DE VIDEO -->
+							
+							<!-- TAB DE PRACTICAS -->
+							<div th:class="${mostrarTabPracticas} ? 'tab-pane fade active in' : 'tab-pane fade'" id="practicasUnidad">								
+								<br></br><br></br>																
+							</div>
+							<!-- FIN - TAB DE PRACTICAS -->
+							
+							<!-- TAB DE EXAMEN -->
+							<div th:class="${mostrarTabExamen} ? 'tab-pane fade active in' : 'tab-pane fade'" id="examenUnidad">								
+								<br></br><br></br>																
+							</div>
+							<!-- FIN - TAB DE EXAMEN -->
+						</div>
+					</div>
+				</div>			    	  	
+			</div>		
+		</div>		
+	</div>
+	
+	<!--  Scripts-->
+    <script src="../../static/js/jquery-2.1.1.js" th:src="@{/js/jquery-2.1.1.js}"></script> 
+    <script src="../../static/js/bootstrap.js" th:src="@{/js/bootstrap.js}"></script>
+    <script src="../../static/js/metisMenu.js" th:src="@{/js/metisMenu.js}"></script>
+    <script src="../../static/js/sb-admin-2.js" th:src="@{/js/sb-admin-2.js}"></script>
+    <script src="../../static/js/materialize.js" th:src="@{/js/materialize.js}"></script>
+    <script src="../../static/js/init.js" th:src="@{/js/init.js}"></script>   
+    <script src="../../static/js/moment-with-locales.js" th:src="@{/js/moment-with-locales.js}"></script>
+    <script src="../../static/js/moment.js" th:src="@{/js/moment.js}"></script>
+    <script src="../../static/js/locale/es.js" th:src="@{/js/locale/es.js}"></script>    
+    <script src="../../static/js/bootstrap-datetimepicker.min.js" th:src="@{/js/bootstrap-datetimepicker.min.js}"></script>
+    
+    <script type="text/javascript">	   
+	    $(function () {
+	    	$('#fechaDesdeInscripcion').datetimepicker({            
+	            format: 'DD-MM-YYYY',
+	            locale: 'es'
+	        });
+	        $('#fechaDesde').datetimepicker({            
+	            format: 'DD-MM-YYYY',
+	            locale: 'es'
+	        });
+	        $('#fechaHasta').datetimepicker({            
+	            format: 'DD-MM-YYYY',
+	            locale: 'es'
+	        });
+	    });
+	    
+	    $(function () {
+	    	$('#fechaDesdeInscripcionActualizadar').datetimepicker({            
+	            format: 'DD-MM-YYYY',
+	            locale: 'es'
+	        });
+	        $('#fechaDesdeActualizadar').datetimepicker({            
+	            format: 'DD-MM-YYYY',
+	            locale: 'es'
+	        });
+	        $('#fechaHastaActualizadar').datetimepicker({            
+	            format: 'DD-MM-YYYY',
+	            locale: 'es'
+	        });
+	    });
+	    
+	    function abrioTag(grupo){
+	    	if(grupo == "UNIDAD") {
+	    		//Unidad: Se muestra o no el formulario de carga, y no se muestran los errores del summit anterior
+	    		var esVisible = $("#formularioAltaUnidad").is(":visible");
+	    			    		
+	    		if(esVisible){
+	    			$("#formularioAltaUnidad").hide();
+	    		} else {
+	    			$("#formularioAltaUnidad").show();
+	    		}
+	    		
+	    		//Oculto mensajes de errores solo si nunca lleno el formulario
+	    		var titulo = document.getElementById("nuevaUnidad.titulo").value;
+	    		var descripcion = document.getElementById("nuevaUnidad.descripcion").value;
+	    		var duracionEstimada = document.getElementById("nuevaUnidad.duracionEstimada").value;
+	    		
+	    		var estaTodoVacio = true;	    		
+	    		if(titulo != ""){
+	    			estaTodoVacio = false;
+	    		}
+	    		
+	    		if(descripcion != ""){
+	    			estaTodoVacio = false;
+	    		}
+	    		
+	    		if(duracionEstimada != ""){
+	    			estaTodoVacio = false;
+	    		}
+	    		
+	    		if(estaTodoVacio == true){
+	    			$("#tituloUnidadError").hide();
+		    		$("#descripcionUnidadError").hide();
+		    		$("#duracionEstimadaUnidadError").hide();	
+	    		}	    			    			    		
+	    	} else if(grupo == "SESION") {
+	    		//Es Sesion: Se muestra o no el formulario de carga, y no se muestran los errores del summit anterior
+				var esVisible = $("#formularioAltaSesion").is(":visible");
+	    		
+	    		if(esVisible){
+	    			$("#formularioAltaSesion").hide();
+	    		} else {
+	    			$("#formularioAltaSesion").show();
+	    		}
+	    		
+	    		//Oculto mensajes de errores solo si nunca lleno el formulario
+	    		var fechaDesdeInscripcion = document.getElementById("fechaDesdeInscripcionInput").value;
+	    		var fechaDesde = document.getElementById("fechaDesdeInput").value;
+	    		var fechaHasta = document.getElementById("fechaHastaInput").value;	    			    		
+	    		
+	    		var estaTodoVacio = true;	    		
+	    		if(fechaDesdeInscripcion != ""){
+	    			estaTodoVacio = false;
+	    		}
+	    		
+	    		if(fechaDesde != ""){
+	    			estaTodoVacio = false;
+	    		}
+	    		
+	    		if(fechaHasta != ""){
+	    			estaTodoVacio = false;
+	    		}
+	    		
+	    		if(estaTodoVacio == true){
+	    			$("#fechaDesdeInscripcionError").hide();
+		    		$("#fechaDesdeError").hide();
+		    		$("#fechaHastaError").hide();	
+	    		}	    		
+	    	}	    	
+	    }
+	</script>
+</body>
+</html>

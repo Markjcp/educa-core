@@ -130,6 +130,7 @@
 														
 													<div class="form-group" style="margin-left: 10px;">
 														<button type="submit" class="btn orange-effect orange">Actualizar</button>
+														<a class="btn orange-effect orange" href="#" th:href="@{/detalleUnidad/{idCurso}/{idUnidad}/{numeroUnidad}(idCurso=${cursoForm.curso.id}, idUnidad=${unidadPropia.id.idCurso}, numeroUnidad=${unidadPropia.id.numero})}">Ver detalle</a>
 														<a class="btn orange-effect orange" href="#" th:href="@{/cursoNoAdmin/eliminarUnidad/{idCurso}/{idUnidad}/{numeroUnidad}(idCurso=${cursoForm.curso.id}, idUnidad=${unidadPropia.id.idCurso}, numeroUnidad=${unidadPropia.id.numero})}">Eliminar</a>
 													 </div>
 												 </form>								    											    												   												   

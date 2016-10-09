@@ -93,6 +93,7 @@ CREATE TABLE IF NOT EXISTS `educa`.`curso` (
   `valoracion_promedio` INT NULL,
   `cantidad_valoraciones` BIGINT NULL,
   `fecha_estimada_prox_sesion` DATE NULL,
+  `estado_curso` VARCHAR(45) NOT NULL DEFAULT 'NO_PUBLICADO',
   PRIMARY KEY (`id_curso`),
   INDEX `fk_curso_1_idx` (`id_categoria` ASC),
   INDEX `fk_curso_docente_idx` (`legajo_docente` ASC),
