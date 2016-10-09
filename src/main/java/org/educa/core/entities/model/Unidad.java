@@ -1,6 +1,8 @@
 package org.educa.core.entities.model;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.SortedSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -8,11 +10,14 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.OrderBy;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -47,6 +52,18 @@ public class Unidad implements Serializable, Comparable<Unidad> {
 	@Min(value = 1, message = "Debe de ingresar un número entero mayor a 0.")
 	@Max(value = 9999, message = "La duración estimada no puede ser mayor a {value} horas.")	
 	private Integer duracionEstimada;
+	
+/*	@OneToOne(cascade = {CascadeType.DETACH, CascadeType.REFRESH, CascadeType.PERSIST})
+	@JoinColumn(name = "id_examen_unidad", referencedColumnName = "id", insertable = false, updatable = false)
+	@JsonIgnore //TODO VER SI HAY Q IGNORARLO O NO - VER CON MOBILE
+	private ExamenUnidad examenUnidad;
+	
+	//private List<VideoUnidad> videos;
+	
+	@OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.PERSIST})
+	@JoinColumn(name="id_curso")
+	@OrderBy(clause = "id.numero ASC")
+	private SortedSet<VideoUnidad> videos;*/
 
 	public Unidad() {
 		super();

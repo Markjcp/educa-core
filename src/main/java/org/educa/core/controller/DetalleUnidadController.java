@@ -51,11 +51,7 @@ public class DetalleUnidadController {
 		
 		if(EstadoCurso.PUBLICADO.equals(curso.getEstadoCurso())){
 			unidadForm.setPublicado(true);
-		}
-		
-		//TODO BORRAR DESDE ACA
-		unidadForm.setPublicado(true);
-		//TODO BORRAR HASTA ACA
+		}		
 		
 		model.addAttribute("unidadForm", unidadForm);
 		model.addAttribute("mostrarTabMaterialTeorico", true);
@@ -66,10 +62,41 @@ public class DetalleUnidadController {
 		return DETALLE_CURSO;
 	}
 	
-	@RequestMapping(value = "/cambiarEstado", method = RequestMethod.POST)
-	public String cambiarEstado(@ModelAttribute @Valid UnidadForm unidadForm, BindingResult bindingResult, Model model) {
+	@RequestMapping(value = "/cambiarEstadoPublicacion", method = RequestMethod.POST)
+	public String cambiarEstadoPublicacion(@ModelAttribute @Valid UnidadForm unidadForm, BindingResult bindingResult, Model model) {
+		/*
+		 * OjO: Viene con el valor con el que fue en el formulario en la accion anterior, 
+		 * asi que hay que cambiarle el valor.
+		 */
+		
+		EstadoCurso nuevoEstadoCurso = EstadoCurso.NO_PUBLICADO;
+		if(!unidadForm.isPublicado()){
+			nuevoEstadoCurso = EstadoCurso.PUBLICADO;
+		}
+		
+		Curso curso = unidadForm.getCurso();
+		curso.setEstadoCurso(nuevoEstadoCurso);
+		
+		cursoService.guardarCurso(curso);
+		
+		Curso cursoPersistido = cursoService.encontrarCursoPorId(curso.getId());
+		unidadForm.setCurso(cursoPersistido);
+		
+		unidadForm.setPublicado(EstadoCurso.PUBLICADO.equals(cursoPersistido.getEstadoCurso()) ? true : false);
+		
+		model.addAttribute("unidadForm", unidadForm);
+		model.addAttribute("mostrarTabMaterialTeorico", true);
+		model.addAttribute("mostrarTabVideo", false);
+		model.addAttribute("mostrarTabPracticas", false);
+		model.addAttribute("mostrarTabExamen", false);
+		
+		return DETALLE_CURSO;
+	}	
+	
+	@RequestMapping(value = "/guardarPreguntaExamen", method = RequestMethod.POST)
+	public String guardarPreguntaExamen(@ModelAttribute @Valid UnidadForm unidadForm, BindingResult bindingResult, Model model) {
 		//TODO FALTA HACERLO!!!
-		System.out.println("ENTRO PARA ACTUALIZAR EL ESTADO DE PUBLICADO: " + unidadForm.isPublicado());
+		System.out.println("ENTRO PARA GUARDAR LA PREGUNTA DEL EXAMEN: " + unidadForm.isPublicado());
 		if(unidadForm.isPublicado()){
 			
 		}

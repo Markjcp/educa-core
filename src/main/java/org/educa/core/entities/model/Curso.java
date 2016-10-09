@@ -101,8 +101,9 @@ public class Curso implements Persistible {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "estado_curso")
-	private EstadoCurso estadoCurso;//TODO ESTO FALTA EN LOS SCRIPTS PARA Q VAYA A LA BASE BIEN
-
+	@JsonIgnore
+	private EstadoCurso estadoCurso;
+	
 	public Curso() {
 		super();
 		this.estadoCurso = EstadoCurso.NO_PUBLICADO;
@@ -252,6 +253,10 @@ public class Curso implements Persistible {
 
 	public void setEstadoCurso(EstadoCurso estadoCurso) {
 		this.estadoCurso = estadoCurso;
+	}
+	
+	public boolean isPublicado() {
+		return (EstadoCurso.PUBLICADO.equals(this.estadoCurso) ? true : false);
 	}
 
 	@Override

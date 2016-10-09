@@ -3,6 +3,7 @@ package org.educa.core.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.educa.core.entities.model.Curso;
+import org.educa.core.entities.model.EstadoCurso;
 import org.educa.core.services.CursoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.PagedListHolder;
@@ -19,7 +20,6 @@ public class DocenteController {
 	
 	private static final String BANDEJA_CURSO = "views/docente/bandeja-cursos";
 	private static final String MODELO_ATRIBUTO_CURSOS = "cursos";
-	private static final String PRODUCT_LIST_BASEURL = "views/docente/bandeja-cursos";
 	private static final int PRODUCT_LIST_PAGE_SIZE = 5;
 	
 	@Autowired
@@ -89,4 +89,26 @@ public class DocenteController {
 		return BANDEJA_CURSO;
 
 	}
+	
+	@RequestMapping(value = "/cambiarEstadoPublicacion/{idCurso}/{pagina}/{idDocente}", method = RequestMethod.POST)
+	public String cambiarEstadoPublicacion(@PathVariable("idCurso") long idCurso, @PathVariable("pagina") Integer numeroPagina, 
+			@PathVariable("idDocente") long legajo, Model model, HttpServletRequest request) {
+		/*
+		 * OjO: Viene con el valor con el que fue en el formulario en la accion anterior, 
+		 * asi que hay que cambiarle el valor.
+		 */
+		
+		EstadoCurso nuevoEstadoCurso = EstadoCurso.NO_PUBLICADO;
+		Curso curso = cursoService.encontrarCursoPorId(idCurso);
+		if(!curso.isPublicado()){
+			nuevoEstadoCurso = EstadoCurso.PUBLICADO;
+		}
+				
+		curso.setEstadoCurso(nuevoEstadoCurso);		
+		cursoService.guardarCurso(curso);
+		
+		request.getSession().setAttribute("listaCursos", null);
+		
+		return "redirect:/docente/" + legajo + "/bandeja-cursos/" + numeroPagina;
+	}	
 }
