@@ -39,7 +39,6 @@ public class DocenteController {
 		return "redirect:/docente/" + idUsuario + "/bandeja-cursos/1";
 	}
 	
-	@SuppressWarnings({"rawtypes", "unchecked"})
 	@RequestMapping(value="/{id}/bandeja-cursos/{numeroPagina}", method = RequestMethod.GET)
 	public String misCursosPagina(HttpServletRequest request, 
 			@PathVariable("id") long legajo,
@@ -47,6 +46,43 @@ public class DocenteController {
 			@PathVariable Integer numeroPagina, 
 			Model uiModel) {
 		
+		return bandejaPorPagina(request, legajo, model, numeroPagina, uiModel);
+	}
+	
+	@RequestMapping(value = "/cambiarEstadoPublicacion/{idCurso}/{pagina}/{idDocente}", method = RequestMethod.POST)
+	public String cambiarEstadoPublicacion(@PathVariable("idCurso") long idCurso, @PathVariable("pagina") Integer numeroPagina, 
+			@PathVariable("idDocente") long legajo, Model model, HttpServletRequest request) {
+		/*
+		 * OjO: Viene con el valor con el que fue en el formulario en la accion anterior, 
+		 * asi que hay que cambiarle el valor.
+		 */
+		Curso curso = cursoService.encontrarCursoPorId(idCurso);
+		EstadoCurso nuevoEstadoCurso = EstadoCurso.NO_PUBLICADO;		
+		if(!curso.isPublicado()){
+			nuevoEstadoCurso = EstadoCurso.PUBLICADO;
+		}
+		
+		if(EstadoCurso.PUBLICADO.equals(nuevoEstadoCurso) && (curso.getUnidades() == null || curso.getUnidades().isEmpty())){
+			model.addAttribute("mostrarMensajeErrorPublicacion", true);
+			StringBuilder mensaje = new StringBuilder();
+			mensaje.append("El curso '" + curso.getNombre() + "' ");
+			mensaje.append("no se puede publicar porque no tiene unidades cargadas.");					
+			model.addAttribute("mensajeErrorPublicacion", mensaje.toString());
+			
+			return bandejaPorPagina(request, legajo, model, numeroPagina, model);
+		}
+			
+		curso.setEstadoCurso(nuevoEstadoCurso);		
+		cursoService.guardarCurso(curso);
+		
+		request.getSession().setAttribute("listaCursos", null);
+		
+		return bandejaPorPagina(request, legajo, model, numeroPagina, model);
+	}
+	
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	private String bandejaPorPagina(HttpServletRequest request, @PathVariable("id") long legajo, Model model,
+			@PathVariable Integer numeroPagina, Model uiModel){
 		String nombreCurso = (String)model.asMap().get("nombreCurso");
 		if (nombreCurso == null) {
 			nombreCurso = "";
@@ -69,8 +105,7 @@ public class DocenteController {
 		}
 		
 		request.getSession().setAttribute("listaCursos", pagedListHolder);
-		
-		
+				
 		int current = pagedListHolder.getPage() + 1;
 		int begin = Math.max(1, current - PRODUCT_LIST_PAGE_SIZE);
 		int end = Math.min(begin+5, pagedListHolder.getPageCount());
@@ -87,28 +122,5 @@ public class DocenteController {
 		uiModel.addAttribute(MODELO_ATRIBUTO_CURSOS, pagedListHolder);
 		
 		return BANDEJA_CURSO;
-
 	}
-	
-	@RequestMapping(value = "/cambiarEstadoPublicacion/{idCurso}/{pagina}/{idDocente}", method = RequestMethod.POST)
-	public String cambiarEstadoPublicacion(@PathVariable("idCurso") long idCurso, @PathVariable("pagina") Integer numeroPagina, 
-			@PathVariable("idDocente") long legajo, Model model, HttpServletRequest request) {
-		/*
-		 * OjO: Viene con el valor con el que fue en el formulario en la accion anterior, 
-		 * asi que hay que cambiarle el valor.
-		 */
-		
-		EstadoCurso nuevoEstadoCurso = EstadoCurso.NO_PUBLICADO;
-		Curso curso = cursoService.encontrarCursoPorId(idCurso);
-		if(!curso.isPublicado()){
-			nuevoEstadoCurso = EstadoCurso.PUBLICADO;
-		}
-				
-		curso.setEstadoCurso(nuevoEstadoCurso);		
-		cursoService.guardarCurso(curso);
-		
-		request.getSession().setAttribute("listaCursos", null);
-		
-		return "redirect:/docente/" + legajo + "/bandeja-cursos/" + numeroPagina;
-	}	
 }

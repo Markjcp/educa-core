@@ -52,6 +52,13 @@
                 	</form>
                 </div>
                 
+                <!-- FIN de Mensajes de publicacion curso -->
+                <div th:if="${mostrarMensajeErrorPublicacion} == true" class="alert alert-danger alert-dismissable">
+				   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+				   <a href="#" class="alert-link">Error!</a> <span th:text="${mensajeErrorPublicacion}"></span>   				   	  
+				</div>
+				<!-- FIN de Mensajes de publicacion curso -->
+                
                 <div th:if="${not #lists.isEmpty(cursos)}" class="panel panel-default">				    
 				    <div class="panel-body">
 				        <div id="dataTables-example_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">				            
@@ -70,12 +77,12 @@
 			                                <tr th:each="curso : ${cursos.pageList}" class="gradeA odd" role="row">			                                	
 										        <td th:text="${curso.nombre}">&nbsp;</td>
 										        <td>Docente</td>
-										        <td>
-										        	<form id="unidadPublicacionForm" action="#" th:action="@{/docente/cambiarEstadoPublicacion/{idCurso}/{pagina}/{legajo}(idCurso=${curso.id},pagina=${currentIndex},legajo=${legajo})}" method="post">
+										        <td>										        	
+										        	<form th:id="'unidadPublicacionForm-' + ${curso.id}" action="#" th:action="@{/docente/cambiarEstadoPublicacion/{idCurso}/{pagina}/{legajo}(idCurso=${curso.id},pagina=${currentIndex},legajo=${legajo})}" method="post">
 											        	<div class="switch">	                         	                         	
 														    <label style="position: absolute; color: #000; font: inherit;">
 														      No
-														      <input type="checkbox" th:checked="${curso.publicado}" onchange="cambioValorPublicacion()" />
+														      <input type="checkbox" th:checked="${curso.publicado}" th:onclick="'cambioValorPublicacion(' + ${curso.id} + ')'" />
 														      <span class="lever"></span>
 														      S&iacute;
 														    </label>
@@ -148,8 +155,9 @@
     <script src="js/init.js" th:src="@{/js/init.js}"></script>
     
     <script type="text/javascript">
-    	function cambioValorPublicacion(){    		   	
-			$('#unidadPublicacionForm').submit();
+    	function cambioValorPublicacion(idCurso){
+    		var id = '#unidadPublicacionForm-' + idCurso;
+			$(id).submit();
     	}
     </script>
 </body>

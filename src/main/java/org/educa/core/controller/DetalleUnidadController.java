@@ -73,8 +73,23 @@ public class DetalleUnidadController {
 		if(!unidadForm.isPublicado()){
 			nuevoEstadoCurso = EstadoCurso.PUBLICADO;
 		}
-		
 		Curso curso = unidadForm.getCurso();
+		if(EstadoCurso.PUBLICADO.equals(nuevoEstadoCurso) && (curso.getUnidades() == null || curso.getUnidades().isEmpty())){
+			model.addAttribute("mostrarMensajeErrorPublicacion", true);
+			StringBuilder mensaje = new StringBuilder();
+			mensaje.append("El curso '" + curso.getNombre() + "' ");
+			mensaje.append("no se puede publicar porque no tiene unidades cargadas.");					
+			model.addAttribute("mensajeErrorPublicacion", mensaje.toString());
+			
+			model.addAttribute("unidadForm", unidadForm);
+			model.addAttribute("mostrarTabMaterialTeorico", true);
+			model.addAttribute("mostrarTabVideo", false);
+			model.addAttribute("mostrarTabPracticas", false);
+			model.addAttribute("mostrarTabExamen", false);
+			
+			return DETALLE_CURSO;
+		}
+				
 		curso.setEstadoCurso(nuevoEstadoCurso);
 		
 		cursoService.guardarCurso(curso);

@@ -51,7 +51,14 @@
 	                         </div>	                         	 			    		 	                        
 				    	</div>
 			    	</div>
-			    </form>			  
+			    </form>
+			    
+			    <!-- FIN de Mensajes de publicacion curso -->
+                <div th:if="${mostrarMensajeErrorPublicacion} == true" class="alert alert-danger alert-dismissable">
+				   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+				   <a href="#" class="alert-link">Error!</a> <span th:text="${mensajeErrorPublicacion}"></span>	   				   	  
+				</div>
+				<!-- FIN de Mensajes de publicacion curso -->		  
 			    
 				<div class="row">
 					<div >
