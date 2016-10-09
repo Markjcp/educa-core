@@ -234,7 +234,7 @@ CREATE TABLE IF NOT EXISTS `educa`.`video_unidad` (
   `numero_componente` INT NOT NULL,
   `id_curso` INT NOT NULL,
   `numero_video` INT NOT NULL,
-  `video` BLOB NOT NULL,
+  `video` LONGBLOB NOT NULL,
   `titulo` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`numero_componente`, `id_curso`, `numero_video`),
   INDEX `fk_video_unidad_unidad1_idx` (`numero_componente` ASC, `id_curso` ASC),

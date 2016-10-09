@@ -21,6 +21,12 @@ public class VideoUnidad implements Serializable {
 
 	@Column(name = "titulo")
 	private String titulo;
+	
+	@Column(name = "numero_componente", insertable = false, updatable = false)
+	private Integer numero;
+
+	@Column(name = "id_curso", insertable = false, updatable = false)
+	private Long idCurso;	
 
 	public VideoUnidadId getId() {
 		return id;
@@ -44,6 +50,22 @@ public class VideoUnidad implements Serializable {
 
 	public void setTitulo(String titulo) {
 		this.titulo = titulo;
+	}
+	
+	public Integer getNumero() {
+		return numero;
+	}
+
+	public void setNumero(Integer numero) {
+		this.numero = numero;
+	}
+
+	public Long getIdCurso() {
+		return idCurso;
+	}
+
+	public void setIdCurso(Long idCurso) {
+		this.idCurso = idCurso;
 	}
 
 	@Override

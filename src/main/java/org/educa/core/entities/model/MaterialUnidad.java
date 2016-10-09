@@ -18,6 +18,12 @@ public class MaterialUnidad implements Serializable {
 
 	@Column(name = "material")
 	private byte[] material;
+	
+	@Column(name = "numero_componente", insertable = false, updatable = false)
+	private Integer numero;
+
+	@Column(name = "id_curso", insertable = false, updatable = false)
+	private Long idCurso;	
 
 	public MaterialUnidadId getId() {
 		return id;
@@ -33,6 +39,22 @@ public class MaterialUnidad implements Serializable {
 
 	public void setMaterial(byte[] material) {
 		this.material = material;
+	}
+	
+	public Integer getNumero() {
+		return numero;
+	}
+
+	public void setNumero(Integer numero) {
+		this.numero = numero;
+	}
+
+	public Long getIdCurso() {
+		return idCurso;
+	}
+
+	public void setIdCurso(Long idCurso) {
+		this.idCurso = idCurso;
 	}
 
 	@Override
