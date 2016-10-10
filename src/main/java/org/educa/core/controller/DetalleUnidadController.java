@@ -1,15 +1,27 @@
 package org.educa.core.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.StringReader;
+
 import javax.validation.Valid;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.educa.core.controller.forms.UnidadForm;
+import org.educa.core.dao.MaterialUnidadRepository;
+import org.educa.core.dao.UnidadRepository;
 import org.educa.core.entities.model.Curso;
 import org.educa.core.entities.model.EstadoCurso;
 import org.educa.core.entities.model.ExamenUnidad;
 import org.educa.core.entities.model.ExamenUnidadId;
+import org.educa.core.entities.model.MaterialUnidad;
+import org.educa.core.entities.model.MaterialUnidadId;
 import org.educa.core.entities.model.Unidad;
 import org.educa.core.services.CursoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +30,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 @Controller
 @RequestMapping("/detalleUnidad")
@@ -28,6 +43,14 @@ public class DetalleUnidadController {
 	
 	@Autowired
 	private CursoService cursoService;
+	
+	@Autowired
+	@Qualifier("materialUnidadRepository")
+	private MaterialUnidadRepository materialUnidadRepository;
+	
+	@Autowired
+	@Qualifier("unidadRepository")
+	private UnidadRepository unidadRepository;
 	
 	@RequestMapping(value = "/{idCurso}/{idUnidad}/{numeroUnidad}", method = RequestMethod.GET)
 	public String index(@PathVariable("idCurso") long idCurso, @PathVariable("idUnidad") long idUnidad, 
@@ -50,6 +73,12 @@ public class DetalleUnidadController {
 		unidadForm.setCurso(curso);
 		unidadForm.setUnidad(unidad);
 		unidadForm.setPublicado(false);
+		
+		String contenidoMaterialGuardado = null;
+		if(unidad.getMaterial() != null && !unidad.getMaterial().isEmpty()){
+			contenidoMaterialGuardado = new String(unidad.getMaterial().get(0).getMaterial());
+		}		
+		unidadForm.setMaterialTeorico(contenidoMaterialGuardado);
 		
 		if(EstadoCurso.PUBLICADO.equals(curso.getEstadoCurso())){
 			unidadForm.setPublicado(true);
@@ -112,6 +141,108 @@ public class DetalleUnidadController {
 		
 		return DETALLE_CURSO;
 	}	
+		
+	@RequestMapping(value = "/guardarMaterialTeorico", method = RequestMethod.POST)
+	public String guardarMaterialTeorico(@ModelAttribute @Valid UnidadForm unidadForm, BindingResult bindingResult, Model model) {
+		System.out.println("Texto de material guardado: " + unidadForm.getMaterialTeorico());
+		
+		if(!validaContenidoMaterialUnidad(unidadForm)){
+			model.addAttribute("mostrarErrorContenidoMaterialTeoricoVacio", true);
+			model.addAttribute("mensajeErrorContenidoMaterialTeoricoVacio", "Debe de cargar material teórico para poder guardarlo.");
+			
+			model.addAttribute("unidadForm", unidadForm);
+			model.addAttribute("mostrarTabMaterialTeorico", true);
+			model.addAttribute("mostrarTabVideo", false);
+			model.addAttribute("mostrarTabPracticas", false);
+			model.addAttribute("mostrarTabExamen", false);
+			model.addAttribute("mostrarMensajeCantidadPreguntas", true);
+			
+			return DETALLE_CURSO;
+		}
+		
+		
+		Unidad unidad = unidadRepository.findOne(unidadForm.getUnidad().getId());//Voy a buscarla porque las listas se cargaron en otra sesion de hibernate (no en la actual).
+		MaterialUnidad material = null;
+		if(unidad.getMaterial() == null || unidad.getMaterial().isEmpty()){
+			material = new MaterialUnidad();
+			
+			MaterialUnidadId id = new MaterialUnidadId();
+			id.setIdCurso(unidadForm.getCurso().getId());
+			id.setIdMaterial(new Long(unidad.getId().getNumero()));
+			id.setNumero(1);
+			
+			material.setId(id);
+			unidad.addMaterial(material);
+			
+			material.setUnidad(unidad);
+			material.setIdCurso(unidad.getCurso().getId());
+		} else {
+			material = unidad.getMaterial().get(0);
+		}
+		
+		byte[] materialBytes = unidadForm.getMaterialTeorico().getBytes();		
+		material.setMaterial(materialBytes);
+		
+		materialUnidadRepository.save(material);
+		
+		Unidad unidadCompleta = unidadRepository.findOne(unidad.getId());		
+		unidadForm.setUnidad(unidadCompleta);
+		
+		String contenidoMaterialGuardado = null;
+		if(unidadCompleta.getMaterial() != null && !unidadCompleta.getMaterial().isEmpty()){
+			contenidoMaterialGuardado = new String(unidadCompleta.getMaterial().get(0).getMaterial());
+		}		
+		unidadForm.setMaterialTeorico(contenidoMaterialGuardado);
+		
+		model.addAttribute("unidadForm", unidadForm);
+		model.addAttribute("mostrarTabMaterialTeorico", true);
+		model.addAttribute("mostrarTabVideo", false);
+		model.addAttribute("mostrarTabPracticas", false);
+		model.addAttribute("mostrarTabExamen", false);
+		model.addAttribute("mostrarMensajeCantidadPreguntas", true);
+		model.addAttribute("mostrarMensajeMaterialGuardado", true);
+		
+		return DETALLE_CURSO;
+	}
+
+	private boolean validaContenidoMaterialUnidad(UnidadForm unidadForm) {
+		boolean valido = true;
+		
+		//TODO SACAR ESTO DESDE ACA
+		if(valido){
+			return valido;
+		}
+		//TODO SACAR ESTO HASTA ACA
+		
+		//TODO REVISAR ESTO XQ NO ANDA BIEN!
+		if(unidadForm.getMaterialTeorico() == null || unidadForm.getMaterialTeorico().isEmpty()){
+			valido = false;
+		} else {
+			try {
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder builder = factory.newDocumentBuilder();
+				String xmlConCabecera = "<?xml version=\"1.0\"?>" + unidadForm.getMaterialTeorico();
+				ByteArrayInputStream input =  new ByteArrayInputStream(xmlConCabecera.getBytes("utf-8"));
+				Document doc = builder.parse(input);
+				String contenido = doc.getTextContent();
+				
+				// builder.parse(new InputSource("<?xml version=\"1.0\"?><body>" + unidadForm.getMaterialTeorico() + "</body>"  ))
+
+				
+				if(contenido == null || contenido.isEmpty()){
+					valido = false;
+				}				
+			} catch (SAXException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ParserConfigurationException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return valido;
+	}
 	
 	@RequestMapping(value = "/guardarPreguntaExamen", method = RequestMethod.POST)
 	public String guardarPreguntaExamen(@ModelAttribute @Valid UnidadForm unidadForm, BindingResult bindingResult, Model model) {

@@ -14,7 +14,8 @@
 	<link href="../../static/css/style.css" th:href="@{/css/style.css}" rel="stylesheet" media="screen,projection" />	
 	<link href="../../static/css/educa.css" th:href="@{/css/educa.css}" rel="stylesheet" media="screen,projection" />
 	<link href="../../static/css/bootstrap-datetimepicker.css" th:href="@{/css/bootstrap-datetimepicker.css}" rel="stylesheet" media="screen,projection" />	
-	<link href="../../static/css/font-awesome.css" th:href="@{/css/font-awesome.css}" rel="stylesheet" media="screen,projection" />	 
+	<link href="../../static/css/font-awesome.css" th:href="@{/css/font-awesome.css}" rel="stylesheet" media="screen,projection" />
+	<link href="../../static/wysiwyg-sceditor/sceditor/themes/modern.css" th:href="@{/wysiwyg-sceditor/sceditor/themes/modern.css}" rel="stylesheet" media="all" />
 </head>
 <body>
 	<div th:replace="views/fragments/header :: header">&nbsp;</div>
@@ -71,7 +72,60 @@
 						<div class="tab-content">
 							<!-- FIN - TAB DE MATERIAL TEORICO -->
 							<div th:class="${mostrarTabMaterialTeorico} ? 'tab-pane fade active in' : 'tab-pane fade'" id="materialTeoricoUnidad">
-								<br></br><br></br>														    								    
+								<br></br><br></br>
+								
+								<form action="#" th:action="@{/detalleUnidad/guardarMaterialTeorico}" th:object="${unidadForm}" method="post" id="formularioMaterialTeorico">
+									<div id="formularioMaterialTeoricoDetalle">
+									  <div class="col l6 s12">									  	    					    		
+								        	<div class="form-group input-field" >
+								        		<label for="theme" style="color: #000;">Si lo desea cambie el estilo del editor - ESTO SACARLO XQ ROMPE LOS ESTILOS, VER ENTRE MODERNO Y DOCUMENTO</label>                             
+					                            <select id="theme" class="form-control input-field">
+					                             	<option value="modern">Moderno</option>
+											        <option value="default">Por defecto</option>													
+													<option value="office-toolbar">Toolbar formal</option>
+													<option value="office">Documento</option>
+													<option value="square">Cuadrado</option>                             	              
+					                            </select>					                                                         
+					                         </div>					                         			    		 			    		 	                        
+								    	</div>
+								    	<div class="col l6 s12"></div>								
+										<div class="row">
+											<div class="col l12 s12">
+												<!-- Mensajes de error guardar -->
+												<div th:if="${mostrarErrorContenidoMaterialTeoricoVacio} == true" class="alert alert-danger alert-dismissable">
+												   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+												   <a href="#" class="alert-link">Error!</a> <span th:text="${mensajeErrorContenidoMaterialTeoricoVacio}"></span>												   												   				  
+												</div>
+												<!-- FIN - Mensajes de error guardar -->
+												
+												<!-- Mensajes de guardar -->								
+												<div th:if="${mostrarMensajeMaterialGuardado} == true" class="alert alert-success alert-dismissable">
+												   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+												   <a href="#" class="alert-link">Bien Hecho!</a> El material te&oacute;rico se guard&oacute; con &eacute;xito.	                   
+												</div>
+												<!-- FIN de Mensajes de guardar -->
+																								
+												<div class="form-group input-field" style="text-align: -webkit-center;">
+													<textarea name="bbcode_field" style="height:300px;width:600px;" th:field="*{materialTeorico}" th:text="*{materialTeorico}" th:value="*{materialTeorico}">														
+													</textarea>													
+												</div>											
+											</div>
+										</div>										
+									</div>
+									
+									<div class="row">
+										<div class="col-xs-12">
+											<hr></hr>
+										</div>
+									</div>
+									
+									<div class="col l12 s12">			    					    				
+										<div class="form-group">
+											<button type="submit" class="btn orange-effect orange darken-4">Guardar</button>                       		
+											<a class="btn orange-effect orange darken-4" href="#" th:href="@{/cursoNoAdmin/configuracionCurso/{cursoId}(cursoId=*{curso.id})}">Salir</a>
+										 </div>
+									</div>
+								</form>											    								    
 							</div>
 							<!-- FIN - TAB DE MATERIAL TEORICO -->
 							
@@ -90,8 +144,6 @@
 							<!-- TAB DE EXAMEN -->
 							<div th:class="${mostrarTabExamen} ? 'tab-pane fade active in' : 'tab-pane fade'" id="examenUnidad">								
 								<br></br><br></br>
-								
-								
 								
 								<form action="#" th:action="@{/detalleUnidad/guardarPreguntaExamen}" th:object="${unidadForm}" method="post" id="formularioAltaPreguntaExamen">
 									<div id="formularioAltaPreguntaExamenDetalle">
@@ -144,7 +196,7 @@
 											
 												<div class="col-xs-6">
 													<div class="form-group input-field">
-														<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion1" th:checked="*{opcionUnoSeleccionada}" th:value="*{opcionUnaSeleccionada}"/>
+														<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion1" th:checked="*{opcionUnoSeleccionada}" th:value="*{opcionUnoSeleccionada}"/>
 	      												<label for="filled-in-box-opcion1">
 	      													<input id="opcion1" type="text" class="validate" th:field="*{respuestaOpcionUno}"/>
 											          		<label for="opcion1" style="position: absolute;">Opci&oacute;n 1</label>
@@ -204,7 +256,7 @@
 									<div class="col l12 s12">			    					    				
 										<div class="form-group">
 											<button type="submit" class="btn orange-effect orange darken-4">Guardar</button>                       		
-											<a class="btn orange-effect orange darken-4" href="#">Salir</a>
+											<a class="btn orange-effect orange darken-4" href="#" th:href="@{/cursoNoAdmin/configuracionCurso/{cursoId}(cursoId=*{curso.id})}">Salir</a>
 										 </div>
 									</div>								
 								</form>
@@ -227,7 +279,9 @@
     <script src="../../static/js/moment-with-locales.js" th:src="@{/js/moment-with-locales.js}"></script>
     <script src="../../static/js/moment.js" th:src="@{/js/moment.js}"></script>
     <script src="../../static/js/locale/es.js" th:src="@{/js/locale/es.js}"></script>    
-    <script src="../../static/js/bootstrap-datetimepicker.min.js" th:src="@{/js/bootstrap-datetimepicker.min.js}"></script>
+    <script src="../../static/js/bootstrap-datetimepicker.min.js" th:src="@{/js/bootstrap-datetimepicker.min.js}"></script>    
+    <script src="../../static/wysiwyg-sceditor/sceditor/jquery.sceditor.xhtml.js" th:src="@{/wysiwyg-sceditor/sceditor/jquery.sceditor.xhtml.js}"></script>
+    <script src="../../static/wysiwyg-sceditor/languages/es.js" th:src="@{/wysiwyg-sceditor/languages/es.js}"></script>    
     
     <script type="text/javascript">
     	function cambioValorPublicacion(){    		   	
@@ -254,6 +308,47 @@
 	    		$("#opcionesMultipleChoice").hide();
 	        }
 	    });
+	</script>
+	
+	<script>
+		// Source: http://www.backalleycoder.com/2011/03/20/link-tag-css-stylesheet-load-event/
+		var loadCSS = function(url, callback){
+			var link = document.createElement('link');
+			link.type = 'text/css';
+			link.rel = 'stylesheet';
+			link.href = url;
+			link.id = 'theme-style';
+
+			document.getElementsByTagName('head')[0].appendChild(link);
+
+			var img = document.createElement('img');
+			img.onerror = function(){
+				if(callback) callback(link);
+			}
+			img.src = url;
+		}
+
+		$(document).ready(function() {
+			var initEditor = function() {
+				$("textarea").sceditor({
+					plugins: 'xhtml',
+					style: "../../../wysiwyg-sceditor/sceditor/themes/modern.css",
+					locale: "es"
+				});
+			};
+			
+			$("#theme").change(function() {
+				var theme = "../../../wysiwyg-sceditor/sceditor/themes/" + $(this).val() + ".css";
+
+				$("textarea").sceditor("instance").destroy();
+				$("link:first").remove();
+				$("#theme-style").remove();
+
+				loadCSS(theme, initEditor);
+			});
+
+			initEditor();
+		});
 	</script>
 </body>
 </html>

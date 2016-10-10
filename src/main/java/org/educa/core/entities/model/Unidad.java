@@ -1,6 +1,7 @@
 package org.educa.core.entities.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -149,6 +150,14 @@ public class Unidad implements Serializable, Comparable<Unidad> {
 
 	public void setMaterial(List<MaterialUnidad> material) {
 		this.material = material;
+	}
+	
+	public void addMaterial(MaterialUnidad material) {
+		if(this.material == null){
+			this.material = new ArrayList<MaterialUnidad>();
+		}
+		
+		this.material.add(material);
 	}
 
 	@Override

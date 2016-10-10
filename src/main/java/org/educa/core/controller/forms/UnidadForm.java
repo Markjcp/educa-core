@@ -6,9 +6,12 @@ import org.educa.core.entities.model.Unidad;
 public class UnidadForm {
 
 	private Curso curso;	
-	private boolean publicado;
-	
+	private boolean publicado;	
 	private Unidad unidad;
+	
+	//Material teorico
+	private String materialTeorico;
+	//Fin - Material teorico	
 	
 	//Examen
 	private boolean opcionUnoSeleccionada;
@@ -147,5 +150,13 @@ public class UnidadForm {
 
 	public void setCantidadPreguntasAlumno(Integer cantidadPreguntasAlumno) {
 		this.cantidadPreguntasAlumno = cantidadPreguntasAlumno;
+	}
+
+	public String getMaterialTeorico() {
+		return materialTeorico;
+	}
+
+	public void setMaterialTeorico(String materialTeorico) {
+		this.materialTeorico = materialTeorico;
 	}	
 }
