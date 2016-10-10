@@ -11,6 +11,7 @@ import org.educa.core.controller.forms.CursoForm;
 import org.educa.core.dao.SesionRepository;
 import org.educa.core.dao.UnidadRepository;
 import org.educa.core.entities.model.Curso;
+import org.educa.core.entities.model.EstadoCurso;
 import org.educa.core.entities.model.Sesion;
 import org.educa.core.entities.model.Unidad;
 import org.educa.core.services.CursoService;
@@ -53,7 +54,12 @@ public class CursoNoAdminController {
 		cargarValoresBasicosParaSesion(curso, model, false, false, false, false, false);
 		
 		CursoForm cursoForm = new CursoForm();
-		cursoForm.setCurso(curso);
+		cursoForm.setCurso(curso);		
+		cursoForm.setPublicado(false);
+		
+		if(EstadoCurso.PUBLICADO.equals(curso.getEstadoCurso())){
+			cursoForm.setPublicado(true);
+		}
 		
 		if(curso == null || curso.getUnidades() == null || curso.getUnidades().isEmpty()){
 			model.addAttribute("mostrarMensajeErrorCrearSesionSinUnidad", true);			
@@ -64,6 +70,35 @@ public class CursoNoAdminController {
 		
 		return CONFIGURACION_CURSO;
 	}
+	
+	@RequestMapping(value = "/cambiarEstadoPublicacion", method = RequestMethod.POST)
+	public String cambiarEstadoPublicacion(@ModelAttribute @Valid CursoForm cursoForm, BindingResult bindingResult, Model model) {
+		/*
+		 * OjO: Viene con el valor con el que fue en el formulario en la accion anterior, 
+		 * asi que hay que cambiarle el valor.
+		 */
+		
+		EstadoCurso nuevoEstadoCurso = EstadoCurso.NO_PUBLICADO;
+		if(!cursoForm.isPublicado()){
+			nuevoEstadoCurso = EstadoCurso.PUBLICADO;
+		}
+		Curso curso = cursoForm.getCurso();
+		if(EstadoCurso.PUBLICADO.equals(nuevoEstadoCurso) && (curso.getUnidades() == null || curso.getUnidades().isEmpty())){
+			model.addAttribute("mostrarMensajeErrorPublicacion", true);
+			StringBuilder mensaje = new StringBuilder();
+			mensaje.append("El curso '" + curso.getNombre() + "' ");
+			mensaje.append("no se puede publicar porque no tiene unidades cargadas.");					
+			model.addAttribute("mensajeErrorPublicacion", mensaje.toString());
+						
+			return configuracionCurso(curso.getId(), model);
+		}
+				
+		curso.setEstadoCurso(nuevoEstadoCurso);
+		
+		cursoService.guardarCurso(curso);
+		
+		return configuracionCurso(curso.getId(), model);
+	}	
 	
 	@RequestMapping(value = "/configuracionUnidadCurso", method = RequestMethod.POST)
 	public String guardarUnidadCurso(@ModelAttribute @Valid CursoForm cursoForm, BindingResult bindingResult, Model model) {

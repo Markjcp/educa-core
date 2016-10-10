@@ -58,6 +58,7 @@ public class DetalleUnidadController {
 		model.addAttribute("mostrarTabVideo", false);
 		model.addAttribute("mostrarTabPracticas", false);
 		model.addAttribute("mostrarTabExamen", false);
+		model.addAttribute("mostrarMensajeCantidadPreguntas", true);
 		
 		return DETALLE_CURSO;
 	}
@@ -86,6 +87,7 @@ public class DetalleUnidadController {
 			model.addAttribute("mostrarTabVideo", false);
 			model.addAttribute("mostrarTabPracticas", false);
 			model.addAttribute("mostrarTabExamen", false);
+			model.addAttribute("mostrarMensajeCantidadPreguntas", true);
 			
 			return DETALLE_CURSO;
 		}
@@ -104,6 +106,7 @@ public class DetalleUnidadController {
 		model.addAttribute("mostrarTabVideo", false);
 		model.addAttribute("mostrarTabPracticas", false);
 		model.addAttribute("mostrarTabExamen", false);
+		model.addAttribute("mostrarMensajeCantidadPreguntas", true);
 		
 		return DETALLE_CURSO;
 	}	
@@ -121,6 +124,7 @@ public class DetalleUnidadController {
 		model.addAttribute("mostrarTabVideo", false);
 		model.addAttribute("mostrarTabPracticas", false);
 		model.addAttribute("mostrarTabExamen", false);
+		model.addAttribute("mostrarMensajeCantidadPreguntas", true);
 		
 		return DETALLE_CURSO;
 	}

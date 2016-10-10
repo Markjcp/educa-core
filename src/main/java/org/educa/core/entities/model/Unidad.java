@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -53,17 +54,21 @@ public class Unidad implements Serializable, Comparable<Unidad> {
 	@Max(value = 9999, message = "La duración estimada no puede ser mayor a {value} horas.")	
 	private Integer duracionEstimada;
 	
-/*	@OneToOne(cascade = {CascadeType.DETACH, CascadeType.REFRESH, CascadeType.PERSIST})
-	@JoinColumn(name = "id_examen_unidad", referencedColumnName = "id", insertable = false, updatable = false)
-	@JsonIgnore //TODO VER SI HAY Q IGNORARLO O NO - VER CON MOBILE
+	//@OneToOne(cascade = {CascadeType.DETACH, CascadeType.REFRESH, CascadeType.PERSIST})
+	//@JoinColumn(name = "id_examen_unidad")	
+	//@JsonIgnore //TODO VER SI HAY Q IGNORARLO O NO - VER CON MOBILE
+	@Transient
 	private ExamenUnidad examenUnidad;
 	
 	//private List<VideoUnidad> videos;
 	
-	@OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.PERSIST})
-	@JoinColumn(name="id_curso")
-	@OrderBy(clause = "id.numero ASC")
-	private SortedSet<VideoUnidad> videos;*/
+	//@OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.PERSIST})
+	//@JoinColumn(name="id_curso")
+	//@OrderBy(clause = "id.numero ASC")
+	@Transient
+	private SortedSet<VideoUnidad> videos;//TODO
+	@Transient
+	private SortedSet<MaterialUnidad> material;//TODO
 
 	public Unidad() {
 		super();

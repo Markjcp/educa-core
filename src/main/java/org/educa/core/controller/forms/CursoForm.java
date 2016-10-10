@@ -19,6 +19,8 @@ public class CursoForm {
 	@Valid
 	private Sesion nuevaSesion;
 	
+	private boolean publicado;
+	
 	public CursoForm() {
 		super();
 		editar = false;
@@ -54,5 +56,13 @@ public class CursoForm {
 
 	public void setNuevaSesion(Sesion nuevaSesion) {
 		this.nuevaSesion = nuevaSesion;
+	}
+
+	public boolean isPublicado() {
+		return publicado;
+	}
+
+	public void setPublicado(boolean publicado) {
+		this.publicado = publicado;
 	}	
 }

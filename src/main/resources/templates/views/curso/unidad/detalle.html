@@ -39,21 +39,14 @@
 				    	<div class="col s1"></div>
 				    	<div class="col s3">	
 				        	<div class="form-group input-field">
-				        		 <!-- Switch -->
-		                         <div class="switch" style="color: #000; border-bottom: 1px solid #26a69a; width: 100%; height: 3rem;">	                         	                         	
-								    <label style="position: absolute; color: #000; font: inherit;">
-								      No publicado
-								      <input type="checkbox" th:checked="*{publicado}" th:value="*{publicado}" onchange="cambioValorPublicacion()" />
-								      <span class="lever"></span>
-								      Publicado
-								    </label>
-								  </div>
+				        		<input type="checkbox" id="publicado" th:checked="*{publicado}" disabled="disabled" style="color: #000; border-bottom: 1px solid #26a69a;" />
+      							<label for="publicado" style="position: absolute; color: #000; font: inherit;">Curso publicado</label>				        		
 	                         </div>	                         	 			    		 	                        
 				    	</div>
 			    	</div>
 			    </form>
 			    
-			    <!-- FIN de Mensajes de publicacion curso -->
+			    <!-- Mensajes de publicacion curso -->
                 <div th:if="${mostrarMensajeErrorPublicacion} == true" class="alert alert-danger alert-dismissable">
 				   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
 				   <a href="#" class="alert-link">Error!</a> <span th:text="${mensajeErrorPublicacion}"></span>	   				   	  
@@ -98,25 +91,123 @@
 							<div th:class="${mostrarTabExamen} ? 'tab-pane fade active in' : 'tab-pane fade'" id="examenUnidad">								
 								<br></br><br></br>
 								
-								<!-- Mensajes de alta pregunta -->								
-								<div th:if="${mostrarMensajeAltaPregunta} == true" class="alert alert-success alert-dismissable">
-								   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-								   <a href="#" class="alert-link">Bien Hecho!</a> La pregunta se cre&oacute; con &eacute;xito.	                   
-								</div>
-								<!-- FIN de Mensajes de alta pregunta -->
+								
 								
 								<form action="#" th:action="@{/detalleUnidad/guardarPreguntaExamen}" th:object="${unidadForm}" method="post" id="formularioAltaPreguntaExamen">
 									<div id="formularioAltaPreguntaExamenDetalle">
-										<div class="col l8 s12">
+										<div class="col l12 s12">
 											<div class="form-group input-field">
-												
+												<div class="row">
+											        <div class="input-field col s8">
+											          <i class="small material-icons prefix">note_add</i>
+											          <input id="icon_prefix" type="text" class="validate" th:field="*{pregunta}"/>
+											          <label for="icon_prefix" style="position: absolute;">Cantidad de preguntas para el alumno</label>
+											        </div>
+											        <div class="input-field col s4">
+											        	<div th:if="${mostrarMensajeCantidadPreguntas} == true" class="alert alert-warning alert-dismissable">														   
+														   <a href="#" class="alert-link">Cuidado!</a> No olvide cargar este campo.	                   
+														</div>											        												        
+											        </div>
+											     </div>
 											</div>
 										</div>
+										
+										<!-- Mensajes de alta pregunta -->								
+										<div th:if="${mostrarMensajeAltaPregunta} == true" class="alert alert-success alert-dismissable">
+										   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+										   <a href="#" class="alert-link">Bien Hecho!</a> La pregunta se cre&oacute; con &eacute;xito.	                   
+										</div>
+										<!-- FIN de Mensajes de alta pregunta -->
+									
+										<div class="col l12 s12">
+											<div class="form-group input-field">
+												<div class="row">
+											        <div class="input-field col s8">
+											          <i class="small material-icons prefix">mode_edit</i>
+											          <input id="icon_prefix" type="text" class="validate" th:field="*{pregunta}"/>
+											          <label for="icon_prefix" style="position: absolute;">Pregunta para incluir en el examen</label>
+											        </div>
+											        <div class="input-field col s4">
+											        	<input id="multipleChoiceCheckbox" type="checkbox" th:checked="*{esMultipleChoice}" th:value="*{esMultipleChoice}"/>
+      													<label for="multipleChoiceCheckbox" style="color: #000;">M&uacute;ltiple choice</label>											         
+											        </div>
+											     </div>
+											</div>
+										</div>
+										<div id="opcionesMultipleChoice" class="row">
+											<div class="col l2 s12">											
+											</div>
+											<div class="col l8 s12">
+												<div class="alert alert-success">
+					                                <a href="#" class="alert-link">Respuesta correcta!</a> No olvide tildar la respuesta correcta.
+					                            </div>
+											
+												<div class="col-xs-6">
+													<div class="form-group input-field">
+														<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion1" th:checked="*{opcionUnaSeleccionada}" th:value="*{opcionUnaSeleccionada}"/>
+	      												<label for="filled-in-box-opcion1">
+	      													<input id="opcion1" type="text" class="validate" th:field="*{respuestaOpcionUna}"/>
+											          		<label for="opcion1" style="position: absolute;">Opci&oacute;n 1</label>
+	      												</label>
+													</div>
+													<br></br>
+													<div class="form-group input-field">
+														<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion2" th:checked="*{opcionDosSeleccionada}" th:value="*{opcionDosSeleccionada}"/>														
+	      												<label for="filled-in-box-opcion2">
+	      													<input id="opcion2" type="text" class="validate" th:field="*{respuestaOpcionDos}"/>
+											          		<label for="opcion2" style="position: absolute;">Opci&oacute;n 2</label>
+	      												</label>
+													</div>													
+												</div>
+												<div class="col-xs-6">
+													<div class="form-group input-field">
+														<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion3" th:checked="*{opcionTresSeleccionada}" th:value="*{opcionTresSeleccionada}"/>
+	      												<label for="filled-in-box-opcion3">
+	      													<input id="opcion3" type="text" class="validate" th:field="*{respuestaOpcionTres}"/>
+											          		<label for="opcion3" style="position: absolute;">Opci&oacute;n 3</label>	      													
+	      												</label>
+													</div>
+													<br></br>
+													<div class="form-group input-field">
+														<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion4" th:checked="*{opcionCuatroSeleccionada}" th:value="*{opcionCuatroSeleccionada}"/>
+	      												<label for="filled-in-box-opcion4">
+	      													<input id="opcion4" type="text" class="validate" th:field="*{respuestaOpcionCuatro}"/>
+											          		<label for="opcion4" style="position: absolute;">Opci&oacute;n 4</label>	      													
+	      												</label>
+													</div>
+												</div>												
+											</div>
+											<div class="col l2 s12">
+											</div>
+										</div>
+										<div id="preguntaUnica">
+											<div class="col l12 s12">
+												<div class="form-group input-field">
+													<div class="row">
+												        <div class="input-field col s8">
+												          <i class="small material-icons prefix">question_answer</i>									          
+												          <input id="icon_prefix" type="text" class="validate" th:field="*{respuestaUnica}"/>
+												          <label for="icon_prefix" style="position: absolute;">Respuesta</label>
+												        </div>												        
+												     </div>
+												</div>
+											</div>																			
+										</div>
 									</div>
-								
-								
+																		
+									<div class="row">
+										<div class="col-xs-12">
+											<hr></hr>
+										</div>
+									</div>
+									
+									<div class="col l12 s12">			    					    				
+										<div class="form-group">
+											<button type="submit" class="btn orange-effect orange darken-4">Guardar</button>                       		
+											<a class="btn orange-effect orange darken-4" href="#">Salir</a>
+										 </div>
+									</div>								
 								</form>
-																							
 							</div>
 							<!-- FIN - TAB DE EXAMEN -->
 						</div>
@@ -142,107 +233,27 @@
     	function cambioValorPublicacion(){    		   	
 			$('#unidadPublicacionForm').submit();
     	}
-    
-    
-	    $(function () {
-	    	$('#fechaDesdeInscripcion').datetimepicker({            
-	            format: 'DD-MM-YYYY',
-	            locale: 'es'
-	        });
-	        $('#fechaDesde').datetimepicker({            
-	            format: 'DD-MM-YYYY',
-	            locale: 'es'
-	        });
-	        $('#fechaHasta').datetimepicker({            
-	            format: 'DD-MM-YYYY',
-	            locale: 'es'
-	        });
-	    });
 	    
-	    $(function () {
-	    	$('#fechaDesdeInscripcionActualizadar').datetimepicker({            
-	            format: 'DD-MM-YYYY',
-	            locale: 'es'
-	        });
-	        $('#fechaDesdeActualizadar').datetimepicker({            
-	            format: 'DD-MM-YYYY',
-	            locale: 'es'
-	        });
-	        $('#fechaHastaActualizadar').datetimepicker({            
-	            format: 'DD-MM-YYYY',
-	            locale: 'es'
-	        });
-	    });
+    	$(function () {
+    		var estaSeleccionado =  $( '#multipleChoiceCheckbox' ).is(':checked');
+    		if(estaSeleccionado){
+    			$("#preguntaUnica").hide();
+        		$("#opcionesMultipleChoice").show();
+    		} else {
+    			$("#preguntaUnica").show();
+        		$("#opcionesMultipleChoice").hide();
+    		}
+    	});
 	    
-	    function abrioTag(grupo){
-	    	if(grupo == "UNIDAD") {
-	    		//Unidad: Se muestra o no el formulario de carga, y no se muestran los errores del summit anterior
-	    		var esVisible = $("#formularioAltaUnidad").is(":visible");
-	    			    		
-	    		if(esVisible){
-	    			$("#formularioAltaUnidad").hide();
-	    		} else {
-	    			$("#formularioAltaUnidad").show();
-	    		}
-	    		
-	    		//Oculto mensajes de errores solo si nunca lleno el formulario
-	    		var titulo = document.getElementById("nuevaUnidad.titulo").value;
-	    		var descripcion = document.getElementById("nuevaUnidad.descripcion").value;
-	    		var duracionEstimada = document.getElementById("nuevaUnidad.duracionEstimada").value;
-	    		
-	    		var estaTodoVacio = true;	    		
-	    		if(titulo != ""){
-	    			estaTodoVacio = false;
-	    		}
-	    		
-	    		if(descripcion != ""){
-	    			estaTodoVacio = false;
-	    		}
-	    		
-	    		if(duracionEstimada != ""){
-	    			estaTodoVacio = false;
-	    		}
-	    		
-	    		if(estaTodoVacio == true){
-	    			$("#tituloUnidadError").hide();
-		    		$("#descripcionUnidadError").hide();
-		    		$("#duracionEstimadaUnidadError").hide();	
-	    		}	    			    			    		
-	    	} else if(grupo == "SESION") {
-	    		//Es Sesion: Se muestra o no el formulario de carga, y no se muestran los errores del summit anterior
-				var esVisible = $("#formularioAltaSesion").is(":visible");
-	    		
-	    		if(esVisible){
-	    			$("#formularioAltaSesion").hide();
-	    		} else {
-	    			$("#formularioAltaSesion").show();
-	    		}
-	    		
-	    		//Oculto mensajes de errores solo si nunca lleno el formulario
-	    		var fechaDesdeInscripcion = document.getElementById("fechaDesdeInscripcionInput").value;
-	    		var fechaDesde = document.getElementById("fechaDesdeInput").value;
-	    		var fechaHasta = document.getElementById("fechaHastaInput").value;	    			    		
-	    		
-	    		var estaTodoVacio = true;	    		
-	    		if(fechaDesdeInscripcion != ""){
-	    			estaTodoVacio = false;
-	    		}
-	    		
-	    		if(fechaDesde != ""){
-	    			estaTodoVacio = false;
-	    		}
-	    		
-	    		if(fechaHasta != ""){
-	    			estaTodoVacio = false;
-	    		}
-	    		
-	    		if(estaTodoVacio == true){
-	    			$("#fechaDesdeInscripcionError").hide();
-		    		$("#fechaDesdeError").hide();
-		    		$("#fechaHastaError").hide();	
-	    		}	    		
-	    	}	    	
-	    }
+	    $( '#multipleChoiceCheckbox' ).on( 'click', function() {
+	        if( $(this).is(':checked') ){
+	        	$("#preguntaUnica").hide();
+	    		$("#opcionesMultipleChoice").show();
+	        } else {
+	        	$("#preguntaUnica").show();
+	    		$("#opcionesMultipleChoice").hide();
+	        }
+	    });
 	</script>
 </body>
 </html>
