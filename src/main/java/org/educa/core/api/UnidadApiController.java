@@ -38,7 +38,7 @@ public class UnidadApiController {
 		return ResponseEntity
 	            .ok()
 	            .contentType(
-	                    MediaType.parseMediaType("application/octet-stream"))
+	                    MediaType.parseMediaType("video/mp4"))
 	            .body(new InputStreamResource(new ByteArrayInputStream(resultado.iterator().next().getVideo())));		
 	}
 	
