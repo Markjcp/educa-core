@@ -100,7 +100,7 @@
 												<div class="row">
 											        <div class="input-field col s8">
 											          <i class="small material-icons prefix">note_add</i>
-											          <input id="icon_prefix" type="text" class="validate" th:field="*{pregunta}"/>
+											          <input id="icon_prefix" type="number" min="1" class="validate" th:field="*{cantidadPreguntasAlumno}"/>
 											          <label for="icon_prefix" style="position: absolute;">Cantidad de preguntas para el alumno</label>
 											        </div>
 											        <div class="input-field col s4">
@@ -128,7 +128,7 @@
 											          <label for="icon_prefix" style="position: absolute;">Pregunta para incluir en el examen</label>
 											        </div>
 											        <div class="input-field col s4">
-											        	<input id="multipleChoiceCheckbox" type="checkbox" th:checked="*{esMultipleChoice}" th:value="*{esMultipleChoice}"/>
+											        	<input id="multipleChoiceCheckbox" type="checkbox" th:checked="*{multipleChoice}" th:value="*{multipleChoice}"/>
       													<label for="multipleChoiceCheckbox" style="color: #000;">M&uacute;ltiple choice</label>											         
 											        </div>
 											     </div>
@@ -144,9 +144,9 @@
 											
 												<div class="col-xs-6">
 													<div class="form-group input-field">
-														<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion1" th:checked="*{opcionUnaSeleccionada}" th:value="*{opcionUnaSeleccionada}"/>
+														<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion1" th:checked="*{opcionUnoSeleccionada}" th:value="*{opcionUnaSeleccionada}"/>
 	      												<label for="filled-in-box-opcion1">
-	      													<input id="opcion1" type="text" class="validate" th:field="*{respuestaOpcionUna}"/>
+	      													<input id="opcion1" type="text" class="validate" th:field="*{respuestaOpcionUno}"/>
 											          		<label for="opcion1" style="position: absolute;">Opci&oacute;n 1</label>
 	      												</label>
 													</div>

@@ -10,24 +10,23 @@ public class UnidadForm {
 	
 	private Unidad unidad;
 	
-	private boolean opcionUnaSeleccionada;
+	//Examen
+	private boolean opcionUnoSeleccionada;
 	private boolean opcionDosSeleccionada;
 	private boolean opcionTresSeleccionada;
-	private boolean opcionCuatroSeleccionada;
-	
-	private String respuestaOpcionUna;
+	private boolean opcionCuatroSeleccionada;	
+	private String respuestaOpcionUno;
 	private String respuestaOpcionDos;
 	private String respuestaOpcionTres;
-	private String respuestaOpcionCuatro;
-	
-	private String esMultipleChoice;
-	
-	private String respuestaUnica;
-	
-	private String pregunta;
+	private String respuestaOpcionCuatro;	
+	private boolean multipleChoice;	
+	private String respuestaUnica;	
+	private String pregunta;	
+	private Integer cantidadPreguntasAlumno;
+	//Fin - Examen
 
 	public UnidadForm() {
-		super();
+		super();		
 	}
 
 	public Curso getCurso() {
@@ -54,12 +53,12 @@ public class UnidadForm {
 		this.unidad = unidad;
 	}
 
-	public boolean isOpcionUnaSeleccionada() {
-		return opcionUnaSeleccionada;
+	public boolean isOpcionUnoSeleccionada() {
+		return opcionUnoSeleccionada;
 	}
 
-	public void setOpcionUnaSeleccionada(boolean opcionUnaSeleccionada) {
-		this.opcionUnaSeleccionada = opcionUnaSeleccionada;
+	public void setOpcionUnoSeleccionada(boolean opcionUnoSeleccionada) {
+		this.opcionUnoSeleccionada = opcionUnoSeleccionada;
 	}
 
 	public boolean isOpcionDosSeleccionada() {
@@ -86,12 +85,12 @@ public class UnidadForm {
 		this.opcionCuatroSeleccionada = opcionCuatroSeleccionada;
 	}
 
-	public String getRespuestaOpcionUna() {
-		return respuestaOpcionUna;
+	public String getRespuestaOpcionUno() {
+		return respuestaOpcionUno;
 	}
 
-	public void setRespuestaOpcionUna(String respuestaOpcionUna) {
-		this.respuestaOpcionUna = respuestaOpcionUna;
+	public void setRespuestaOpcionUno(String respuestaOpcionUno) {
+		this.respuestaOpcionUno = respuestaOpcionUno;
 	}
 
 	public String getRespuestaOpcionDos() {
@@ -118,14 +117,6 @@ public class UnidadForm {
 		this.respuestaOpcionCuatro = respuestaOpcionCuatro;
 	}
 
-	public String getEsMultipleChoice() {
-		return esMultipleChoice;
-	}
-
-	public void setEsMultipleChoice(String esMultipleChoice) {
-		this.esMultipleChoice = esMultipleChoice;
-	}
-
 	public String getRespuestaUnica() {
 		return respuestaUnica;
 	}
@@ -140,5 +131,21 @@ public class UnidadForm {
 
 	public void setPregunta(String pregunta) {
 		this.pregunta = pregunta;
+	}
+
+	public boolean isMultipleChoice() {
+		return multipleChoice;
+	}
+
+	public void setMultipleChoice(boolean multipleChoice) {
+		this.multipleChoice = multipleChoice;
+	}
+
+	public Integer getCantidadPreguntasAlumno() {
+		return cantidadPreguntasAlumno;
+	}
+
+	public void setCantidadPreguntasAlumno(Integer cantidadPreguntasAlumno) {
+		this.cantidadPreguntasAlumno = cantidadPreguntasAlumno;
 	}	
 }

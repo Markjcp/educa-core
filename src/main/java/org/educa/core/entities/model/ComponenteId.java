@@ -7,7 +7,7 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 public class ComponenteId implements Serializable {
-//UnidadId
+
 	private static final long serialVersionUID = 3040390215434698515L;
 
 	@Column(name = "numero_componente", updatable=true)
