@@ -5,7 +5,12 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "video_unidad")
@@ -26,7 +31,15 @@ public class VideoUnidad implements Serializable {
 	private Integer numero;
 
 	@Column(name = "id_curso", insertable = false, updatable = false)
-	private Long idCurso;	
+	private Long idCurso;
+	
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumns({
+		@JoinColumn(name = "numero_componente", insertable = false, updatable = false),
+		@JoinColumn(name = "id_curso", insertable = false, updatable = false)		
+	})
+	private Unidad unidad;
 
 	public VideoUnidadId getId() {
 		return id;
@@ -66,6 +79,14 @@ public class VideoUnidad implements Serializable {
 
 	public void setIdCurso(Long idCurso) {
 		this.idCurso = idCurso;
+	}
+	
+	public Unidad getUnidad() {
+		return unidad;
+	}
+
+	public void setUnidad(Unidad unidad) {
+		this.unidad = unidad;
 	}
 
 	@Override

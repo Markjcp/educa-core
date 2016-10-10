@@ -370,7 +370,7 @@ CREATE TABLE IF NOT EXISTS `educa`.`opcion_examen_unidad` (
 ENGINE = InnoDB;
 
 
---08/10
+-- 08/10
 
 -- -----------------------------------------------------
 -- Table `educa`.`curso`

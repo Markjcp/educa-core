@@ -5,7 +5,12 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "opcion_examen_unidad")
@@ -21,6 +26,15 @@ public class OpcionExamenUnidad implements Serializable {
 
 	@Column(name = "es_correcta")
 	private boolean esCorrecta;
+	
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumns({
+		@JoinColumn(name = "numero_componente", insertable = false, updatable = false),
+		@JoinColumn(name = "id_curso", insertable = false, updatable = false),
+		@JoinColumn(name = "numero_examen", insertable = false, updatable = false)
+	})
+	private ExamenUnidad examen;
 
 	public OpcionExamenUnidadId getId() {
 		return id;
@@ -44,6 +58,14 @@ public class OpcionExamenUnidad implements Serializable {
 
 	public void setEsCorrecta(boolean esCorrecta) {
 		this.esCorrecta = esCorrecta;
+	}
+	
+	public ExamenUnidad getExamen() {
+		return examen;
+	}
+
+	public void setExamen(ExamenUnidad examen) {
+		this.examen = examen;
 	}
 
 	@Override

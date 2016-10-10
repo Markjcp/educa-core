@@ -2,23 +2,20 @@ package org.educa.core.entities.model;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.SortedSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.OrderBy;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -54,21 +51,29 @@ public class Unidad implements Serializable, Comparable<Unidad> {
 	@Max(value = 9999, message = "La duración estimada no puede ser mayor a {value} horas.")	
 	private Integer duracionEstimada;
 	
-	//@OneToOne(cascade = {CascadeType.DETACH, CascadeType.REFRESH, CascadeType.PERSIST})
-	//@JoinColumn(name = "id_examen_unidad")	
-	//@JsonIgnore //TODO VER SI HAY Q IGNORARLO O NO - VER CON MOBILE
-	@Transient
-	private ExamenUnidad examenUnidad;
+	@JsonIgnore
+	@OneToMany
+	@JoinColumns({
+		@JoinColumn(name = "numero_componente", referencedColumnName = "numero_componente", insertable = false, updatable = false),
+		@JoinColumn(name = "id_curso", referencedColumnName = "id_curso", insertable = false, updatable = false)		
+	})
+	private List<ExamenUnidad> examenes;
 	
-	//private List<VideoUnidad> videos;
+	@JsonIgnore
+	@OneToMany
+	@JoinColumns({
+		@JoinColumn(name = "numero_componente", referencedColumnName = "numero_componente", insertable = false, updatable = false),
+		@JoinColumn(name = "id_curso", referencedColumnName = "id_curso", insertable = false, updatable = false)		
+	})
+	private List<VideoUnidad> videos;
 	
-	//@OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.PERSIST})
-	//@JoinColumn(name="id_curso")
-	//@OrderBy(clause = "id.numero ASC")
-	@Transient
-	private SortedSet<VideoUnidad> videos;//TODO
-	@Transient
-	private SortedSet<MaterialUnidad> material;//TODO
+	@JsonIgnore
+	@OneToMany
+	@JoinColumns({
+		@JoinColumn(name = "numero_componente", referencedColumnName = "numero_componente", insertable = false, updatable = false),
+		@JoinColumn(name = "id_curso", referencedColumnName = "id_curso", insertable = false, updatable = false)		
+	})
+	private List<MaterialUnidad> material;
 
 	public Unidad() {
 		super();
@@ -120,6 +125,30 @@ public class Unidad implements Serializable, Comparable<Unidad> {
 	
 	public String getDescripcionLargaError() {
 		return "Unidad Nro. " + (getId().getNumero() == null ? "" : getId().getNumero());
+	}
+	
+	public List<ExamenUnidad> getExamenes() {
+		return examenes;
+	}
+
+	public void setExamenes(List<ExamenUnidad> examenes) {
+		this.examenes = examenes;
+	}
+
+	public List<VideoUnidad> getVideos() {
+		return videos;
+	}
+
+	public void setVideos(List<VideoUnidad> videos) {
+		this.videos = videos;
+	}
+
+	public List<MaterialUnidad> getMaterial() {
+		return material;
+	}
+
+	public void setMaterial(List<MaterialUnidad> material) {
+		this.material = material;
 	}
 
 	@Override

@@ -1,13 +1,16 @@
 package org.educa.core.entities.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -32,6 +35,23 @@ public class ExamenUnidad implements Serializable {
 
 	@Column(name = "respuesta")
 	private String respuesta;
+	
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumns({
+		@JoinColumn(name = "numero_componente", insertable = false, updatable = false),
+		@JoinColumn(name = "id_curso", insertable = false, updatable = false)		
+	})
+	private Unidad unidad;
+	
+	@JsonIgnore
+	@OneToMany(cascade = {CascadeType.REMOVE})
+	@JoinColumns({
+		@JoinColumn(name = "numero_componente", insertable = false, updatable = false),
+		@JoinColumn(name = "id_curso", insertable = false, updatable = false),
+		@JoinColumn(name = "numero_examen", insertable = false, updatable = false)
+	})
+	private List<OpcionExamenUnidad> opciones;
 		
 	public ExamenUnidadId getId() {
 		return id;
@@ -71,6 +91,22 @@ public class ExamenUnidad implements Serializable {
 
 	public void setRespuesta(String respuesta) {
 		this.respuesta = respuesta;
+	}
+	
+	public Unidad getUnidad() {
+		return unidad;
+	}
+
+	public void setUnidad(Unidad unidad) {
+		this.unidad = unidad;
+	}
+	
+	public List<OpcionExamenUnidad> getOpciones() {
+		return opciones;
+	}
+
+	public void setOpciones(List<OpcionExamenUnidad> opciones) {
+		this.opciones = opciones;
 	}
 
 	@Override

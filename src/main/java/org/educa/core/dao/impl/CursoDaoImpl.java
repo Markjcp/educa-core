@@ -58,18 +58,41 @@ public class CursoDaoImpl extends GeneralDaoSupport<Curso>implements CursoDao {
 
 	@Override
 	public void deleteUnidad(Unidad unidad) {
+		if(unidad!= null && unidad.getId()!=null && unidad.getMaterial()!= null && !unidad.getMaterial().isEmpty()){
+			String queryDeleteMaterial = crearQueryDeleteUnidad("material_unidad", unidad.getId().getIdCurso(), unidad.getId().getNumero());
+			Query q = this.getEntityManager().createNativeQuery(queryDeleteMaterial);			
+			q.executeUpdate();
+		}
+		
+		if(unidad!= null && unidad.getId()!=null && unidad.getExamenes()!= null && !unidad.getExamenes().isEmpty()){
+			String queryDeleteOpciones = crearQueryDeleteUnidad("opcion_examen_unidad", unidad.getId().getIdCurso(), unidad.getId().getNumero());
+			Query q1 = this.getEntityManager().createNativeQuery(queryDeleteOpciones);			
+			q1.executeUpdate();
+			
+			String queryDeleteExamen = crearQueryDeleteUnidad("examen_unidad", unidad.getId().getIdCurso(), unidad.getId().getNumero());
+			Query q = this.getEntityManager().createNativeQuery(queryDeleteExamen);			
+			q.executeUpdate();
+		}
+		
+		if(unidad!= null && unidad.getId()!=null && unidad.getVideos()!= null && !unidad.getVideos().isEmpty()){
+			String queryDeleteVideos = crearQueryDeleteUnidad("video_unidad", unidad.getId().getIdCurso(), unidad.getId().getNumero());
+			Query q = this.getEntityManager().createNativeQuery(queryDeleteVideos);			
+			q.executeUpdate();
+		}
+		
 		if(unidad != null && unidad.getId() != null){
-			StringBuilder query = new StringBuilder();
-			query.append(" delete from unidad ");
-			query.append(" where id_curso = " + unidad.getId().getIdCurso());
-			query.append(" and numero_componente = " + unidad.getId().getNumero());
-			
-			System.out.println("QUERY - deleteUnidad: " + query.toString());
-			
-			Query q = this.getEntityManager().createNativeQuery(query.toString());
-			
-			q.executeUpdate();			
+			String queryDelete = crearQueryDeleteUnidad("unidad", unidad.getId().getIdCurso(), unidad.getId().getNumero());
+			Query q = this.getEntityManager().createNativeQuery(queryDelete);			
+			q.executeUpdate();						
 		}		
+	}
+	
+	private String crearQueryDeleteUnidad(String tabla, Long idCurso, Integer numeroComponente){
+		StringBuilder query = new StringBuilder();
+		query.append(" delete from " + tabla);
+		query.append(" where id_curso = " + idCurso);
+		query.append(" and numero_componente = " + numeroComponente);
+		return query.toString();
 	}
 
 	@Override
