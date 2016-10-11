@@ -377,3 +377,68 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 ALTER TABLE `educa`.`curso`
   ADD `estado_curso` VARCHAR(45) NOT NULL DEFAULT 'NO_PUBLICADO';
+  
+-- 11/10
+
+-- -----------------------------------------------------
+-- Table `educa`.`examen_unidad`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `educa`.`opcion_examen_unidad` ;
+DROP TABLE IF EXISTS `educa`.`examen_unidad` ;
+
+CREATE TABLE IF NOT EXISTS `educa`.`examen_unidad` (
+  `numero_componente` INT NOT NULL,
+  `id_curso` INT NOT NULL,
+  `numero_examen` INT NOT NULL,
+  `cant_preguntas_alumno` INT NOT NULL,
+  PRIMARY KEY (`numero_componente`, `id_curso`, `numero_examen`),
+  CONSTRAINT `fk_examen_unidad_unidad1`
+    FOREIGN KEY (`numero_componente` , `id_curso`)
+    REFERENCES `educa`.`unidad` (`numero_componente` , `id_curso`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `educa`.`pregunta_examen_unidad`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `educa`.`pregunta_examen_unidad` ;
+
+CREATE TABLE IF NOT EXISTS `educa`.`pregunta_examen_unidad` (
+  `numero_componente` INT NOT NULL,
+  `id_curso` INT NOT NULL,
+  `numero_examen` INT NOT NULL,
+  `numero_pregunta` INT NOT NULL,
+  `enunciado` VARCHAR(500) NOT NULL,
+  `multiple_choice` TINYINT(1) NOT NULL,
+  `respuesta` VARCHAR(45) NULL,
+  PRIMARY KEY (`numero_componente`, `id_curso`, `numero_examen`, `numero_pregunta`),
+  CONSTRAINT `fk_pregunta_examen_unidad_examen_unidad1`
+    FOREIGN KEY (`numero_componente` , `id_curso` , `numero_examen`)
+    REFERENCES `educa`.`examen_unidad` (`numero_componente` , `id_curso` , `numero_examen`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `educa`.`opcion_examen_unidad`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `educa`.`opcion_examen_unidad` ;
+
+CREATE TABLE IF NOT EXISTS `educa`.`opcion_examen_unidad` (
+  `numero_componente` INT NOT NULL,
+  `id_curso` INT NOT NULL,
+  `numero_examen` INT NOT NULL,
+  `numero_pregunta` INT NOT NULL,
+  `numero_opcion` INT NOT NULL,
+  `texto` VARCHAR(500) NOT NULL,
+  `es_correcta` TINYINT(1) NOT NULL,
+  PRIMARY KEY (`numero_componente`, `id_curso`, `numero_examen`, `numero_pregunta`, `numero_opcion`),
+  CONSTRAINT `fk_opcion_examen_unidad_pregunta_examen_unidad1`
+    FOREIGN KEY (`numero_componente` , `id_curso` , `numero_examen` , `numero_pregunta`)
+    REFERENCES `educa`.`pregunta_examen_unidad` (`numero_componente` , `id_curso` , `numero_examen` , `numero_pregunta`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;

@@ -2,7 +2,8 @@ package org.educa.core.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.Valid;
 import javax.xml.parsers.DocumentBuilder;
@@ -10,6 +11,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.educa.core.controller.forms.UnidadForm;
+import org.educa.core.dao.ExamenUnidadRepository;
 import org.educa.core.dao.MaterialUnidadRepository;
 import org.educa.core.dao.UnidadRepository;
 import org.educa.core.entities.model.Curso;
@@ -18,6 +20,10 @@ import org.educa.core.entities.model.ExamenUnidad;
 import org.educa.core.entities.model.ExamenUnidadId;
 import org.educa.core.entities.model.MaterialUnidad;
 import org.educa.core.entities.model.MaterialUnidadId;
+import org.educa.core.entities.model.OpcionExamenUnidad;
+import org.educa.core.entities.model.OpcionExamenUnidadId;
+import org.educa.core.entities.model.PreguntaExamenUnidad;
+import org.educa.core.entities.model.PreguntaExamenUnidadId;
 import org.educa.core.entities.model.Unidad;
 import org.educa.core.services.CursoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +37,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 @Controller
@@ -51,6 +56,10 @@ public class DetalleUnidadController {
 	@Autowired
 	@Qualifier("unidadRepository")
 	private UnidadRepository unidadRepository;
+	
+	@Autowired
+	@Qualifier("examenUnidadRepository")
+	private ExamenUnidadRepository examenUnidadRepository;
 	
 	@RequestMapping(value = "/{idCurso}/{idUnidad}/{numeroUnidad}", method = RequestMethod.GET)
 	public String index(@PathVariable("idCurso") long idCurso, @PathVariable("idUnidad") long idUnidad, 
@@ -337,16 +346,92 @@ public class DetalleUnidadController {
 			
 			ExamenUnidadId id = new ExamenUnidadId();
 			id.setIdCurso(unidadForm.getCurso().getId());
-			id.setNumero(1);
-			id.setIdExamen(new Long(unidadForm.getUnidad().getId().getNumero()));
+			id.setNumero(unidadForm.getUnidad().getId().getNumero());
+			id.setIdExamen(1);
 			
 			examenUnidad.setId(id);
 		}
 		
-		//examenUnidad.setEnunciado(unidadForm.getPregunta());
-		
 		examenUnidad.setCantPreguntasUsuario(unidadForm.getCantidadPreguntasAlumno());
-		examenUnidad.setMultipleChoica(true);
+		
+		List<PreguntaExamenUnidad> preguntas = examenUnidad.getPreguntas();
+		if(preguntas == null){
+			preguntas = new ArrayList<PreguntaExamenUnidad>();
+		}
+		
+		PreguntaExamenUnidadId preguntaId = new PreguntaExamenUnidadId();
+		preguntaId.setIdCurso(unidadForm.getCurso().getId());
+		preguntaId.setNumero(unidadForm.getUnidad().getId().getNumero());
+		preguntaId.setIdExamen(1);
+		preguntaId.setIdPregunta(preguntas.size()+1);
+		
+		List<OpcionExamenUnidad> opciones = new ArrayList<OpcionExamenUnidad>();
+		
+		OpcionExamenUnidadId opcionId1 = new OpcionExamenUnidadId();
+		opcionId1.setIdCurso(unidadForm.getCurso().getId());
+		opcionId1.setNumero(unidadForm.getUnidad().getId().getNumero());
+		opcionId1.setIdExamen(1);
+		opcionId1.setIdPregunta(preguntaId.getIdPregunta());
+		opcionId1.setIdOpcion(1);
+		
+		OpcionExamenUnidad opcion1 = new OpcionExamenUnidad();
+		opcion1.setId(opcionId1);
+		opcion1.setEsCorrecta(unidadForm.isOpcionUnoSeleccionada());
+		opcion1.setTexto(unidadForm.getRespuestaOpcionUno());
+		
+		OpcionExamenUnidadId opcionId2 = new OpcionExamenUnidadId();
+		opcionId1.setIdCurso(unidadForm.getCurso().getId());
+		opcionId1.setNumero(unidadForm.getUnidad().getId().getNumero());
+		opcionId1.setIdExamen(1);
+		opcionId1.setIdPregunta(preguntaId.getIdPregunta());
+		opcionId1.setIdOpcion(2);
+		
+		OpcionExamenUnidad opcion2 = new OpcionExamenUnidad();
+		opcion2.setId(opcionId2);
+		opcion2.setEsCorrecta(unidadForm.isOpcionDosSeleccionada());
+		opcion2.setTexto(unidadForm.getRespuestaOpcionDos());
+		
+		OpcionExamenUnidadId opcionId3 = new OpcionExamenUnidadId();
+		opcionId3.setIdCurso(unidadForm.getCurso().getId());
+		opcionId3.setNumero(unidadForm.getUnidad().getId().getNumero());
+		opcionId3.setIdExamen(1);
+		opcionId3.setIdPregunta(preguntaId.getIdPregunta());
+		opcionId3.setIdOpcion(3);
+		
+		OpcionExamenUnidad opcion3 = new OpcionExamenUnidad();
+		opcion3.setId(opcionId3);
+		opcion3.setEsCorrecta(unidadForm.isOpcionTresSeleccionada());
+		opcion3.setTexto(unidadForm.getRespuestaOpcionTres());
+		
+		OpcionExamenUnidadId opcionId4 = new OpcionExamenUnidadId();
+		opcionId4.setIdCurso(unidadForm.getCurso().getId());
+		opcionId4.setNumero(unidadForm.getUnidad().getId().getNumero());
+		opcionId4.setIdExamen(1);
+		opcionId4.setIdPregunta(preguntaId.getIdPregunta());
+		opcionId4.setIdOpcion(4);
+		
+		OpcionExamenUnidad opcion4 = new OpcionExamenUnidad();
+		opcion4.setId(opcionId4);
+		opcion4.setEsCorrecta(unidadForm.isOpcionCuatroSeleccionada());
+		opcion4.setTexto(unidadForm.getRespuestaOpcionCuatro());
+		
+		opciones.add(opcion1);
+		opciones.add(opcion2);
+		opciones.add(opcion3);
+		opciones.add(opcion4);
+		
+		
+		PreguntaExamenUnidad pregunta = new PreguntaExamenUnidad();
+		pregunta.setId(preguntaId);
+		pregunta.setEnunciado(unidadForm.getPregunta());
+		pregunta.setMultipleChoica(true);
+		pregunta.setOpciones(opciones);
+		
+		preguntas.add(pregunta);
+		
+		examenUnidad.setPreguntas(preguntas);
+		
+		examenUnidadRepository.save(examenUnidad);
 		
 		//OpcionExamenUnidad
 		

@@ -180,7 +180,7 @@
 											          <label for="icon_prefix" style="position: absolute;">Pregunta para incluir en el examen</label>
 											        </div>
 											        <div class="input-field col s4">
-											        	<input id="multipleChoiceCheckbox" type="checkbox" th:checked="*{multipleChoice}" th:value="*{multipleChoice}"/>
+											        	<input id="multipleChoiceCheckbox" type="checkbox" th:value="*{multipleChoice}" th:checked="true" th:field="*{multipleChoice}"/>
       													<label for="multipleChoiceCheckbox" style="color: #000;">M&uacute;ltiple choice</label>											         
 											        </div>
 											     </div>

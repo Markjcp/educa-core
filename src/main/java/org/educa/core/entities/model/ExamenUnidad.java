@@ -24,49 +24,28 @@ public class ExamenUnidad implements Serializable {
 	@EmbeddedId
 	private ExamenUnidadId id;
 
-	@Column(name = "enunciado")
-	private String enunciado;
-
 	@Column(name = "cant_preguntas_alumno")
 	private Integer cantPreguntasUsuario;
 
-	@Column(name = "multiple_choice")
-	private boolean multipleChoica;
-
-	@Column(name = "respuesta")
-	private String respuesta;
-	
 	@JsonIgnore
 	@ManyToOne
-	@JoinColumns({
-		@JoinColumn(name = "numero_componente", insertable = false, updatable = false),
-		@JoinColumn(name = "id_curso", insertable = false, updatable = false)		
-	})
+	@JoinColumns({ @JoinColumn(name = "numero_componente", insertable = false, updatable = false),
+			@JoinColumn(name = "id_curso", insertable = false, updatable = false) })
 	private Unidad unidad;
-	
+
 	@JsonIgnore
-	@OneToMany(cascade = {CascadeType.REMOVE})
-	@JoinColumns({
-		@JoinColumn(name = "numero_componente", insertable = false, updatable = false),
-		@JoinColumn(name = "id_curso", insertable = false, updatable = false),
-		@JoinColumn(name = "numero_examen", insertable = false, updatable = false)
-	})
-	private List<OpcionExamenUnidad> opciones;
-		
+	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinColumns({ @JoinColumn(name = "numero_componente", insertable = false, updatable = false),
+			@JoinColumn(name = "id_curso", insertable = false, updatable = false),
+			@JoinColumn(name = "numero_examen", insertable = false, updatable = false) })
+	private List<PreguntaExamenUnidad> preguntas;
+
 	public ExamenUnidadId getId() {
 		return id;
 	}
 
 	public void setId(ExamenUnidadId id) {
 		this.id = id;
-	}
-
-	public String getEnunciado() {
-		return enunciado;
-	}
-
-	public void setEnunciado(String enunciado) {
-		this.enunciado = enunciado;
 	}
 
 	public Integer getCantPreguntasUsuario() {
@@ -77,22 +56,6 @@ public class ExamenUnidad implements Serializable {
 		this.cantPreguntasUsuario = cantPreguntasUsuario;
 	}
 
-	public boolean isMultipleChoica() {
-		return multipleChoica;
-	}
-
-	public void setMultipleChoica(boolean multipleChoica) {
-		this.multipleChoica = multipleChoica;
-	}
-
-	public String getRespuesta() {
-		return respuesta;
-	}
-
-	public void setRespuesta(String respuesta) {
-		this.respuesta = respuesta;
-	}
-	
 	public Unidad getUnidad() {
 		return unidad;
 	}
@@ -100,13 +63,13 @@ public class ExamenUnidad implements Serializable {
 	public void setUnidad(Unidad unidad) {
 		this.unidad = unidad;
 	}
-	
-	public List<OpcionExamenUnidad> getOpciones() {
-		return opciones;
+
+	public List<PreguntaExamenUnidad> getPreguntas() {
+		return preguntas;
 	}
 
-	public void setOpciones(List<OpcionExamenUnidad> opciones) {
-		this.opciones = opciones;
+	public void setPreguntas(List<PreguntaExamenUnidad> preguntas) {
+		this.preguntas = preguntas;
 	}
 
 	@Override

@@ -17,7 +17,7 @@ public class ExamenUnidadId implements Serializable{
 	private Long idCurso;
 	
 	@Column(name = "numero_examen")
-	private Long idExamen; //Asumo que es el id de la unidad
+	private Integer idExamen; //Asumo que es el id de la unidad NO ES ASI, ES EL DEL EXAMEN
 
 	public Integer getNumero() {
 		return numero;
@@ -35,11 +35,11 @@ public class ExamenUnidadId implements Serializable{
 		this.idCurso = idCurso;
 	}
 
-	public Long getIdExamen() {
+	public Integer getIdExamen() {
 		return idExamen;
 	}
 
-	public void setIdExamen(Long idExamen) {
+	public void setIdExamen(Integer idExamen) {
 		this.idExamen = idExamen;
 	}
 

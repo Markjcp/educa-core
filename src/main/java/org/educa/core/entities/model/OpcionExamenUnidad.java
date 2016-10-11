@@ -32,9 +32,10 @@ public class OpcionExamenUnidad implements Serializable {
 	@JoinColumns({
 		@JoinColumn(name = "numero_componente", insertable = false, updatable = false),
 		@JoinColumn(name = "id_curso", insertable = false, updatable = false),
-		@JoinColumn(name = "numero_examen", insertable = false, updatable = false)
+		@JoinColumn(name = "numero_examen", insertable = false, updatable = false),
+		@JoinColumn(name = "numero_pregunta", insertable = false, updatable = false)
 	})
-	private ExamenUnidad examen;
+	private PreguntaExamenUnidad pregunta;
 
 	public OpcionExamenUnidadId getId() {
 		return id;
@@ -60,12 +61,12 @@ public class OpcionExamenUnidad implements Serializable {
 		this.esCorrecta = esCorrecta;
 	}
 	
-	public ExamenUnidad getExamen() {
-		return examen;
+	public PreguntaExamenUnidad getPregunta() {
+		return pregunta;
 	}
 
-	public void setExamen(ExamenUnidad examen) {
-		this.examen = examen;
+	public void setPregunta(PreguntaExamenUnidad pregunta) {
+		this.pregunta = pregunta;
 	}
 
 	@Override

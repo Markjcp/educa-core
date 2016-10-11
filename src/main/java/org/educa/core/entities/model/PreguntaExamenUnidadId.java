@@ -6,24 +6,21 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class OpcionExamenUnidadId implements Serializable {
+public class PreguntaExamenUnidadId implements Serializable{
 
-	private static final long serialVersionUID = 1750067432806405816L;
-
+	private static final long serialVersionUID = -7344209651712783725L;
+	
 	@Column(name = "numero_componente")
 	private Integer numero;
 
 	@Column(name = "id_curso")
 	private Long idCurso;
-
+	
 	@Column(name = "numero_examen")
-	private Integer idExamen;
-
+	private Integer idExamen; 
+	
 	@Column(name = "numero_pregunta")
 	private Integer idPregunta;
-
-	@Column(name = "numero_opcion")
-	private Integer idOpcion;
 
 	public Integer getNumero() {
 		return numero;
@@ -57,21 +54,12 @@ public class OpcionExamenUnidadId implements Serializable {
 		this.idPregunta = idPregunta;
 	}
 
-	public Integer getIdOpcion() {
-		return idOpcion;
-	}
-
-	public void setIdOpcion(Integer idOpcion) {
-		this.idOpcion = idOpcion;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((idCurso == null) ? 0 : idCurso.hashCode());
 		result = prime * result + ((idExamen == null) ? 0 : idExamen.hashCode());
-		result = prime * result + ((idOpcion == null) ? 0 : idOpcion.hashCode());
 		result = prime * result + ((idPregunta == null) ? 0 : idPregunta.hashCode());
 		result = prime * result + ((numero == null) ? 0 : numero.hashCode());
 		return result;
@@ -85,7 +73,7 @@ public class OpcionExamenUnidadId implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		OpcionExamenUnidadId other = (OpcionExamenUnidadId) obj;
+		PreguntaExamenUnidadId other = (PreguntaExamenUnidadId) obj;
 		if (idCurso == null) {
 			if (other.idCurso != null)
 				return false;
@@ -95,11 +83,6 @@ public class OpcionExamenUnidadId implements Serializable {
 			if (other.idExamen != null)
 				return false;
 		} else if (!idExamen.equals(other.idExamen))
-			return false;
-		if (idOpcion == null) {
-			if (other.idOpcion != null)
-				return false;
-		} else if (!idOpcion.equals(other.idOpcion))
 			return false;
 		if (idPregunta == null) {
 			if (other.idPregunta != null)
@@ -113,5 +96,4 @@ public class OpcionExamenUnidadId implements Serializable {
 			return false;
 		return true;
 	}
-
 }
