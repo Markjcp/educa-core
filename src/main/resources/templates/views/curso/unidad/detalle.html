@@ -180,8 +180,8 @@
 											          <label for="icon_prefix" style="position: absolute;">Pregunta para incluir en el examen</label>
 											        </div>
 											        <div class="input-field col s4">
-											        	<input id="multipleChoiceCheckbox" type="checkbox" th:value="*{multipleChoice}" th:checked="true" th:field="*{multipleChoice}"/>
-      													<label for="multipleChoiceCheckbox" style="color: #000;">M&uacute;ltiple choice</label>											         
+											        	<input id="multipleChoiceCheckbox" type="checkbox" th:field="*{multipleChoice}" th:checked="*{multipleChoice}" th:value="*{multipleChoice}"/>
+											        	<label for="multipleChoiceCheckbox">Multiple choice</label>
 											        </div>
 											     </div>
 											</div>
@@ -196,15 +196,15 @@
 											
 												<div class="col-xs-6">
 													<div class="form-group input-field">
-														<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion1" th:checked="*{opcionUnoSeleccionada}" th:value="*{opcionUnoSeleccionada}"/>
+														<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion1" th:checked="*{opcionUnoSeleccionada}" th:value="*{opcionUnoSeleccionada}" th:field="*{opcionUnoSeleccionada}"/>
 	      												<label for="filled-in-box-opcion1">
-	      													<input id="opcion1" type="text" class="validate" th:field="*{respuestaOpcionUno}"/>
+	      													<input id="opcion1" type="text" class="validate" th:field="*{respuestaOpcionUno}" />
 											          		<label for="opcion1" style="position: absolute;">Opci&oacute;n 1</label>
 	      												</label>
 													</div>
 													<br></br>
 													<div class="form-group input-field">
-														<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion2" th:checked="*{opcionDosSeleccionada}" th:value="*{opcionDosSeleccionada}"/>														
+														<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion2" th:checked="*{opcionDosSeleccionada}" th:value="*{opcionDosSeleccionada}" th:field="*{opcionDosSeleccionada}"/>														
 	      												<label for="filled-in-box-opcion2">
 	      													<input id="opcion2" type="text" class="validate" th:field="*{respuestaOpcionDos}"/>
 											          		<label for="opcion2" style="position: absolute;">Opci&oacute;n 2</label>
@@ -213,7 +213,7 @@
 												</div>
 												<div class="col-xs-6">
 													<div class="form-group input-field">
-														<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion3" th:checked="*{opcionTresSeleccionada}" th:value="*{opcionTresSeleccionada}"/>
+														<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion3" th:checked="*{opcionTresSeleccionada}" th:value="*{opcionTresSeleccionada}" th:field="*{opcionTresSeleccionada}"/>
 	      												<label for="filled-in-box-opcion3">
 	      													<input id="opcion3" type="text" class="validate" th:field="*{respuestaOpcionTres}"/>
 											          		<label for="opcion3" style="position: absolute;">Opci&oacute;n 3</label>	      													
@@ -221,7 +221,7 @@
 													</div>
 													<br></br>
 													<div class="form-group input-field">
-														<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion4" th:checked="*{opcionCuatroSeleccionada}" th:value="*{opcionCuatroSeleccionada}"/>
+														<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion4" th:checked="*{opcionCuatroSeleccionada}" th:value="*{opcionCuatroSeleccionada}" th:field="*{opcionCuatroSeleccionada}"/>
 	      												<label for="filled-in-box-opcion4">
 	      													<input id="opcion4" type="text" class="validate" th:field="*{respuestaOpcionCuatro}"/>
 											          		<label for="opcion4" style="position: absolute;">Opci&oacute;n 4</label>	      													
