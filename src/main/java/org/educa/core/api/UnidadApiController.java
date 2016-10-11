@@ -43,7 +43,7 @@ public class UnidadApiController {
 	}
 	
 	@ResponseBody
-	@RequestMapping(method = RequestMethod.GET, value = "{numeroUnidad}/{idCurso}/material", headers="Accept=*/*",produces = {"application/html"})
+	@RequestMapping(method = RequestMethod.GET, value = "{numeroUnidad}/{idCurso}/material", headers="Accept=*/*",produces = {"text/html"})
 	public ResponseEntity<InputStreamResource> material(@PathVariable Integer numeroUnidad, @PathVariable Long idCurso) {
 		List<MaterialUnidad> resultado = materialUnidadRepository.findByNumeroAndIdCurso(numeroUnidad, idCurso);
 		if(resultado == null || resultado.isEmpty()){
@@ -52,7 +52,7 @@ public class UnidadApiController {
 		return ResponseEntity
 	            .ok()
 	            .contentType(
-	                    MediaType.parseMediaType("application/html"))
+	                    MediaType.parseMediaType("text/html"))
 	            .body(new InputStreamResource(new ByteArrayInputStream(resultado.iterator().next().getMaterial())));		
 	}
 
