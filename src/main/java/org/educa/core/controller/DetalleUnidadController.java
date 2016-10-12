@@ -380,11 +380,11 @@ public class DetalleUnidadController {
 		opcion1.setTexto(unidadForm.getRespuestaOpcionUno());
 		
 		OpcionExamenUnidadId opcionId2 = new OpcionExamenUnidadId();
-		opcionId1.setIdCurso(unidadForm.getCurso().getId());
-		opcionId1.setNumero(unidadForm.getUnidad().getId().getNumero());
-		opcionId1.setIdExamen(1);
-		opcionId1.setIdPregunta(preguntaId.getIdPregunta());
-		opcionId1.setIdOpcion(2);
+		opcionId2.setIdCurso(unidadForm.getCurso().getId());
+		opcionId2.setNumero(unidadForm.getUnidad().getId().getNumero());
+		opcionId2.setIdExamen(1);
+		opcionId2.setIdPregunta(preguntaId.getIdPregunta());
+		opcionId2.setIdOpcion(2);
 		
 		OpcionExamenUnidad opcion2 = new OpcionExamenUnidad();
 		opcion2.setId(opcionId2);
@@ -433,28 +433,6 @@ public class DetalleUnidadController {
 		
 		examenUnidadRepository.save(examenUnidad);
 		
-		//OpcionExamenUnidad
-		
-/*
-		private ExamenUnidadId id;
-		private String enunciado;
-		private Integer cantPreguntasUsuario;
-		private boolean multipleChoica;
-		private String respuesta;	
-		private Unidad unidad; //NO HACE FALTA	
-		private List<OpcionExamenUnidad> opciones;
-
-		----
-		ID:
-		
-		private Integer numero;
-		private Long idCurso;	
-		private Long idExamen;
-*/
-		
-		
-		
-		
 		return examenUnidad;
 	}
 	
@@ -470,8 +448,43 @@ public class DetalleUnidadController {
 	}
 
 	private ExamenUnidad cargarPreguntaSimple(ExamenUnidad examenUnidad, UnidadForm unidadForm) {
-		// TODO Auto-generated method stub
-		return null;
+		if(examenUnidad == null){
+			examenUnidad = new ExamenUnidad();
+			
+			ExamenUnidadId id = new ExamenUnidadId();
+			id.setIdCurso(unidadForm.getCurso().getId());
+			id.setNumero(unidadForm.getUnidad().getId().getNumero());
+			id.setIdExamen(1);
+			
+			examenUnidad.setId(id);
+		}
+		
+		examenUnidad.setCantPreguntasUsuario(unidadForm.getCantidadPreguntasAlumno());
+		
+		List<PreguntaExamenUnidad> preguntas = examenUnidad.getPreguntas();
+		if(preguntas == null){
+			preguntas = new ArrayList<PreguntaExamenUnidad>();
+		}
+		
+		PreguntaExamenUnidadId preguntaId = new PreguntaExamenUnidadId();
+		preguntaId.setIdCurso(unidadForm.getCurso().getId());
+		preguntaId.setNumero(unidadForm.getUnidad().getId().getNumero());
+		preguntaId.setIdExamen(1);
+		preguntaId.setIdPregunta(preguntas.size()+1);
+		
+		PreguntaExamenUnidad pregunta = new PreguntaExamenUnidad();
+		pregunta.setId(preguntaId);
+		pregunta.setEnunciado(unidadForm.getPregunta());
+		pregunta.setMultipleChoica(false);
+		pregunta.setRespuesta(unidadForm.getRespuestaUnica());
+		
+		preguntas.add(pregunta);
+		
+		examenUnidad.setPreguntas(preguntas);
+		
+		examenUnidadRepository.save(examenUnidad);
+		
+		return examenUnidad;
 	}
 	
 	private boolean validaCamposGeneral(UnidadForm unidadForm, BindingResult bindingResult, Model model) {
