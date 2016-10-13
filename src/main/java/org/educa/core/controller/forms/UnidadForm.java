@@ -2,6 +2,7 @@ package org.educa.core.controller.forms;
 
 import org.educa.core.entities.model.Curso;
 import org.educa.core.entities.model.Unidad;
+import org.springframework.web.multipart.MultipartFile;
 
 public class UnidadForm {
 
@@ -27,6 +28,12 @@ public class UnidadForm {
 	private String pregunta;	
 	private Integer cantidadPreguntasAlumno;
 	//Fin - Examen
+	
+	//Video
+	private MultipartFile video;
+	private String videoBytes;
+	private boolean edicion;
+	//Fin - video
 
 	public UnidadForm() {
 		super();		
@@ -158,5 +165,29 @@ public class UnidadForm {
 
 	public void setMaterialTeorico(String materialTeorico) {
 		this.materialTeorico = materialTeorico;
+	}
+
+	public MultipartFile getVideo() {
+		return video;
+	}
+
+	public void setVideo(MultipartFile video) {
+		this.video = video;
+	}
+
+	public String getVideoBytes() {
+		return videoBytes;
+	}
+
+	public void setVideoBytes(String videoBytes) {
+		this.videoBytes = videoBytes;
+	}
+
+	public boolean isEdicion() {
+		return edicion;
+	}
+
+	public void setEdicion(boolean edicion) {
+		this.edicion = edicion;
 	}	
 }

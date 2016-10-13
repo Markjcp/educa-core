@@ -75,20 +75,7 @@
 								<br></br><br></br>
 								
 								<form action="#" th:action="@{/detalleUnidad/guardarMaterialTeorico}" th:object="${unidadForm}" method="post" id="formularioMaterialTeorico">
-									<div id="formularioMaterialTeoricoDetalle">
-									  <div class="col l6 s12">									  	    					    		
-								        	<div class="form-group input-field" >
-								        		<label for="theme" style="color: #000;">Si lo desea cambie el estilo del editor - ESTO SACARLO XQ ROMPE LOS ESTILOS, VER ENTRE MODERNO Y DOCUMENTO</label>                             
-					                            <select id="theme" class="form-control input-field">
-					                             	<option value="modern">Moderno</option>
-											        <option value="default">Por defecto</option>													
-													<option value="office-toolbar">Toolbar formal</option>
-													<option value="office">Documento</option>
-													<option value="square">Cuadrado</option>                             	              
-					                            </select>					                                                         
-					                         </div>					                         			    		 			    		 	                        
-								    	</div>
-								    	<div class="col l6 s12"></div>								
+									<div id="formularioMaterialTeoricoDetalle">									  								
 										<div class="row">
 											<div class="col l12 s12">
 												<!-- Mensajes de error guardar -->
@@ -131,7 +118,52 @@
 							
 							<!-- TAB DE VIDEO -->
 							<div th:class="${mostrarTabVideo} ? 'tab-pane fade active in' : 'tab-pane fade'" id="videoUnidad">								
-								<br></br><br></br>																
+								<br></br><br></br>
+								
+								<form action="#" th:action="@{/detalleUnidad/guardarVideo}" th:object="${unidadForm}" method="post" id="formularioVideo">
+									<div id="formularioVideoDetalle">									  								
+										<div class="row">
+											<div class="col l12 s12">
+												<div class="form-group input-field">
+													<div class="row">
+												        <div class="input-field col s8">
+												            <p class="help-block">Seleccione un video</p>									    			
+											    			<input type="file" accept="video/mp4,video/x-m4v,video/*" onchange="loadVideo(event)" th:field="*{video}"/>											    
+												        </div>
+												        <div class="input-field col s4">
+												        	<div th:if="${mostrarMensajeErrorCargaVideo} == true" class="alert alert-danger alert-dismissable">
+												        		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+												   				<a href="#" class="alert-link">Error!</a> <span th:text="${mensajeErrorCargaVideo}"></span>															   	                   
+															</div>											        												        
+												        </div>
+												     </div>
+												</div>
+												<div class="form-group input-field col s8">
+													 <div th:if="*{edicion} == false" class="video-container">
+												      	<object type="text/html" id="outputVideo" th:field="*{video}"></object>
+												      </div>
+												      <div th:if="*{edicion} == true" class="video-container">
+												      	<object type="text/html" id="outputVideo"  th:src="*{videoBytes}" th:field="*{video}"></object>
+												      </div>												      									    			
+												</div>												
+											</div>
+										</div>
+																				
+										<div class="row">
+											<div class="col-xs-12">
+												<hr></hr>
+											</div>
+										</div>
+										
+										<div class="col l12 s12">			    					    				
+											<div class="form-group">
+												<button type="submit" class="btn orange-effect orange darken-4">Guardar</button>
+												<a class="btn orange-effect orange darken-4" href="#" th:href="@{/detalleUnidad/eliminarVideo}">Eliminar</a>
+												<a class="btn orange-effect orange darken-4" href="#" th:href="@{/cursoNoAdmin/configuracionCurso/{cursoId}(cursoId=*{curso.id})}">Salir</a>
+											 </div>
+										</div>																				
+									</div>
+								</form>													
 							</div>
 							<!-- FIN - TAB DE VIDEO -->
 							
@@ -308,6 +340,14 @@
 	    		$("#opcionesMultipleChoice").hide();
 	        }
 	    });
+	</script>
+	
+	<script>
+	  var loadVideo = function(event) {
+	    var outputVideo = document.getElementById('outputVideo');
+	    //outputVideo.src = URL.createObjectURL(event.target.files[0]);
+	    outputVideo.data = URL.createObjectURL(event.target.files[0]);
+	  };
 	</script>
 	
 	<script>

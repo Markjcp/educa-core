@@ -159,6 +159,14 @@ public class Unidad implements Serializable, Comparable<Unidad> {
 		
 		this.material.add(material);
 	}
+	
+	public void addVideo(VideoUnidad video) {
+		if(this.videos == null){
+			this.videos = new ArrayList<VideoUnidad>();
+		}
+		
+		this.videos.add(video);
+	}
 
 	@Override
 	public int hashCode() {

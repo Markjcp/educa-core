@@ -10,10 +10,12 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.codec.binary.Base64;
 import org.educa.core.controller.forms.UnidadForm;
 import org.educa.core.dao.ExamenUnidadRepository;
 import org.educa.core.dao.MaterialUnidadRepository;
 import org.educa.core.dao.UnidadRepository;
+import org.educa.core.dao.VideoUnidadRepository;
 import org.educa.core.entities.model.Curso;
 import org.educa.core.entities.model.EstadoCurso;
 import org.educa.core.entities.model.ExamenUnidad;
@@ -25,6 +27,8 @@ import org.educa.core.entities.model.OpcionExamenUnidadId;
 import org.educa.core.entities.model.PreguntaExamenUnidad;
 import org.educa.core.entities.model.PreguntaExamenUnidadId;
 import org.educa.core.entities.model.Unidad;
+import org.educa.core.entities.model.VideoUnidad;
+import org.educa.core.entities.model.VideoUnidadId;
 import org.educa.core.services.CursoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,6 +40,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.multipart.MultipartFile;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -61,13 +66,13 @@ public class DetalleUnidadController {
 	@Qualifier("examenUnidadRepository")
 	private ExamenUnidadRepository examenUnidadRepository;
 	
+	@Autowired
+	@Qualifier("videoUnidadRepository")
+	private VideoUnidadRepository videoUnidadRepository;	
+	
 	@RequestMapping(value = "/{idCurso}/{idUnidad}/{numeroUnidad}", method = RequestMethod.GET)
 	public String index(@PathVariable("idCurso") long idCurso, @PathVariable("idUnidad") long idUnidad, 
-			@PathVariable("numeroUnidad") int numeroUnidad, Model model) {
-		
-		//Necesito: unidadForm , mostrarTabMaterialTeorico , mostrarTabVideo , mostrarTabPracticas , mostrarTabExamen
-		//Metodo: cambiarEstado (form mas model)
-		
+			@PathVariable("numeroUnidad") int numeroUnidad, Model model) {		
 		//No se validad que no sea null ya que no deberia de suceder, en caso de que pase, es porque hay un error entonces se espera verlo.
 		Curso curso = this.cursoService.encontrarCursoPorId(idCurso);
 		Unidad unidad = null;
@@ -253,6 +258,123 @@ public class DetalleUnidadController {
 		return valido;
 	}
 	
+	@RequestMapping(value = "/guardarVideo", method = RequestMethod.POST)
+	public String guardarVideo(@ModelAttribute @Valid UnidadForm unidadForm, BindingResult bindingResult, Model model) {
+		if(!validaVideo(unidadForm.getVideo())){
+			//TODO
+			model.addAttribute("mostrarMensajeErrorCargaVideo", true);
+			model.addAttribute("mensajeErrorCargaVideo", "ERROR .");//Ver el mensaje de error a mostrar!!! TODO
+			
+			model.addAttribute("unidadForm", unidadForm);
+			model.addAttribute("mostrarTabMaterialTeorico", false);
+			model.addAttribute("mostrarTabVideo", true);
+			model.addAttribute("mostrarTabPracticas", false);
+			model.addAttribute("mostrarTabExamen", false);
+			model.addAttribute("mostrarMensajeCantidadPreguntas", true);
+			
+			return DETALLE_CURSO;
+		}
+		
+		Unidad unidad = unidadRepository.findOne(unidadForm.getUnidad().getId());//Voy a buscarla porque las listas se cargaron en otra sesion de hibernate (no en la actual).
+		VideoUnidad video = null;
+		if(unidad.getVideos() == null || unidad.getVideos().isEmpty()){
+			video = new VideoUnidad();
+			
+			VideoUnidadId id = new VideoUnidadId();
+			id.setIdCurso(unidadForm.getCurso().getId());
+			id.setIdVideo(new Long(unidad.getId().getNumero()));
+			id.setNumero(1);
+			
+			video.setId(id);
+			unidad.addVideo(video);;
+			
+			video.setUnidad(unidad);
+			video.setIdCurso(unidad.getCurso().getId());
+		} else {
+			video = unidad.getVideos().get(0);
+		}
+		
+		try {
+			if(unidadForm.getVideo() != null){
+				byte[] videoBytes = unidadForm.getVideo().getBytes();
+				video.setVideo(videoBytes);
+				
+				videoUnidadRepository.save(video);
+			}			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		
+		Unidad unidadCompleta = unidadRepository.findOne(unidad.getId());		
+		unidadForm.setUnidad(unidadCompleta);
+		
+		String videoGuardado = null;
+		if(unidadCompleta.getVideos() != null && !unidadCompleta.getVideos().isEmpty()){			
+			//data:image/jpg;base64,${foto en base 64}
+			videoGuardado = "data:image/jpg;base64,";
+			String base64 = Base64.encodeBase64String(unidadCompleta.getVideos().get(0).getVideo());
+			videoGuardado +=base64;
+		}
+		unidadForm.setEdicion(true);
+		unidadForm.setVideoBytes(videoGuardado);
+		
+		model.addAttribute("unidadForm", unidadForm);
+		model.addAttribute("mostrarTabMaterialTeorico", true);
+		model.addAttribute("mostrarTabVideo", false);
+		model.addAttribute("mostrarTabPracticas", false);
+		model.addAttribute("mostrarTabExamen", false);
+		model.addAttribute("mostrarMensajeCantidadPreguntas", true);
+		model.addAttribute("mostrarMensajeMaterialGuardado", true);
+		
+		return DETALLE_CURSO;
+	}
+		
+	private boolean validaVideo(MultipartFile video) {
+		// TODO FALTA HACER LA VALIDACION DEL VIDEO
+		return true;
+	}
+	
+	
+	@RequestMapping(value = "/eliminarVideo", method = RequestMethod.GET)
+	public String eliminarVideo(@ModelAttribute @Valid UnidadForm unidadForm, BindingResult bindingResult, Model model) {
+		Curso curso = this.cursoService.encontrarCursoPorId(unidadForm.getCurso().getId());
+		Unidad unidad = this.unidadRepository.findOne(unidadForm.getUnidad().getId());;
+		
+		unidadForm.setCurso(curso);
+		unidadForm.setUnidad(unidad);
+		unidadForm.setPublicado(false);
+		
+		String contenidoMaterialGuardado = null;
+		if(unidad.getMaterial() != null && !unidad.getMaterial().isEmpty()){
+			contenidoMaterialGuardado = new String(unidad.getMaterial().get(0).getMaterial());
+		}		
+		unidadForm.setMaterialTeorico(contenidoMaterialGuardado);
+		
+		if(EstadoCurso.PUBLICADO.equals(curso.getEstadoCurso())){
+			unidadForm.setPublicado(true);
+		}		
+		
+		String videoGuardado = null;
+		if(unidad.getVideos() != null && !unidad.getVideos().isEmpty()){			
+			//data:image/jpg;base64,${foto en base 64}
+			videoGuardado = "data:image/jpg;base64,";
+			String base64 = Base64.encodeBase64String(unidad.getVideos().get(0).getVideo());
+			videoGuardado +=base64;
+		}
+		unidadForm.setEdicion(true);
+		unidadForm.setVideoBytes(videoGuardado);
+		
+		model.addAttribute("unidadForm", unidadForm);
+		model.addAttribute("mostrarTabMaterialTeorico", false);
+		model.addAttribute("mostrarTabVideo", true);
+		model.addAttribute("mostrarTabPracticas", false);
+		model.addAttribute("mostrarTabExamen", false);
+		model.addAttribute("mostrarMensajeCantidadPreguntas", true);
+		
+		return DETALLE_CURSO;
+	}
+
 	@RequestMapping(value = "/guardarPreguntaExamen", method = RequestMethod.POST)
 	public String guardarPreguntaExamen(@ModelAttribute @Valid UnidadForm unidadForm, BindingResult bindingResult, Model model) {
 		//TODO FALTA HACERLO!!!
