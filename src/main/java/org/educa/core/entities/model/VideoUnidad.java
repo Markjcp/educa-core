@@ -10,6 +10,9 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.educa.core.entities.constants.ConstantesDelModelo;
+import org.hibernate.validator.constraints.Length;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -25,6 +28,7 @@ public class VideoUnidad implements Serializable {
 	private byte[] video;
 
 	@Column(name = "titulo")
+	@Length(max=ConstantesDelModelo.MAX_VIDEO_NAME, message="El nombre del video debe tener al menos {max} caracteres.")
 	private String titulo;
 	
 	@Column(name = "numero_componente", insertable = false, updatable = false)

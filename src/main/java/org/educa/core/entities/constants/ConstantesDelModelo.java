@@ -19,6 +19,10 @@ public interface ConstantesDelModelo {
 	public static final String MAX_TAM_IMAGEN_MSJ = "512KB";
 	
 	public static final int MAX_FILE_NAME = 40;
-
-
+	
+	public static final int MAX_VIDEO_NAME = 40;
+	
+	public static final long MAX_TAM_VIDEO = 50000000;
+	
+	public static final String UNIDAD_TAM_VIDEO = "MB";
 }

@@ -44,6 +44,12 @@ div.sceditor-grip,
 .sceditor-button-table div {
   background-position: 0px -80px;
 }
+
+.sceditor-button-table td {
+	border: 1px dotted #000;
+	empty-cells: show;
+}
+
 .sceditor-button-superscript div {
   background-position: 0px -96px;
 }
