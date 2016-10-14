@@ -196,7 +196,7 @@
 								<br></br><br></br>
 
 								<!-- Se listan las preguntas si alguna fue dada de alta. -->
-								<div th:if="${unidadForm.examenUnidad.preguntas} != null">
+								<div th:if="${unidadForm.examenUnidad} != null">
 									<div th:if="${not #lists.isEmpty(unidadForm.examenUnidad.preguntas)}">
 										<ul class="collapsible popout collapsible-accordion"
 											data-collapsible="accordion">
@@ -213,7 +213,7 @@
 								</div>
 
 								<div
-									th:if="${unidadForm.examenUnidad.preguntas} == null">
+									th:if="${unidadForm.examenUnidad} == null">
 									<div class="alert alert-warning">No hay preguntas
 										asociadas al examen.</div>
 								</div>
