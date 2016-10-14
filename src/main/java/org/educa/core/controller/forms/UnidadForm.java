@@ -1,6 +1,7 @@
 package org.educa.core.controller.forms;
 
 import org.educa.core.entities.model.Curso;
+import org.educa.core.entities.model.ExamenUnidad;
 import org.educa.core.entities.model.Unidad;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,6 +16,7 @@ public class UnidadForm {
 	//Fin - Material teorico	
 	
 	//Examen
+	private ExamenUnidad examenUnidad;
 	private boolean opcionUnoSeleccionada;
 	private boolean opcionDosSeleccionada;
 	private boolean opcionTresSeleccionada;
@@ -189,5 +191,13 @@ public class UnidadForm {
 
 	public void setEdicion(boolean edicion) {
 		this.edicion = edicion;
+	}
+
+	public ExamenUnidad getExamenUnidad() {
+		return examenUnidad;
+	}
+
+	public void setExamenUnidad(ExamenUnidad examenUnidad) {
+		this.examenUnidad = examenUnidad;
 	}	
 }

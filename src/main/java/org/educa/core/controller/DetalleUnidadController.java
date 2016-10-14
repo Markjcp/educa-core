@@ -84,10 +84,18 @@ public class DetalleUnidadController {
 			}
 		}
 		
+		ExamenUnidadId examenId = new ExamenUnidadId();
+		examenId.setIdCurso(curso.getId());
+		examenId.setIdExamen(1);
+		examenId.setNumero(unidad.getId().getNumero());
+		
+		ExamenUnidad examenUnidad = examenUnidadRepository.findOne(examenId);
+		
 		UnidadForm unidadForm = new UnidadForm();
 		unidadForm.setCurso(curso);
 		unidadForm.setUnidad(unidad);
 		unidadForm.setPublicado(false);
+		unidadForm.setExamenUnidad(examenUnidad);
 		
 		String contenidoMaterialGuardado = null;
 		if(unidad.getMaterial() != null && !unidad.getMaterial().isEmpty()){
@@ -534,7 +542,7 @@ public class DetalleUnidadController {
 		
 		examenUnidad.setCantPreguntasUsuario(unidadForm.getCantidadPreguntasAlumno());
 		
-		List<PreguntaExamenUnidad> preguntas = examenUnidad.getPreguntas();
+		List<PreguntaExamenUnidad> preguntas = unidadForm.getExamenUnidad().getPreguntas();
 		if(preguntas == null){
 			preguntas = new ArrayList<PreguntaExamenUnidad>();
 		}
@@ -641,7 +649,7 @@ public class DetalleUnidadController {
 		
 		examenUnidad.setCantPreguntasUsuario(unidadForm.getCantidadPreguntasAlumno());
 		
-		List<PreguntaExamenUnidad> preguntas = examenUnidad.getPreguntas();
+		List<PreguntaExamenUnidad> preguntas = unidadForm.getExamenUnidad().getPreguntas();
 		if(preguntas == null){
 			preguntas = new ArrayList<PreguntaExamenUnidad>();
 		}

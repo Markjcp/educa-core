@@ -194,7 +194,30 @@
 							<!-- TAB DE EXAMEN -->
 							<div th:class="${mostrarTabExamen} ? 'tab-pane fade active in' : 'tab-pane fade'" id="examenUnidad">								
 								<br></br><br></br>
-								
+
+								<!-- Se listan las preguntas si alguna fue dada de alta. -->
+								<div th:if="${unidadForm.examenUnidad.preguntas} != null">
+									<div th:if="${not #lists.isEmpty(unidadForm.examenUnidad.preguntas)}">
+										<ul class="collapsible popout collapsible-accordion"
+											data-collapsible="accordion">
+											<li th:each="preguntaPropia : ${unidadForm.examenUnidad.preguntas}"
+												th:id="'preguntaPropia-' + ${preguntaPropia.id.idPregunta}">
+												<!-- onclick="abrioTag('UNIDAD')"> -->
+												<div class="collapsible-header">
+													<i class="fa fa-file-text-o" aria-hidden="true"></i>&nbsp;
+													<span th:text="${preguntaPropia.enunciado}">&nbsp;</span>
+												</div>
+											</li>
+										</ul>
+									</div>
+								</div>
+
+								<div
+									th:if="${#lists.isEmpty(unidadForm.examenUnidad.preguntas)}">
+									<div class="alert alert-warning">No hay preguntas
+										asociadas al examen.</div>
+								</div>
+
 								<form action="#" th:action="@{/detalleUnidad/guardarPreguntaExamen}" th:object="${unidadForm}" method="post" id="formularioAltaPreguntaExamen">
 									<div id="formularioAltaPreguntaExamenDetalle">
 										<div class="col l12 s12">
