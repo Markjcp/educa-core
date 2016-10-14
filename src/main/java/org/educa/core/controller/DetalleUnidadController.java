@@ -542,7 +542,10 @@ public class DetalleUnidadController {
 		
 		examenUnidad.setCantPreguntasUsuario(unidadForm.getCantidadPreguntasAlumno());
 		
-		List<PreguntaExamenUnidad> preguntas = unidadForm.getExamenUnidad().getPreguntas();
+		List<PreguntaExamenUnidad> preguntas = null;
+		if(unidadForm.getExamenUnidad()!=null){
+			unidadForm.getExamenUnidad().getPreguntas();			
+		}
 		if(preguntas == null){
 			preguntas = new ArrayList<PreguntaExamenUnidad>();
 		}
@@ -649,7 +652,10 @@ public class DetalleUnidadController {
 		
 		examenUnidad.setCantPreguntasUsuario(unidadForm.getCantidadPreguntasAlumno());
 		
-		List<PreguntaExamenUnidad> preguntas = unidadForm.getExamenUnidad().getPreguntas();
+		List<PreguntaExamenUnidad> preguntas = null;
+		if(unidadForm.getExamenUnidad()!=null){
+			unidadForm.getExamenUnidad().getPreguntas();			
+		}
 		if(preguntas == null){
 			preguntas = new ArrayList<PreguntaExamenUnidad>();
 		}
