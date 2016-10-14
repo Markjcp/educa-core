@@ -120,7 +120,7 @@
 							<div th:class="${mostrarTabVideo} ? 'tab-pane fade active in' : 'tab-pane fade'" id="videoUnidad">								
 								<br></br><br></br>
 								
-								<form action="#" th:action="@{/detalleUnidad/guardarVideo}" th:object="${unidadForm}" method="post" id="formularioVideo">
+								<form action="#" th:action="@{/detalleUnidad/guardarVideo}" th:object="${unidadForm}" method="post" id="formularioVideo" enctype="multipart/form-data">
 									<div id="formularioVideoDetalle">									  								
 										<div class="row">
 											<div class="col l12 s12">
@@ -129,23 +129,41 @@
 												        <div class="input-field col s8">
 												            <p class="help-block">Seleccione un video</p>									    			
 											    			<input type="file" accept="video/mp4,video/x-m4v,video/*" onchange="loadVideo(event)" th:field="*{video}"/>											    
-												        </div>
-												        <div class="input-field col s4">
-												        	<div th:if="${mostrarMensajeErrorCargaVideo} == true" class="alert alert-danger alert-dismissable">
-												        		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-												   				<a href="#" class="alert-link">Error!</a> <span th:text="${mensajeErrorCargaVideo}"></span>															   	                   
-															</div>											        												        
-												        </div>
+												        </div>												        
 												     </div>
 												</div>
-												<div class="form-group input-field col s8">
-													 <div th:if="*{edicion} == false" class="video-container">
-												      	<object type="text/html" id="outputVideo" th:field="*{video}"></object>
-												      </div>
-												      <div th:if="*{edicion} == true" class="video-container">
-												      	<object type="text/html" id="outputVideo"  th:src="*{videoBytes}" th:field="*{video}"></object>
-												      </div>												      									    			
-												</div>												
+												<div class="form-group input-field">
+													<div class="row">
+														<div class="input-field col s2"></div>
+														<div class="input-field col s8">
+												        	<div th:if="${mostrarMensajeErrorCargaVideo} == true" class="alert alert-danger alert-dismissable">
+												        		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+												   				<a href="#" class="alert-link">Error!</a> <span th:text="${mensajeErrorVideo}"></span>															   	                   
+															</div>
+															<div th:if="${mostrarMensajeEliminarVideo} == true" class="alert alert-success alert-dismissable">
+												        		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+												   				<a href="#" class="alert-link">Bien Hecho!</a> El video se elimin&oacute; con &eacute;xito.															   	                   
+															</div>
+															<div th:if="${mostrarMensajeWarningCargaVideo} == true" class="alert alert-warning alert-dismissable">
+												        		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+												   				<a href="#" class="alert-link">Cuidado!</a> <span th:text="${mensajeWarningVideo}"></span>															   	                   
+															</div>
+												        </div>
+													</div>													
+												</div>
+												<div class="form-group input-field">
+													<div class="row">
+														<div class="form-group input-field col s2"></div>
+														<div class="form-group input-field col s8">
+															 <div th:if="*{edicion} == false" class="video-container">
+														      	<object type="text/html" id="outputVideo" th:field="*{video}"></object>
+														      </div>
+														      <div th:if="*{edicion} == true" class="video-container">
+														      	<object type="video/mp4" id="outputVideo"  th:data="*{videoBytes}" th:field="*{video}"></object>
+														      </div>								      									    			
+														</div>
+													</div>														
+												</div>																																			
 											</div>
 										</div>
 																				
@@ -158,7 +176,7 @@
 										<div class="col l12 s12">			    					    				
 											<div class="form-group">
 												<button type="submit" class="btn orange-effect orange darken-4">Guardar</button>
-												<a class="btn orange-effect orange darken-4" href="#" th:href="@{/detalleUnidad/eliminarVideo}">Eliminar</a>
+												<a class="btn orange-effect orange darken-4" href="#" th:href="@{/detalleUnidad/eliminarVideo/{cursoId}/{unidadNro}(cursoId=*{curso.id},unidadNro=*{unidad.id.numero})}">Eliminar</a>
 												<a class="btn orange-effect orange darken-4" href="#" th:href="@{/cursoNoAdmin/configuracionCurso/{cursoId}(cursoId=*{curso.id})}">Salir</a>
 											 </div>
 										</div>																				

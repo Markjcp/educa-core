@@ -16,6 +16,7 @@ import org.educa.core.dao.ExamenUnidadRepository;
 import org.educa.core.dao.MaterialUnidadRepository;
 import org.educa.core.dao.UnidadRepository;
 import org.educa.core.dao.VideoUnidadRepository;
+import org.educa.core.entities.model.ComponenteId;
 import org.educa.core.entities.model.Curso;
 import org.educa.core.entities.model.EstadoCurso;
 import org.educa.core.entities.model.ExamenUnidad;
@@ -260,10 +261,24 @@ public class DetalleUnidadController {
 	
 	@RequestMapping(value = "/guardarVideo", method = RequestMethod.POST)
 	public String guardarVideo(@ModelAttribute @Valid UnidadForm unidadForm, BindingResult bindingResult, Model model) {
+		if(unidadForm.getVideo().isEmpty()){
+			model.addAttribute("mostrarMensajeWarningCargaVideo", true);
+			model.addAttribute("mensajeWarningVideo", "No existe un video cargado para realizar la operación solicitada.");
+			
+			model.addAttribute("unidadForm", unidadForm);
+			model.addAttribute("mostrarTabMaterialTeorico", false);
+			model.addAttribute("mostrarTabVideo", true);
+			model.addAttribute("mostrarTabPracticas", false);
+			model.addAttribute("mostrarTabExamen", false);
+			model.addAttribute("mostrarMensajeCantidadPreguntas", true);
+			
+			return DETALLE_CURSO;
+		}
+		
 		if(!validaVideo(unidadForm.getVideo())){
 			//TODO
 			model.addAttribute("mostrarMensajeErrorCargaVideo", true);
-			model.addAttribute("mensajeErrorCargaVideo", "ERROR .");//Ver el mensaje de error a mostrar!!! TODO
+			model.addAttribute("mensajeErrorVideo", "ERROR .");//Ver el mensaje de error a mostrar!!! TODO
 			
 			model.addAttribute("unidadForm", unidadForm);
 			model.addAttribute("mostrarTabMaterialTeorico", false);
@@ -294,6 +309,7 @@ public class DetalleUnidadController {
 			video = unidad.getVideos().get(0);
 		}
 		
+		boolean error = false;
 		try {
 			if(unidadForm.getVideo() != null){
 				byte[] videoBytes = unidadForm.getVideo().getBytes();
@@ -302,30 +318,46 @@ public class DetalleUnidadController {
 				videoUnidadRepository.save(video);
 			}			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		
-		
-		Unidad unidadCompleta = unidadRepository.findOne(unidad.getId());		
-		unidadForm.setUnidad(unidadCompleta);
+			error = true;
+		}  catch (Exception e) {
+			e.printStackTrace();
+			error = true;
+		}
 		
 		String videoGuardado = null;
-		if(unidadCompleta.getVideos() != null && !unidadCompleta.getVideos().isEmpty()){			
-			//data:image/jpg;base64,${foto en base 64}
-			videoGuardado = "data:image/jpg;base64,";
-			String base64 = Base64.encodeBase64String(unidadCompleta.getVideos().get(0).getVideo());
-			videoGuardado +=base64;
+		String base64 = null;
+		if(error){
+			model.addAttribute("mostrarMensajeErrorCargaVideo", true);
+			model.addAttribute("mensajeErrorVideo", "Se produjo un error al intentar guardar el video.");
+			try {
+				base64 = Base64.encodeBase64String(unidadForm.getVideo().getBytes());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			Unidad unidadCompleta = unidadRepository.findOne(unidad.getId());		
+			unidadForm.setUnidad(unidadCompleta);
+			
+			if(unidadCompleta.getVideos() != null && !unidadCompleta.getVideos().isEmpty()){
+				base64 = Base64.encodeBase64String(unidadCompleta.getVideos().get(0).getVideo());
+			}				
 		}
-		unidadForm.setEdicion(true);
-		unidadForm.setVideoBytes(videoGuardado);
 		
+		//data:video/webm;base64,${video en base 64}
+		videoGuardado = "data:video/mp4;base64,";
+		videoGuardado +=base64;
+		
+		unidadForm.setVideoBytes(videoGuardado);
+		unidadForm.setEdicion(true);
 		model.addAttribute("unidadForm", unidadForm);
-		model.addAttribute("mostrarTabMaterialTeorico", true);
-		model.addAttribute("mostrarTabVideo", false);
+		model.addAttribute("mostrarTabMaterialTeorico", false);
+		model.addAttribute("mostrarTabVideo", true);
 		model.addAttribute("mostrarTabPracticas", false);
 		model.addAttribute("mostrarTabExamen", false);
 		model.addAttribute("mostrarMensajeCantidadPreguntas", true);
-		model.addAttribute("mostrarMensajeMaterialGuardado", true);
+		model.addAttribute("mostrarMensajeMaterialGuardado", false);
 		
 		return DETALLE_CURSO;
 	}
@@ -336,11 +368,30 @@ public class DetalleUnidadController {
 	}
 	
 	
-	@RequestMapping(value = "/eliminarVideo", method = RequestMethod.GET)
-	public String eliminarVideo(@ModelAttribute @Valid UnidadForm unidadForm, BindingResult bindingResult, Model model) {
-		Curso curso = this.cursoService.encontrarCursoPorId(unidadForm.getCurso().getId());
-		Unidad unidad = this.unidadRepository.findOne(unidadForm.getUnidad().getId());;
+	@RequestMapping(value = "/eliminarVideo/{idCurso}/{unidadNro}", method = RequestMethod.GET)
+	public String eliminarVideo(@PathVariable("idCurso") long idCurso, @PathVariable("unidadNro") int unidadNro, Model model) {
+		ComponenteId idUnidad = new ComponenteId();
+		idUnidad.setIdCurso(idCurso);
+		idUnidad.setNumero(unidadNro);
+		Unidad unidad = this.unidadRepository.findOne(idUnidad);
+		boolean intentoEliminar = false;
+		if(unidad.getVideos() == null || unidad.getVideos().isEmpty()){
+			model.addAttribute("mostrarMensajeWarningCargaVideo", true);
+			model.addAttribute("mensajeWarningVideo", "Nunca se guardó un video para poder ser eliminado.");		
+		} else {
+			//Como se carga un unico video, elimino directamente el que esta en el primer lugar
+			VideoUnidad video = (unidad.getVideos() == null || unidad.getVideos().isEmpty() ) ? null : unidad.getVideos().get(0);
+			if(video != null){
+				unidad.setVideos(null);
+				this.unidadRepository.save(unidad);
+				this.videoUnidadRepository.delete(video);
+				intentoEliminar = true;
+			}
+		}
 		
+		unidad = this.unidadRepository.findOne(idUnidad);		
+		Curso curso = this.cursoService.encontrarCursoPorId(idCurso);
+		UnidadForm unidadForm = new UnidadForm();
 		unidadForm.setCurso(curso);
 		unidadForm.setUnidad(unidad);
 		unidadForm.setPublicado(false);
@@ -355,15 +406,22 @@ public class DetalleUnidadController {
 			unidadForm.setPublicado(true);
 		}		
 		
-		String videoGuardado = null;
-		if(unidad.getVideos() != null && !unidad.getVideos().isEmpty()){			
-			//data:image/jpg;base64,${foto en base 64}
-			videoGuardado = "data:image/jpg;base64,";
-			String base64 = Base64.encodeBase64String(unidad.getVideos().get(0).getVideo());
-			videoGuardado +=base64;
-		}
-		unidadForm.setEdicion(true);
-		unidadForm.setVideoBytes(videoGuardado);
+		if(intentoEliminar){
+			String videoGuardado = null;
+			if(unidad.getVideos() != null && !unidad.getVideos().isEmpty()){
+				//Esto lo hago para verificar que el video se a eliminado correctamente de la unidad
+				
+				//data:video/webm;base64,${video en base 64}
+				videoGuardado = "data:video/mp4;base64,";
+				String base64 = Base64.encodeBase64String(unidad.getVideos().get(0).getVideo());
+				videoGuardado +=base64;
+				unidadForm.setVideoBytes(videoGuardado);
+			} else {
+				model.addAttribute("mostrarMensajeEliminarVideo", true);
+			}
+		}		
+		
+		unidadForm.setEdicion(true);		
 		
 		model.addAttribute("unidadForm", unidadForm);
 		model.addAttribute("mostrarTabMaterialTeorico", false);
