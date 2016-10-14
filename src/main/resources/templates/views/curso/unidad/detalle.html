@@ -213,7 +213,7 @@
 								</div>
 
 								<div
-									th:if="${#lists.isEmpty(unidadForm.examenUnidad.preguntas)}">
+									th:if="${unidadForm.examenUnidad.preguntas} == null">
 									<div class="alert alert-warning">No hay preguntas
 										asociadas al examen.</div>
 								</div>
