@@ -15,6 +15,7 @@
 	<link href="../../static/css/educa.css" th:href="@{/css/educa.css}" rel="stylesheet" media="screen,projection" />
 	<link href="../../static/css/bootstrap-datetimepicker.css" th:href="@{/css/bootstrap-datetimepicker.css}" rel="stylesheet" media="screen,projection" />	
 	<link href="../../static/css/font-awesome.css" th:href="@{/css/font-awesome.css}" rel="stylesheet" media="screen,projection" />
+	<link href="../../static/wysiwyg-sceditor/sceditor/jquery.sceditor.default.css" th:href="@{/wysiwyg-sceditor/sceditor/jquery.sceditor.default.css}" rel="stylesheet" media="all" />
 	<link href="../../static/wysiwyg-sceditor/sceditor/themes/modern.css" th:href="@{/wysiwyg-sceditor/sceditor/themes/modern.css}" rel="stylesheet" media="all" />
 </head>
 <body>
@@ -147,6 +148,19 @@
 															<div th:if="${mostrarMensajeWarningCargaVideo} == true" class="alert alert-warning alert-dismissable">
 												        		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
 												   				<a href="#" class="alert-link">Cuidado!</a> <span th:text="${mensajeWarningVideo}"></span>															   	                   
+															</div>
+															<div th:if="${mostrarMensajeErrorValidacionCargaVideo} == true" class="alert alert-danger alert-dismissable">
+															   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+															   <a href="#" class="alert-link">Error!</a> El video contiene errores de validaci&oacute;n, por lo que los cambios no se realizaron.
+															   
+															   <div>
+																	<br></br><br></br>
+																	<a href="#" class="alert-link">Errores:</a>
+																	<br></br><br></br>
+																	<ol>
+																		<li th:each="err : *{errores}"><p th:text="${err}"></p></li>
+																	</ol>
+																</div>													  
 															</div>
 												        </div>
 													</div>													

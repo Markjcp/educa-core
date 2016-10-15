@@ -1,5 +1,7 @@
 package org.educa.core.controller.forms;
 
+import java.util.List;
+
 import org.educa.core.entities.model.Curso;
 import org.educa.core.entities.model.ExamenUnidad;
 import org.educa.core.entities.model.Unidad;
@@ -35,6 +37,7 @@ public class UnidadForm {
 	private MultipartFile video;
 	private String videoBytes;
 	private boolean edicion;
+	private List<String> errores;
 	//Fin - video
 
 	public UnidadForm() {
@@ -199,5 +202,13 @@ public class UnidadForm {
 
 	public void setExamenUnidad(ExamenUnidad examenUnidad) {
 		this.examenUnidad = examenUnidad;
+	}
+
+	public List<String> getErrores() {
+		return errores;
+	}
+
+	public void setErrores(List<String> errores) {
+		this.errores = errores;
 	}	
 }

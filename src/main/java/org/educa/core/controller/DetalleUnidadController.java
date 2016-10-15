@@ -16,6 +16,7 @@ import org.educa.core.dao.ExamenUnidadRepository;
 import org.educa.core.dao.MaterialUnidadRepository;
 import org.educa.core.dao.UnidadRepository;
 import org.educa.core.dao.VideoUnidadRepository;
+import org.educa.core.entities.constants.ConstantesDelModelo;
 import org.educa.core.entities.model.ComponenteId;
 import org.educa.core.entities.model.Curso;
 import org.educa.core.entities.model.EstadoCurso;
@@ -283,10 +284,23 @@ public class DetalleUnidadController {
 			return DETALLE_CURSO;
 		}
 		
-		if(!validaVideo(unidadForm.getVideo())){
-			//TODO
-			model.addAttribute("mostrarMensajeErrorCargaVideo", true);
-			model.addAttribute("mensajeErrorVideo", "ERROR .");//Ver el mensaje de error a mostrar!!! TODO
+		boolean valida = validaVideo(unidadForm); 
+		if(!valida){
+			model.addAttribute("mostrarMensajeErrorValidacionCargaVideo", true);
+			
+			String base64 = null;
+			try {
+				base64 = Base64.encodeBase64String(unidadForm.getVideo().getBytes());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			//data:video/mp4;base64,${video en base 64}
+			String videoGuardado = "data:video/mp4;base64,";
+			videoGuardado +=base64;
+			
+			unidadForm.setVideoBytes(videoGuardado);
+			unidadForm.setEdicion(true);
 			
 			model.addAttribute("unidadForm", unidadForm);
 			model.addAttribute("mostrarTabMaterialTeorico", false);
@@ -309,19 +323,20 @@ public class DetalleUnidadController {
 			id.setNumero(1);
 			
 			video.setId(id);
-			unidad.addVideo(video);;
+			unidad.addVideo(video);
 			
 			video.setUnidad(unidad);
 			video.setIdCurso(unidad.getCurso().getId());
 		} else {
 			video = unidad.getVideos().get(0);
-		}
+		}				
 		
 		boolean error = false;
 		try {
 			if(unidadForm.getVideo() != null){
 				byte[] videoBytes = unidadForm.getVideo().getBytes();
 				video.setVideo(videoBytes);
+				video.setTitulo(unidadForm.getVideo().getOriginalFilename());
 				
 				videoUnidadRepository.save(video);
 			}			
@@ -341,7 +356,6 @@ public class DetalleUnidadController {
 			try {
 				base64 = Base64.encodeBase64String(unidadForm.getVideo().getBytes());
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else {
@@ -353,7 +367,7 @@ public class DetalleUnidadController {
 			}				
 		}
 		
-		//data:video/webm;base64,${video en base 64}
+		//data:video/mp4;base64,${video en base 64}
 		videoGuardado = "data:video/mp4;base64,";
 		videoGuardado +=base64;
 		
@@ -370,11 +384,28 @@ public class DetalleUnidadController {
 		return DETALLE_CURSO;
 	}
 		
-	private boolean validaVideo(MultipartFile video) {
-		// TODO FALTA HACER LA VALIDACION DEL VIDEO
-		return true;
+	private boolean validaVideo(UnidadForm unidadForm) {
+		MultipartFile video = unidadForm.getVideo();
+		if(video == null){
+			return false;
+		}
+		
+		boolean valida = true;
+		List<String> errores = new ArrayList<String>();
+		
+		if(video.getOriginalFilename().length() > ConstantesDelModelo.MAX_VIDEO_NAME){
+			errores.add("El nombre del video debe contener como máximo " + ConstantesDelModelo.MAX_VIDEO_NAME + " caracteres.");
+			valida = false;
+		}
+		
+		if(video.getSize() > ConstantesDelModelo.MAX_TAM_VIDEO){
+			errores.add("El video debe ser menor a " + ConstantesDelModelo.MAX_TAM_VIDEO + " " + ConstantesDelModelo.UNIDAD_TAM_VIDEO);
+			valida = false;
+		}
+		
+		unidadForm.setErrores(errores);
+		return valida;
 	}
-	
 	
 	@RequestMapping(value = "/eliminarVideo/{idCurso}/{unidadNro}", method = RequestMethod.GET)
 	public String eliminarVideo(@PathVariable("idCurso") long idCurso, @PathVariable("unidadNro") int unidadNro, Model model) {
