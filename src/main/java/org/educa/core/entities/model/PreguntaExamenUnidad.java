@@ -32,7 +32,6 @@ public class PreguntaExamenUnidad implements Serializable {
 	@Column(name = "respuesta")
 	private String respuesta;
 
-	@JsonIgnore
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumns({
 			@JoinColumn(name = "numero_componente", referencedColumnName = "numero_componente", insertable = false, updatable = false),

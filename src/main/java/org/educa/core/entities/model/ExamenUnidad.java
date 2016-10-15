@@ -33,7 +33,6 @@ public class ExamenUnidad implements Serializable {
 			@JoinColumn(name = "id_curso", insertable = false, updatable = false) })
 	private Unidad unidad;
 
-	@JsonIgnore
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumns({ @JoinColumn(name = "numero_componente", insertable = false, updatable = false),
 			@JoinColumn(name = "id_curso", insertable = false, updatable = false),
