@@ -29,14 +29,14 @@ public class ExamenUnidad implements Serializable {
 
 	@JsonIgnore
 	@ManyToOne
-	@JoinColumns({ @JoinColumn(name = "numero_componente", insertable = false, updatable = false),
-			@JoinColumn(name = "id_curso", insertable = false, updatable = false) })
+	@JoinColumns({ @JoinColumn(name = "numero_componente", referencedColumnName = "numero_componente", insertable = false, updatable = false),
+			@JoinColumn(name = "id_curso", referencedColumnName = "id_curso", insertable = false, updatable = false) })
 	private Unidad unidad;
 
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE })
-	@JoinColumns({ @JoinColumn(name = "numero_componente", insertable = false, updatable = false),
-			@JoinColumn(name = "id_curso", insertable = false, updatable = false),
-			@JoinColumn(name = "numero_examen", insertable = false, updatable = false) })
+	@JoinColumns({ @JoinColumn(name = "numero_componente",referencedColumnName = "numero_componente", insertable = false, updatable = false),
+			@JoinColumn(name = "id_curso", referencedColumnName = "id_curso", insertable = false, updatable = false),
+			@JoinColumn(name = "numero_examen", referencedColumnName= "numero_examen", insertable = false, updatable = false) })
 	private List<PreguntaExamenUnidad> preguntas;
 
 	public ExamenUnidadId getId() {
