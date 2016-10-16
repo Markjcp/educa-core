@@ -102,11 +102,11 @@ public class Curso implements Persistible {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "estado_curso")
 	@JsonIgnore
-	private EstadoCurso estadoCurso;
+	private Estado estadoCurso;
 	
 	public Curso() {
 		super();
-		this.estadoCurso = EstadoCurso.NO_PUBLICADO;
+		this.estadoCurso = Estado.NO_PUBLICADO;
 	}
 
 	@Override
@@ -247,16 +247,16 @@ public class Curso implements Persistible {
 		this.sesiones.add(sesion);
 	}
 
-	public EstadoCurso getEstadoCurso() {
+	public Estado getEstadoCurso() {
 		return estadoCurso;
 	}
 
-	public void setEstadoCurso(EstadoCurso estadoCurso) {
+	public void setEstadoCurso(Estado estadoCurso) {
 		this.estadoCurso = estadoCurso;
 	}
 	
 	public boolean isPublicado() {
-		return (EstadoCurso.PUBLICADO.equals(this.estadoCurso) ? true : false);
+		return (Estado.PUBLICADO.equals(this.estadoCurso) ? true : false);
 	}
 
 	@Override

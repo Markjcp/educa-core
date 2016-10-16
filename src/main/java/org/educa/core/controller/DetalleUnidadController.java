@@ -1,14 +1,11 @@
 package org.educa.core.controller;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.codec.binary.Base64;
 import org.educa.core.controller.forms.UnidadForm;
@@ -19,7 +16,7 @@ import org.educa.core.dao.VideoUnidadRepository;
 import org.educa.core.entities.constants.ConstantesDelModelo;
 import org.educa.core.entities.model.ComponenteId;
 import org.educa.core.entities.model.Curso;
-import org.educa.core.entities.model.EstadoCurso;
+import org.educa.core.entities.model.Estado;
 import org.educa.core.entities.model.ExamenUnidad;
 import org.educa.core.entities.model.ExamenUnidadId;
 import org.educa.core.entities.model.MaterialUnidad;
@@ -32,6 +29,9 @@ import org.educa.core.entities.model.Unidad;
 import org.educa.core.entities.model.VideoUnidad;
 import org.educa.core.entities.model.VideoUnidadId;
 import org.educa.core.services.CursoService;
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -43,8 +43,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 @Controller
 @RequestMapping("/detalleUnidad")
@@ -104,9 +102,7 @@ public class DetalleUnidadController {
 		}		
 		unidadForm.setMaterialTeorico(contenidoMaterialGuardado);
 		
-		if(EstadoCurso.PUBLICADO.equals(curso.getEstadoCurso())){
-			unidadForm.setPublicado(true);
-		}		
+		unidadForm.setPublicado(unidad.isPublicado());		
 		
 		model.addAttribute("unidadForm", unidadForm);
 		model.addAttribute("mostrarTabMaterialTeorico", true);
@@ -125,17 +121,36 @@ public class DetalleUnidadController {
 		 * asi que hay que cambiarle el valor.
 		 */
 		
-		EstadoCurso nuevoEstadoCurso = EstadoCurso.NO_PUBLICADO;
+		Estado nuevoEstadoCurso = Estado.NO_PUBLICADO;
 		if(!unidadForm.isPublicado()){
-			nuevoEstadoCurso = EstadoCurso.PUBLICADO;
+			nuevoEstadoCurso = Estado.PUBLICADO;
 		}
-		Curso curso = unidadForm.getCurso();
-		if(EstadoCurso.PUBLICADO.equals(nuevoEstadoCurso) && (curso.getUnidades() == null || curso.getUnidades().isEmpty())){
-			model.addAttribute("mostrarMensajeErrorPublicacion", true);
-			StringBuilder mensaje = new StringBuilder();
-			mensaje.append("El curso '" + curso.getNombre() + "' ");
-			mensaje.append("no se puede publicar porque no tiene unidades cargadas.");					
-			model.addAttribute("mensajeErrorPublicacion", mensaje.toString());
+		
+		//Voy a buscar la unidad nuevamente porque las colecciones estan cargadas en otra sesion de hibernate
+		Unidad unidad = unidadRepository.findOne(unidadForm.getUnidad().getId());
+		
+		//Para poder publicar una unidad tiene que tener cargado un video y/o un material teorico.
+		if(Estado.PUBLICADO.equals(nuevoEstadoCurso) && (unidad.getMaterial() == null || unidad.getMaterial().isEmpty()) 
+				&& (unidad.getVideos() == null || unidad.getVideos().isEmpty())){
+			String mensaje = "La unidad no se puede publicar porque no tiene ";
+			boolean tieneMaterial = true;
+			if(unidad.getMaterial() == null || unidad.getMaterial().isEmpty()){
+				mensaje += "material teórico ";
+				tieneMaterial = false;
+			}
+			
+			if(unidad.getVideos() == null || unidad.getVideos().isEmpty()){
+				if(!tieneMaterial){
+					mensaje += "ni ";
+				}
+				
+				mensaje += "video ";
+			}
+			
+			mensaje += "cargado.";
+			
+			model.addAttribute("mostrarMensajeErrorPublicacion", true);				
+			model.addAttribute("mensajeErrorPublicacion", mensaje);
 			
 			model.addAttribute("unidadForm", unidadForm);
 			model.addAttribute("mostrarTabMaterialTeorico", true);
@@ -147,14 +162,14 @@ public class DetalleUnidadController {
 			return DETALLE_CURSO;
 		}
 				
-		curso.setEstadoCurso(nuevoEstadoCurso);
+		unidad.setEstadoUnidad(nuevoEstadoCurso);
 		
-		cursoService.guardarCurso(curso);
+		unidadRepository.save(unidad);
 		
-		Curso cursoPersistido = cursoService.encontrarCursoPorId(curso.getId());
-		unidadForm.setCurso(cursoPersistido);
+		Unidad unidadPersistida = unidadRepository.findOne(unidad.getId());
+		unidadForm.setUnidad(unidadPersistida);
 		
-		unidadForm.setPublicado(EstadoCurso.PUBLICADO.equals(cursoPersistido.getEstadoCurso()) ? true : false);
+		unidadForm.setPublicado(unidadPersistida.isPublicado());
 		
 		model.addAttribute("unidadForm", unidadForm);
 		model.addAttribute("mostrarTabMaterialTeorico", true);
@@ -170,22 +185,27 @@ public class DetalleUnidadController {
 	public String guardarMaterialTeorico(@ModelAttribute @Valid UnidadForm unidadForm, BindingResult bindingResult, Model model) {
 		System.out.println("Texto de material guardado: " + unidadForm.getMaterialTeorico());
 		
-		if(!validaContenidoMaterialUnidad(unidadForm)){
-			model.addAttribute("mostrarErrorContenidoMaterialTeoricoVacio", true);
-			model.addAttribute("mensajeErrorContenidoMaterialTeoricoVacio", "Debe de cargar material teórico para poder guardarlo.");
+		Unidad unidad = unidadRepository.findOne(unidadForm.getUnidad().getId());//Voy a buscarla porque las listas se cargaron en otra sesion de hibernate (no en la actual).
+		
+		boolean intentaLimpiar = intentaLimpiarContenido(unidadForm.getMaterialTeorico(), unidad);
+		if(!intentaLimpiar){
+			String mensajeError = validaContenidoMaterialUnidad(unidadForm);
 			
-			model.addAttribute("unidadForm", unidadForm);
-			model.addAttribute("mostrarTabMaterialTeorico", true);
-			model.addAttribute("mostrarTabVideo", false);
-			model.addAttribute("mostrarTabPracticas", false);
-			model.addAttribute("mostrarTabExamen", false);
-			model.addAttribute("mostrarMensajeCantidadPreguntas", true);
-			
-			return DETALLE_CURSO;
+			if(mensajeError != null && !mensajeError.isEmpty()){
+				model.addAttribute("mostrarErrorContenidoMaterialTeoricoVacio", true);
+				model.addAttribute("mensajeErrorContenidoMaterialTeoricoVacio", mensajeError);
+				
+				model.addAttribute("unidadForm", unidadForm);
+				model.addAttribute("mostrarTabMaterialTeorico", true);
+				model.addAttribute("mostrarTabVideo", false);
+				model.addAttribute("mostrarTabPracticas", false);
+				model.addAttribute("mostrarTabExamen", false);
+				model.addAttribute("mostrarMensajeCantidadPreguntas", true);
+				
+				return DETALLE_CURSO;
+			}			
 		}
 		
-		
-		Unidad unidad = unidadRepository.findOne(unidadForm.getUnidad().getId());//Voy a buscarla porque las listas se cargaron en otra sesion de hibernate (no en la actual).
 		MaterialUnidad material = null;
 		if(unidad.getMaterial() == null || unidad.getMaterial().isEmpty()){
 			material = new MaterialUnidad();
@@ -204,10 +224,14 @@ public class DetalleUnidadController {
 			material = unidad.getMaterial().get(0);
 		}
 		
-		byte[] materialBytes = unidadForm.getMaterialTeorico().getBytes();		
-		material.setMaterial(materialBytes);
-		
-		materialUnidadRepository.save(material);
+		if(!intentaLimpiar){
+			byte[] materialBytes = unidadForm.getMaterialTeorico().getBytes();
+			material.setMaterial(materialBytes);
+			
+			materialUnidadRepository.save(material);
+		} else {
+			materialUnidadRepository.delete(material.getId());
+		}
 		
 		Unidad unidadCompleta = unidadRepository.findOne(unidad.getId());		
 		unidadForm.setUnidad(unidadCompleta);
@@ -229,43 +253,90 @@ public class DetalleUnidadController {
 		return DETALLE_CURSO;
 	}
 
-	private boolean validaContenidoMaterialUnidad(UnidadForm unidadForm) {
-		boolean valido = true;
-		
-		//TODO SACAR ESTO DESDE ACA
-		if(valido){
-			return valido;
-		}
-		//TODO SACAR ESTO HASTA ACA
-		
-		//TODO REVISAR ESTO XQ NO ANDA BIEN!
-		if(unidadForm.getMaterialTeorico() == null || unidadForm.getMaterialTeorico().isEmpty()){
-			valido = false;
-		} else {
-			try {
-				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder builder = factory.newDocumentBuilder();
-				String xmlConCabecera = "<?xml version=\"1.0\"?>" + unidadForm.getMaterialTeorico();
-				ByteArrayInputStream input =  new ByteArrayInputStream(xmlConCabecera.getBytes("utf-8"));
-				Document doc = builder.parse(input);
-				String contenido = doc.getTextContent();
-				
-				// builder.parse(new InputSource("<?xml version=\"1.0\"?><body>" + unidadForm.getMaterialTeorico() + "</body>"  ))
-
-				
-				if(contenido == null || contenido.isEmpty()){
-					valido = false;
+	private boolean intentaLimpiarContenido(String materialTeorico, Unidad unidad) {		
+		if(unidad.getMaterial() != null && !unidad.getMaterial().isEmpty()){
+			MaterialUnidad materialUnidad = unidad.getMaterial().get(0);			
+			if(materialUnidad.getMaterial() != null && materialUnidad.getMaterial().length > 0){
+				boolean contenidoVacio = estaContenidoVacio(materialTeorico);
+				//Contiene material y lo intenta limpiar
+				if(contenidoVacio){
+					return true;
 				}				
-			} catch (SAXException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (ParserConfigurationException e) {
-				e.printStackTrace();
 			}
 		}
 		
-		return valido;
+		return false;
+	}
+	
+	private boolean estaContenidoVacio2(String contenido){
+		/*
+		 * Si el contenido viene vacio, tiene la siguiente estructura:
+		 * <p><br />
+		 *	</p>
+		 */
+		
+		//Esto deberia de hacerse con un parse de xhtml pero no me funciono y ya no tengo tiempo. Ver si pasa todas las pruebas, sino reveer esto.
+		String contenidoInicial = "<p><br />";
+		int indexInicio = contenido.indexOf(contenidoInicial);
+		if(indexInicio == -1 || indexInicio != 0){
+			return false;
+		}
+		
+		int indexContenido = indexInicio + contenidoInicial.length();//En ese index deberia de comenzar el contenido real si escribio algo distinto de espacios.
+		String contenidoFinal = "</p>";
+		//Busco el primer contenidoFinal. Si no escribio nada, deberia de no tener nada mas.
+		int indexFinal = contenido.indexOf(contenidoFinal);
+		
+		//Voy a verificar que no haya mas contenido xhtml que el que viene por defecto.
+		int indexFinalExtra = contenido.length() - (indexFinal + contenidoFinal.length());		
+		if(indexFinalExtra > 0){
+			return false;
+		}
+		
+		String contenidoEfectivo = contenido.substring(indexContenido, indexFinal);
+		contenidoEfectivo = contenidoEfectivo.trim();//Saco los espacios en blanco al comienzo y al final
+		
+		if(contenidoEfectivo.length() > 0){
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private boolean estaContenidoVacio(String contenido){
+		//org.jdom.input.SAXBuilder saxBuilder = new SAXBuilder();
+		SAXBuilder saxBuilder = new SAXBuilder();
+		try {
+		    //org.jdom.Document doc = saxBuilder.build(new StringReader(xml));
+			Document doc = saxBuilder.build(new StringReader(contenido));
+		    String contenidoPuro = doc.getRootElement().getText();
+		    System.out.println(contenidoPuro);
+		    
+		    if(contenidoPuro == null || contenidoPuro.isEmpty()){
+		    	return true;
+		    }
+		} catch (JDOMException e) {
+		    // handle JDOMException
+		} catch (IOException e) {
+		    // handle IOException
+		}
+		
+		return false;
+	}
+
+	private String validaContenidoMaterialUnidad(UnidadForm unidadForm) {
+		String mensaje = null;
+		String materialTeorico = unidadForm.getMaterialTeorico();
+		if(materialTeorico == null || materialTeorico.isEmpty() || estaContenidoVacio(materialTeorico)){
+			mensaje = "Debe de cargar material teórico para poder guardarlo.";
+		} else {
+			byte[] materialBytes = unidadForm.getMaterialTeorico().getBytes();
+			if(materialBytes.length > ConstantesDelModelo.MAX_TAM_MATERIAL_TEORICO){
+				mensaje = "El tamaño del material teorico debe ser menor a " + ConstantesDelModelo.MAX_TAM_MATERIAL_TEORICO + " " + ConstantesDelModelo.UNIDAD_TAM_MATERIAL_TEORICO;
+			}
+		}
+		
+		return mensaje;
 	}
 	
 	@RequestMapping(value = "/guardarVideo", method = RequestMethod.POST)
@@ -441,7 +512,7 @@ public class DetalleUnidadController {
 		}		
 		unidadForm.setMaterialTeorico(contenidoMaterialGuardado);
 		
-		if(EstadoCurso.PUBLICADO.equals(curso.getEstadoCurso())){
+		if(Estado.PUBLICADO.equals(curso.getEstadoCurso())){
 			unidadForm.setPublicado(true);
 		}		
 		

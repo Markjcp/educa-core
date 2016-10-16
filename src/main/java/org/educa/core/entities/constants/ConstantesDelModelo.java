@@ -25,4 +25,8 @@ public interface ConstantesDelModelo {
 	public static final long MAX_TAM_VIDEO = 50000000;
 	
 	public static final String UNIDAD_TAM_VIDEO = "MB";
+	
+	public static final long MAX_TAM_MATERIAL_TEORICO = 50000000;
+	
+	public static final String UNIDAD_TAM_MATERIAL_TEORICO = "MB";
 }

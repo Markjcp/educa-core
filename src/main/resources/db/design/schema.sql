@@ -178,6 +178,7 @@ CREATE TABLE IF NOT EXISTS `educa`.`unidad` (
   `titulo` VARCHAR(45) NOT NULL,
   `descripcion` VARCHAR(45) NOT NULL,
   `duracion_estimada` INT NOT NULL,
+  `estado_unidad` VARCHAR(45) NOT NULL DEFAULT 'NO_PUBLICADO',
   PRIMARY KEY (`numero_componente`, `id_curso`),
   INDEX `fk_unidad_curso1_idx` (`id_curso` ASC),
   CONSTRAINT `fk_unidad_curso1`

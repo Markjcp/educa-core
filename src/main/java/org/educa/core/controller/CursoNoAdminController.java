@@ -11,7 +11,7 @@ import org.educa.core.controller.forms.CursoForm;
 import org.educa.core.dao.SesionRepository;
 import org.educa.core.dao.UnidadRepository;
 import org.educa.core.entities.model.Curso;
-import org.educa.core.entities.model.EstadoCurso;
+import org.educa.core.entities.model.Estado;
 import org.educa.core.entities.model.Sesion;
 import org.educa.core.entities.model.Unidad;
 import org.educa.core.services.CursoService;
@@ -57,7 +57,7 @@ public class CursoNoAdminController {
 		cursoForm.setCurso(curso);		
 		cursoForm.setPublicado(false);
 		
-		if(EstadoCurso.PUBLICADO.equals(curso.getEstadoCurso())){
+		if(Estado.PUBLICADO.equals(curso.getEstadoCurso())){
 			cursoForm.setPublicado(true);
 		}
 		
@@ -78,12 +78,12 @@ public class CursoNoAdminController {
 		 * asi que hay que cambiarle el valor.
 		 */
 		
-		EstadoCurso nuevoEstadoCurso = EstadoCurso.NO_PUBLICADO;
+		Estado nuevoEstadoCurso = Estado.NO_PUBLICADO;
 		if(!cursoForm.isPublicado()){
-			nuevoEstadoCurso = EstadoCurso.PUBLICADO;
+			nuevoEstadoCurso = Estado.PUBLICADO;
 		}
 		Curso curso = cursoForm.getCurso();
-		if(EstadoCurso.PUBLICADO.equals(nuevoEstadoCurso) && (curso.getUnidades() == null || curso.getUnidades().isEmpty())){
+		if(Estado.PUBLICADO.equals(nuevoEstadoCurso) && (curso.getUnidades() == null || curso.getUnidades().isEmpty())){
 			model.addAttribute("mostrarMensajeErrorPublicacion", true);
 			StringBuilder mensaje = new StringBuilder();
 			mensaje.append("El curso '" + curso.getNombre() + "' ");

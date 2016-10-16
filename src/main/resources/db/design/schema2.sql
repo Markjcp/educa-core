@@ -442,3 +442,13 @@ CREATE TABLE IF NOT EXISTS `educa`.`opcion_examen_unidad` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
+
+
+-- 16/10
+
+-- -----------------------------------------------------
+-- Table `educa`.`unidad`
+-- -----------------------------------------------------
+ALTER TABLE `educa`.`unidad`
+  ADD `estado_unidad` VARCHAR(45) NOT NULL DEFAULT 'NO_PUBLICADO';
+  

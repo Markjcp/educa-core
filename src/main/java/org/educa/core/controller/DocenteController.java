@@ -3,7 +3,7 @@ package org.educa.core.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.educa.core.entities.model.Curso;
-import org.educa.core.entities.model.EstadoCurso;
+import org.educa.core.entities.model.Estado;
 import org.educa.core.services.CursoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.PagedListHolder;
@@ -57,12 +57,12 @@ public class DocenteController {
 		 * asi que hay que cambiarle el valor.
 		 */
 		Curso curso = cursoService.encontrarCursoPorId(idCurso);
-		EstadoCurso nuevoEstadoCurso = EstadoCurso.NO_PUBLICADO;		
+		Estado nuevoEstadoCurso = Estado.NO_PUBLICADO;		
 		if(!curso.isPublicado()){
-			nuevoEstadoCurso = EstadoCurso.PUBLICADO;
+			nuevoEstadoCurso = Estado.PUBLICADO;
 		}
 		
-		if(EstadoCurso.PUBLICADO.equals(nuevoEstadoCurso) && (curso.getUnidades() == null || curso.getUnidades().isEmpty())){
+		if(Estado.PUBLICADO.equals(nuevoEstadoCurso) && (curso.getUnidades() == null || curso.getUnidades().isEmpty())){
 			model.addAttribute("mostrarMensajeErrorPublicacion", true);
 			StringBuilder mensaje = new StringBuilder();
 			mensaje.append("El curso '" + curso.getNombre() + "' ");

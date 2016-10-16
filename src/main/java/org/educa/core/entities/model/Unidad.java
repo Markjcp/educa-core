@@ -8,6 +8,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
@@ -75,9 +77,15 @@ public class Unidad implements Serializable, Comparable<Unidad> {
 		@JoinColumn(name = "id_curso", referencedColumnName = "id_curso", insertable = false, updatable = false)		
 	})
 	private List<MaterialUnidad> material;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "estado_unidad")
+	@JsonIgnore
+	private Estado estadoUnidad;
 
 	public Unidad() {
 		super();
+		this.estadoUnidad = Estado.NO_PUBLICADO;
 	}
 
 	public ComponenteId getId() {
@@ -168,6 +176,18 @@ public class Unidad implements Serializable, Comparable<Unidad> {
 		this.videos.add(video);
 	}
 
+	public Estado getEstadoUnidad() {
+		return estadoUnidad;
+	}
+
+	public void setEstadoUnidad(Estado estadoUnidad) {
+		this.estadoUnidad = estadoUnidad;
+	}
+	
+	public boolean isPublicado() {
+		return (Estado.PUBLICADO.equals(this.estadoUnidad) ? true : false);
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -196,7 +216,8 @@ public class Unidad implements Serializable, Comparable<Unidad> {
 	@Override
 	public String toString() {
 		return "Unidad [id=" + id + ", curso=" + curso + ", titulo=" + titulo + ", descripcion=" + descripcion
-				+ ", duracionEstimada=" + duracionEstimada + "]";
+				+ ", duracionEstimada=" + duracionEstimada + ", examenes=" + examenes + ", videos=" + videos
+				+ ", material=" + material + ", estadoUnidad=" + estadoUnidad + "]";
 	}
 
 	@Override
@@ -212,5 +233,4 @@ public class Unidad implements Serializable, Comparable<Unidad> {
 		//Orden ascendente
 		return this.getId().getNumero().compareTo(unaUnidad.getId().getNumero());
 	}
-
 }
