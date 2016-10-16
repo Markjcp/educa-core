@@ -1,6 +1,5 @@
 package org.educa.core.controller;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -9,6 +8,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.apache.commons.codec.binary.Base64;
+import org.educa.core.controller.forms.PreguntasForm;
 import org.educa.core.controller.forms.UnidadForm;
 import org.educa.core.dao.ExamenUnidadRepository;
 import org.educa.core.dao.MaterialUnidadRepository;
@@ -84,14 +84,49 @@ public class DetalleUnidadController {
 			}
 		}
 		
+		UnidadForm unidadForm = new UnidadForm();
+		
 		ExamenUnidadId examenId = new ExamenUnidadId();
 		examenId.setIdCurso(curso.getId());
 		examenId.setIdExamen(1);
 		examenId.setNumero(unidad.getId().getNumero());
 		
 		ExamenUnidad examenUnidad = examenUnidadRepository.findOne(examenId);
+		if(examenUnidad.getPreguntas() != null && !examenUnidad.getPreguntas().isEmpty()){
+			List<PreguntasForm> preguntasForm = new ArrayList<PreguntasForm>();
+			for(PreguntaExamenUnidad pregunta : examenUnidad.getPreguntas()){
+				PreguntasForm preguntaForm = new PreguntasForm();
+				preguntaForm.setPregunta(pregunta.getEnunciado());
+				preguntaForm.setIdPregunta(pregunta.getId().getNumero());
+				if(!pregunta.isMultipleChoice()){
+					preguntaForm.setMultipleChoice(false);
+					preguntaForm.setRespuestaUnica(pregunta.getRespuesta());					
+				} else {
+					preguntaForm.setMultipleChoice(true);
+					//Opcion Uno
+					OpcionExamenUnidad opcionUna = pregunta.getOpciones().get(0);
+					preguntaForm.setOpcionUnoSeleccionada(opcionUna.isEsCorrecta());
+					preguntaForm.setRespuestaOpcionUno(opcionUna.getTexto());
+					//Opcion Dos
+					OpcionExamenUnidad opcionDos = pregunta.getOpciones().get(1);
+					preguntaForm.setOpcionDosSeleccionada(opcionDos.isEsCorrecta());
+					preguntaForm.setRespuestaOpcionDos(opcionDos.getTexto());
+					//Opcion Tres
+					OpcionExamenUnidad opcionTres = pregunta.getOpciones().get(2);
+					preguntaForm.setOpcionTresSeleccionada(opcionTres.isEsCorrecta());
+					preguntaForm.setRespuestaOpcionTres(opcionTres.getTexto());
+					//Opcion Cuatro
+					OpcionExamenUnidad opcionCuatro = pregunta.getOpciones().get(3);
+					preguntaForm.setOpcionCuatroSeleccionada(opcionCuatro.isEsCorrecta());
+					preguntaForm.setRespuestaOpcionCuatro(opcionCuatro.getTexto());
+					
+				}
+				preguntasForm.add(preguntaForm);
+			}
+			
+			unidadForm.setPreguntas(preguntasForm);
+		}
 		
-		UnidadForm unidadForm = new UnidadForm();
 		unidadForm.setCurso(curso);
 		unidadForm.setUnidad(unidad);
 		unidadForm.setPublicado(false);
@@ -311,15 +346,18 @@ public class DetalleUnidadController {
 		    //org.jdom.Document doc = saxBuilder.build(new StringReader(xml));
 			Document doc = saxBuilder.build(new StringReader(contenido));
 		    String contenidoPuro = doc.getRootElement().getText();
+		    contenidoPuro = contenidoPuro.trim();
 		    System.out.println(contenidoPuro);
 		    
 		    if(contenidoPuro == null || contenidoPuro.isEmpty()){
 		    	return true;
 		    }
 		} catch (JDOMException e) {
+			System.out.println(e);
 		    // handle JDOMException
-		} catch (IOException e) {
+		} catch (IOException e) {			
 		    // handle IOException
+			System.out.println(e);
 		}
 		
 		return false;

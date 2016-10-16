@@ -30,8 +30,7 @@ public class UnidadForm {
 	private boolean multipleChoice;	
 	private String respuestaUnica;	
 	private String pregunta;	
-	private Integer cantidadPreguntasAlumno;
-	
+	private Integer cantidadPreguntasAlumno;	
 	private List<PreguntasForm> preguntas;
 	//Fin - Examen
 	

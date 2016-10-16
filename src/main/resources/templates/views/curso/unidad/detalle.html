@@ -228,110 +228,106 @@
 													<i class="fa fa-file-text-o" aria-hidden="true"></i>&nbsp;
 													<span th:text="${preguntaPropia.pregunta}">&nbsp;</span>
 												</div>
-											<div class="collapsible-body" style="">
-												<form action="#" th:action="@{/detalleUnidad/actualizarPreguntaExamen}" th:object="${unidadForm}" method="post" id="formularioActualizacionPreguntaExamen">
-												<!-- Mensajes de actualizacion pregunta -->								
-												<div th:if="${mostrarMensajeActualizacionPregunta} == true" class="alert alert-success alert-dismissable">
-													<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-													<a href="#" class="alert-link">Bien Hecho!</a> La pregunta se actualiz&oacute; con &eacute;xito.	                   
-												</div>
-												<!-- FIN de Mensajes de actualizacion pregunta -->
-												<div class="col l12 s12">
-													<div class="form-group input-field">
+												<div class="collapsible-body" style="">
+													<form action="#" th:action="@{/detalleUnidad/actualizarPreguntaExamen}" th:object="${unidadForm}" method="post" id="formularioActualizacionPreguntaExamen">
+														<!-- Mensajes de actualizacion pregunta -->								
+														<div th:if="${mostrarMensajeActualizacionPregunta} == true" class="alert alert-success alert-dismissable">
+															<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+															<a href="#" class="alert-link">Bien Hecho!</a> La pregunta se actualiz&oacute; con &eacute;xito.	                   
+														</div>
+														<!-- FIN de Mensajes de actualizacion pregunta -->
+														<div class="col l12 s12">
+															<div class="form-group input-field">
+																<div class="row">
+																	<div class="input-field col s8">
+																		<i class="small material-icons prefix">mode_edit</i>
+																		<input id="icon_prefix" type="text" class="validate" th:value="${preguntaPropia.pregunta}"/>
+																		<label for="icon_prefix" style="position: absolute;">Pregunta para incluir en el examen</label>
+																	</div>
+																	<div class="input-field col s4">
+																		<input id="multipleChoiceCheckbox" type="checkbox" th:value="${preguntaPropia.multipleChoice}" th:checked="${preguntaPropia.multipleChoice}"/>
+																		<label for="multipleChoiceCheckbox">Multiple choice</label>
+																	</div>
+																</div>
+															</div>
+														</div>
+														<div id="opcionesMultipleChoice" class="row">
+															<div class="col l2 s12">											
+															</div>
+															<div class="col l8 s12">
+															<div class="alert alert-success">
+																<a href="#" class="alert-link">Respuesta correcta!</a> No olvide tildar la respuesta correcta.
+															</div>
+															<div class="col-xs-6">
+																<div class="form-group input-field">
+																	<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion1" th:checked="${preguntaPropia.opcionUnoSeleccionada}" th:value="${preguntaPropia.opcionUnoSeleccionada}"/>
+																	<label for="filled-in-box-opcion1">
+																		<input id="opcion1" type="text" class="validate" th:value="${preguntaPropia.respuestaOpcionUno}" />
+																		<label for="opcion1" style="position: absolute;">Opci&oacute;n 1</label>
+																	</label>
+																</div>
+																<br></br>
+																<div class="form-group input-field">
+																	<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion2" th:checked="${preguntaPropia.opcionDosSeleccionada}" th:value="${preguntaPropia.opcionDosSeleccionada}"/>														
+																	<label for="filled-in-box-opcion2">
+																		<input id="opcion2" type="text" class="validate" th:value="${preguntaPropia.respuestaOpcionDos}"/>
+																		<label for="opcion2" style="position: absolute;">Opci&oacute;n 2</label>
+																	</label>
+																</div>													
+																</div>
+																<div class="col-xs-6">
+																	<div class="form-group input-field">
+																		<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion3" th:checked="${preguntaPropia.opcionTresSeleccionada}" th:value="${preguntaPropia.opcionTresSeleccionada}"/>
+																		<label for="filled-in-box-opcion3">
+																			<input id="opcion3" type="text" class="validate" th:value="${preguntaPropia.respuestaOpcionTres}"/>
+																			<label for="opcion3" style="position: absolute;">Opci&oacute;n 3</label>	      													
+																		</label>
+																	</div>
+																	<br></br>
+																	<div class="form-group input-field">
+																		<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion4" th:checked="${preguntaPropia.opcionCuatroSeleccionada}" th:value="${preguntaPropia.opcionCuatroSeleccionada}"/>
+																		<label for="filled-in-box-opcion4">
+																			<input id="opcion4" type="text" class="validate" th:value="${preguntaPropia.respuestaOpcionCuatro}"/>
+																			<label for="opcion4" style="position: absolute;">Opci&oacute;n 4</label>	      													
+																		</label>
+																	</div>
+																</div>
+															</div>
+															<div class="col l2 s12">
+															</div>
+														</div>
+														<div id="preguntaUnica">
+															<div class="col l12 s12">
+																<div class="form-group input-field">
+																	<div class="row">
+																		<div class="input-field col s8">
+																		  <i class="small material-icons prefix">question_answer</i>									          
+																		  <input id="icon_prefix" type="text" class="validate" th:value="${preguntaPropia.respuestaUnica}"/>
+																		  <label for="icon_prefix" style="position: absolute;">Respuesta</label>
+																		</div>												        
+																	 </div>
+																</div>
+															</div>																			
+														</div>
+										
 														<div class="row">
-															<div class="input-field col s8">
-				 												<i class="small material-icons prefix">mode_edit</i>
-				 												<input id="icon_prefix" type="text" class="validate" th:field="*{preguntaPropia.pregunta}"/>
-				 												<label for="icon_prefix" style="position: absolute;">Pregunta para incluir en el examen</label>
-				 											</div>
-											        		<div class="input-field col s4">
-											        			<input id="multipleChoiceCheckbox" type="checkbox" th:field="*{preguntaPropia.multipleChoice}" th:checked="*{preguntaPropia.multipleChoice}" th:value="*{preguntaPropia.multipleChoice}"/>
-											        			<label for="multipleChoiceCheckbox">Multiple choice</label>
-											        		</div>
-											    		</div>
-													</div>
+															<div class="col-xs-12">
+																<hr></hr>
+															</div>
+														</div>
+													
+														<div class="col l12 s12">			    					    				
+															<div class="form-group">
+																<button type="submit" class="btn orange-effect orange darken-4">Acualizar</button>                       		
+															 </div>
+														</div>								
+													</form>				
 												</div>
-												<div id="opcionesMultipleChoice" class="row">
-													<div class="col l2 s12">											
-													</div>
-													<div class="col l8 s12">
-													<div class="alert alert-success">
-					                                	<a href="#" class="alert-link">Respuesta correcta!</a> No olvide tildar la respuesta correcta.
-					                            	</div>
-					                            	<div class="col-xs-6">
-													<div class="form-group input-field">
-														<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion1" th:checked="*{preguntaPropia.opcionUnoSeleccionada}" th:value="*{preguntaPropia.opcionUnoSeleccionada}" th:field="*{preguntaPropia.opcionUnoSeleccionada}"/>
-	      												<label for="filled-in-box-opcion1">
-	      													<input id="opcion1" type="text" class="validate" th:field="*{preguntaPropia.respuestaOpcionUno}" />
-											          		<label for="opcion1" style="position: absolute;">Opci&oacute;n 1</label>
-	      												</label>
-													</div>
-													<br></br>
-													<div class="form-group input-field">
-														<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion2" th:checked="*{preguntaPropia.opcionDosSeleccionada}" th:value="*{preguntaPropia.opcionDosSeleccionada}" th:field="*{preguntaPropia.opcionDosSeleccionada}"/>														
-	      												<label for="filled-in-box-opcion2">
-	      													<input id="opcion2" type="text" class="validate" th:field="*{preguntaPropia.respuestaOpcionDos}"/>
-											          		<label for="opcion2" style="position: absolute;">Opci&oacute;n 2</label>
-	      												</label>
-													</div>													
-												</div>
-												<div class="col-xs-6">
-													<div class="form-group input-field">
-														<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion3" th:checked="*{preguntaPropia.opcionTresSeleccionada}" th:value="*{preguntaPropia.opcionTresSeleccionada}" th:field="*{preguntaPropia.opcionTresSeleccionada}"/>
-	      												<label for="filled-in-box-opcion3">
-	      													<input id="opcion3" type="text" class="validate" th:field="*{preguntaPropia.respuestaOpcionTres}"/>
-											          		<label for="opcion3" style="position: absolute;">Opci&oacute;n 3</label>	      													
-	      												</label>
-													</div>
-													<br></br>
-													<div class="form-group input-field">
-														<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion4" th:checked="*{preguntaPropia.opcionCuatroSeleccionada}" th:value="*{preguntaPropia.opcionCuatroSeleccionada}" th:field="*{preguntaPropia.opcionCuatroSeleccionada}"/>
-	      												<label for="filled-in-box-opcion4">
-	      													<input id="opcion4" type="text" class="validate" th:field="*{preguntaPropia.respuestaOpcionCuatro}"/>
-											          		<label for="opcion4" style="position: absolute;">Opci&oacute;n 4</label>	      													
-	      												</label>
-													</div>
-												</div>
-											</div>
-											<div class="col l2 s12">
-											</div>
-										</div>
-										<div id="preguntaUnica">
-											<div class="col l12 s12">
-												<div class="form-group input-field">
-													<div class="row">
-												        <div class="input-field col s8">
-												          <i class="small material-icons prefix">question_answer</i>									          
-												          <input id="icon_prefix" type="text" class="validate" th:field="*{preguntaPropia.respuestaUnica}"/>
-												          <label for="icon_prefix" style="position: absolute;">Respuesta</label>
-												        </div>												        
-												     </div>
-												</div>
-											</div>																			
-										</div>
-									
-									<div class="row">
-										<div class="col-xs-12">
-											<hr></hr>
-										</div>
-									</div>
-									
-									<div class="col l12 s12">			    					    				
-										<div class="form-group">
-											<button type="submit" class="btn orange-effect orange darken-4">Acualizar</button>                       		
-										 </div>
-									</div>								
-								</form>
-												
-												
-											</div>
 											</li>											
 										</ul>
 									</div>
 								</div>
-
-								<div
-									th:if="${unidadForm.preguntas} == null">
+								<div th:if="${unidadForm.preguntas} == null">
 									<div class="alert alert-warning">No hay preguntas
 										asociadas al examen.</div>
 								</div>
