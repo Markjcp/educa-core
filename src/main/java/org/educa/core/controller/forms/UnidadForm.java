@@ -31,6 +31,8 @@ public class UnidadForm {
 	private String respuestaUnica;	
 	private String pregunta;	
 	private Integer cantidadPreguntasAlumno;
+	
+	private List<PreguntasForm> preguntas;
 	//Fin - Examen
 	
 	//Video
@@ -210,5 +212,13 @@ public class UnidadForm {
 
 	public void setErrores(List<String> errores) {
 		this.errores = errores;
+	}
+
+	public List<PreguntasForm> getPreguntas() {
+		return preguntas;
+	}
+
+	public void setPreguntas(List<PreguntasForm> preguntas) {
+		this.preguntas = preguntas;
 	}	
 }

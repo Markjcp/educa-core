@@ -11,6 +11,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.codec.binary.Base64;
+import org.educa.core.controller.forms.PreguntasForm;
 import org.educa.core.controller.forms.UnidadForm;
 import org.educa.core.dao.ExamenUnidadRepository;
 import org.educa.core.dao.MaterialUnidadRepository;
@@ -98,6 +99,11 @@ public class DetalleUnidadController {
 		unidadForm.setPublicado(false);
 		unidadForm.setExamenUnidad(examenUnidad);
 		
+		if(examenUnidad!=null){
+			List<PreguntasForm> preguntasForm = crearPreguntasForm(examenUnidad.getPreguntas());		
+			unidadForm.setPreguntas(preguntasForm);			
+		}
+		
 		String contenidoMaterialGuardado = null;
 		if(unidad.getMaterial() != null && !unidad.getMaterial().isEmpty()){
 			contenidoMaterialGuardado = new String(unidad.getMaterial().get(0).getMaterial());
@@ -118,6 +124,35 @@ public class DetalleUnidadController {
 		return DETALLE_CURSO;
 	}
 	
+	private List<PreguntasForm> crearPreguntasForm(List<PreguntaExamenUnidad> preguntas) {
+		List<PreguntasForm> resultado = new ArrayList<PreguntasForm>();
+			for (PreguntaExamenUnidad pregunta : preguntas) {
+				PreguntasForm preguntaForm = new PreguntasForm();
+				preguntaForm.setMultipleChoice(pregunta.isMultipleChoice());
+				preguntaForm.setRespuestaUnica(pregunta.getRespuesta());
+				preguntaForm.setPregunta(pregunta.getEnunciado());
+				preguntaForm.setIdPregunta(pregunta.getId().getIdPregunta());
+				
+				List<OpcionExamenUnidad> opciones = pregunta.getOpciones();
+				if(opciones!=null && !opciones.isEmpty()){
+					preguntaForm.setOpcionUnoSeleccionada(opciones.get(0).isEsCorrecta());
+					preguntaForm.setRespuestaOpcionUno(opciones.get(0).getTexto());
+					
+					preguntaForm.setOpcionDosSeleccionada(opciones.get(1).isEsCorrecta());
+					preguntaForm.setRespuestaOpcionDos(opciones.get(1).getTexto());
+					
+					preguntaForm.setOpcionTresSeleccionada(opciones.get(2).isEsCorrecta());
+					preguntaForm.setRespuestaOpcionTres(opciones.get(2).getTexto());
+					
+					preguntaForm.setOpcionCuatroSeleccionada(opciones.get(3).isEsCorrecta());
+					preguntaForm.setRespuestaOpcionCuatro(opciones.get(3).getTexto());					
+				}
+				resultado.add(preguntaForm);
+				
+			}			
+		return resultado;
+	}
+
 	@RequestMapping(value = "/cambiarEstadoPublicacion", method = RequestMethod.POST)
 	public String cambiarEstadoPublicacion(@ModelAttribute @Valid UnidadForm unidadForm, BindingResult bindingResult, Model model) {
 		/*
@@ -180,6 +215,7 @@ public class DetalleUnidadController {
 			model.addAttribute("mostrarTabPracticas", false);
 			model.addAttribute("mostrarTabExamen", false);
 			model.addAttribute("mostrarMensajeCantidadPreguntas", true);
+			model.addAttribute("preguntaForm",new PreguntasForm());
 			
 			return DETALLE_CURSO;
 		}
