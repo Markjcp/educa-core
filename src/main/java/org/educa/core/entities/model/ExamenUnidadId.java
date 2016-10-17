@@ -17,7 +17,7 @@ public class ExamenUnidadId implements Serializable{
 	private Long idCurso;
 	
 	@Column(name = "numero_examen")
-	private Integer idExamen; //Asumo que es el id de la unidad NO ES ASI, ES EL DEL EXAMEN
+	private Integer idExamen;
 
 	public Integer getNumero() {
 		return numero;

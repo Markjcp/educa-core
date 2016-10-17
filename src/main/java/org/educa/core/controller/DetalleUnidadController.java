@@ -1,7 +1,5 @@
 package org.educa.core.controller;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +9,12 @@ import javax.validation.Valid;
 import org.apache.commons.codec.binary.Base64;
 import org.educa.core.controller.forms.PreguntasForm;
 import org.educa.core.controller.forms.UnidadForm;
+import org.educa.core.dao.CursoDao;
 import org.educa.core.dao.ExamenUnidadRepository;
 import org.educa.core.dao.MaterialUnidadRepository;
 import org.educa.core.dao.UnidadRepository;
 import org.educa.core.dao.VideoUnidadRepository;
 import org.educa.core.entities.constants.ConstantesDelModelo;
-import org.educa.core.entities.model.ComponenteId;
 import org.educa.core.entities.model.Curso;
 import org.educa.core.entities.model.Estado;
 import org.educa.core.entities.model.ExamenUnidad;
@@ -74,16 +72,17 @@ public class DetalleUnidadController {
 	@Qualifier("materialTeoricoValidator")
 	private MaterialTeoricoValidator materialTeoricoValidator;
 	
+	@Autowired
+	private CursoDao cursoDao;
+	
 	@RequestMapping(value = "/{idCurso}/{idUnidad}/{numeroUnidad}", method = RequestMethod.GET)
 	public String index(@PathVariable("idCurso") long idCurso, @PathVariable("idUnidad") long idUnidad, 
 			@PathVariable("numeroUnidad") int numeroUnidad, Model model) {		
 		//No se validad que no sea null ya que no deberia de suceder, en caso de que pase, es porque hay un error entonces se espera verlo.
 		Curso curso = this.cursoService.encontrarCursoPorId(idCurso);
 		
-		ComponenteId unidadId = new ComponenteId();
-		unidadId.setIdCurso(idCurso);
-		unidadId.setNumero(numeroUnidad);
-		Unidad unidad = unidadRepository.findOne(unidadId);
+		Unidad unidad = unidadRepository.findByNumeroAndIdCurso(numeroUnidad, idCurso);
+		unidad = hidratarUnidad(unidad);
 		
 		UnidadForm unidadForm = new UnidadForm();
 		//Carga Examen
@@ -132,6 +131,17 @@ public class DetalleUnidadController {
 		
 		unidadForm.setVideoBytes(videoGuardado);
 		unidadForm.setEdicion(true);
+	}
+	
+	private Unidad hidratarUnidad(Unidad unidad){
+		Integer numero = unidad.getId().getNumero();
+		Long idCurso = unidad.getId().getIdCurso();
+		
+		unidad.setMaterial(cursoDao.findMaterialUnidadByNumeroAndIdCurso(numero, idCurso));
+		unidad.setVideos(cursoDao.findVideoUnidadByNumeroAndIdCurso(numero, idCurso));
+		unidad.setExamenes(cursoDao.findExamenUnidadByNumeroAndIdCurso(numero, idCurso));
+		
+		return unidad;
 	}
 	
 	private void cargarExamen(Curso curso, Unidad unidad, UnidadForm unidadForm) {
@@ -192,7 +202,19 @@ public class DetalleUnidadController {
 		}
 		
 		//Voy a buscar la unidad nuevamente porque las colecciones estan cargadas en otra sesion de hibernate
-		Unidad unidad = unidadRepository.findOne(unidadForm.getUnidad().getId());
+		Unidad unidad = unidadRepository.findByNumeroAndIdCurso(unidadForm.getUnidad().getId().getNumero(), unidadForm.getCurso().getId());
+		unidad = hidratarUnidad(unidad);
+		
+		if(Estado.PUBLICADO.equals(nuevoEstadoCurso) && !unidadForm.getCurso().isPublicado()){
+			model.addAttribute("mostrarMensajeErrorPublicacion", true);				
+			model.addAttribute("mensajeErrorPublicacion", "El curso debe de estar publicado para poder publicar una unidad.");
+			
+			model.addAttribute("unidadForm", unidadForm);			
+			mostrarTab(model, true, false, false, false);			
+			model.addAttribute("mostrarMensajeCantidadPreguntas", true);
+			
+			return DETALLE_CURSO;
+		}
 		
 		//Para poder publicar una unidad tiene que tener cargado un video y/o un material teorico.
 		if(Estado.PUBLICADO.equals(nuevoEstadoCurso) && (unidad.getMaterial() == null || unidad.getMaterial().isEmpty()) 
@@ -228,7 +250,8 @@ public class DetalleUnidadController {
 		
 		unidadRepository.save(unidad);
 		
-		Unidad unidadPersistida = unidadRepository.findOne(unidad.getId());
+		Unidad unidadPersistida = unidadRepository.findByNumeroAndIdCurso(unidadForm.getUnidad().getId().getNumero(), unidadForm.getCurso().getId());
+		unidadPersistida = hidratarUnidad(unidadPersistida);
 		unidadForm.setUnidad(unidadPersistida);
 		
 		unidadForm.setPublicado(unidadPersistida.isPublicado());
@@ -244,7 +267,8 @@ public class DetalleUnidadController {
 	public String guardarMaterialTeorico(@ModelAttribute @Valid UnidadForm unidadForm, BindingResult bindingResult, Model model) {
 		System.out.println("Texto de material guardado: " + unidadForm.getMaterialTeorico());
 		
-		Unidad unidad = unidadRepository.findOne(unidadForm.getUnidad().getId());//Voy a buscarla porque las listas se cargaron en otra sesion de hibernate (no en la actual).
+		Unidad unidad = unidadRepository.findByNumeroAndIdCurso(unidadForm.getUnidad().getId().getNumero(), unidadForm.getCurso().getId());//Voy a buscarla porque las listas se cargaron en otra sesion de hibernate (no en la actual).
+		unidad = hidratarUnidad(unidad);
 		
 		boolean intentaLimpiar = materialTeoricoValidator.intentaLimpiarContenido(unidadForm.getMaterialTeorico(), unidad);
 		if(!intentaLimpiar){
@@ -295,7 +319,9 @@ public class DetalleUnidadController {
 			materialUnidadRepository.delete(material.getId());
 		}
 		
-		Unidad unidadCompleta = unidadRepository.findOne(unidad.getId());		
+		Unidad unidadCompleta = unidadRepository.findByNumeroAndIdCurso(unidadForm.getUnidad().getId().getNumero(), unidadForm.getCurso().getId());
+		unidadCompleta = hidratarUnidad(unidadCompleta);
+		
 		unidadForm.setUnidad(unidadCompleta);
 		
 		String contenidoMaterialGuardado = null;
@@ -345,7 +371,8 @@ public class DetalleUnidadController {
 			return DETALLE_CURSO;
 		}
 		
-		Unidad unidad = unidadRepository.findOne(unidadForm.getUnidad().getId());//Voy a buscarla porque las listas se cargaron en otra sesion de hibernate (no en la actual).
+		Unidad unidad = unidadRepository.findByNumeroAndIdCurso(unidadForm.getUnidad().getId().getNumero(), unidadForm.getCurso().getId());//Voy a buscarla porque las listas se cargaron en otra sesion de hibernate (no en la actual).
+		unidad = hidratarUnidad(unidad);
 		VideoUnidad video = null;
 		if(unidad.getVideos() == null || unidad.getVideos().isEmpty()){
 			video = new VideoUnidad();
@@ -397,12 +424,15 @@ public class DetalleUnidadController {
 				e.printStackTrace();
 			}
 		} else {
-			Unidad unidadCompleta = unidadRepository.findOne(unidad.getId());		
+			Unidad unidadCompleta = unidadRepository.findByNumeroAndIdCurso(unidadForm.getUnidad().getId().getNumero(), unidadForm.getCurso().getId());
+			unidadCompleta = hidratarUnidad(unidadCompleta);
 			unidadForm.setUnidad(unidadCompleta);
 			
 			if(unidadCompleta.getVideos() != null && !unidadCompleta.getVideos().isEmpty()){
 				base64 = Base64.encodeBase64String(unidadCompleta.getVideos().get(0).getVideo());
-			}				
+			}
+			
+			model.addAttribute("mostrarMensajeCargaVideoOk", true);			
 		}
 		
 		//data:video/mp4;base64,${video en base 64}
@@ -444,10 +474,9 @@ public class DetalleUnidadController {
 	
 	@RequestMapping(value = "/eliminarVideo/{idCurso}/{unidadNro}", method = RequestMethod.GET)
 	public String eliminarVideo(@PathVariable("idCurso") long idCurso, @PathVariable("unidadNro") int unidadNro, Model model) {
-		ComponenteId idUnidad = new ComponenteId();
-		idUnidad.setIdCurso(idCurso);
-		idUnidad.setNumero(unidadNro);
-		Unidad unidad = this.unidadRepository.findOne(idUnidad);
+		Unidad unidad = unidadRepository.findByNumeroAndIdCurso(unidadNro, idCurso);
+		unidad = hidratarUnidad(unidad);
+		
 		boolean intentoEliminar = false;
 		if(unidad.getVideos() == null || unidad.getVideos().isEmpty()){
 			model.addAttribute("mostrarMensajeWarningCargaVideo", true);
@@ -463,7 +492,8 @@ public class DetalleUnidadController {
 			}
 		}
 		
-		unidad = this.unidadRepository.findOne(idUnidad);		
+		unidad = unidadRepository.findByNumeroAndIdCurso(unidadNro, idCurso);
+		unidad = hidratarUnidad(unidad);	
 		Curso curso = this.cursoService.encontrarCursoPorId(idCurso);
 		UnidadForm unidadForm = new UnidadForm();
 		unidadForm.setCurso(curso);

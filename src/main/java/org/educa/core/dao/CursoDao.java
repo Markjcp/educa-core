@@ -4,8 +4,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.educa.core.entities.model.Curso;
+import org.educa.core.entities.model.ExamenUnidad;
+import org.educa.core.entities.model.MaterialUnidad;
 import org.educa.core.entities.model.Sesion;
 import org.educa.core.entities.model.Unidad;
+import org.educa.core.entities.model.VideoUnidad;
 
 public interface CursoDao extends GeneralDao<Curso> {
 	
@@ -26,5 +29,10 @@ public interface CursoDao extends GeneralDao<Curso> {
 	void updateNumeroSesion(Sesion sesion, int nuevoNumero);
 
 	void deleteCurso(Curso curso);
-
+	
+	List<ExamenUnidad> findExamenUnidadByNumeroAndIdCurso(Integer numero, Long idCurso);
+	
+	List<MaterialUnidad> findMaterialUnidadByNumeroAndIdCurso(Integer numero, Long idCurso);
+	
+	List<VideoUnidad> findVideoUnidadByNumeroAndIdCurso(Integer numero, Long idCurso);
 }

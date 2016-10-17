@@ -15,8 +15,11 @@ import org.educa.core.entities.model.Categoria;
 import org.educa.core.entities.model.ComponenteId;
 import org.educa.core.entities.model.Curso;
 import org.educa.core.entities.model.Docente;
+import org.educa.core.entities.model.ExamenUnidad;
+import org.educa.core.entities.model.MaterialUnidad;
 import org.educa.core.entities.model.Sesion;
 import org.educa.core.entities.model.Unidad;
+import org.educa.core.entities.model.VideoUnidad;
 import org.educa.core.util.FechaUtil;
 import org.springframework.stereotype.Repository;
 
@@ -292,5 +295,35 @@ public class CursoDaoImpl extends GeneralDaoSupport<Curso>implements CursoDao {
 			
 			q.executeUpdate();			
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ExamenUnidad> findExamenUnidadByNumeroAndIdCurso(Integer numero, Long idCurso) {		
+		EntityManager em = getEntityManager();		
+		return (List<ExamenUnidad>) em
+				.createQuery(
+						"SELECT u FROM ExamenUnidad u  JOIN u.id d WHERE d.numero = :numero and d.idCurso = :idCurso ")
+				.setParameter("numero", numero).setParameter("idCurso", idCurso).getResultList();		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MaterialUnidad> findMaterialUnidadByNumeroAndIdCurso(Integer numero, Long idCurso) {
+		EntityManager em = getEntityManager();
+		return (List<MaterialUnidad>) em
+				.createQuery(
+						"SELECT u FROM MaterialUnidad u JOIN u.id d WHERE d.numero = :numero and d.idCurso = :idCurso ")
+				.setParameter("numero", numero).setParameter("idCurso", idCurso).getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VideoUnidad> findVideoUnidadByNumeroAndIdCurso(Integer numero, Long idCurso) {
+		EntityManager em = getEntityManager();
+		return (List<VideoUnidad>) em
+				.createQuery(
+						"SELECT u FROM VideoUnidad u JOIN u.id d WHERE d.numero = :numero and d.idCurso = :idCurso ")
+				.setParameter("numero", numero).setParameter("idCurso", idCurso).getResultList();
 	}
 }

@@ -40,9 +40,9 @@ public class VideoUnidad implements Serializable {
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumns({
-		@JoinColumn(name = "numero_componente", insertable = false, updatable = false),
-		@JoinColumn(name = "id_curso", insertable = false, updatable = false)		
-	})
+		@JoinColumn(name = "numero_componente", referencedColumnName = "numero_componente", insertable = false, updatable = false),
+		@JoinColumn(name = "id_curso", referencedColumnName = "id_curso", insertable = false, updatable = false)		
+	})	
 	private Unidad unidad;
 
 	public VideoUnidadId getId() {
