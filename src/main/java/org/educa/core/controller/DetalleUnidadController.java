@@ -12,9 +12,12 @@ import org.educa.core.controller.forms.UnidadForm;
 import org.educa.core.dao.CursoDao;
 import org.educa.core.dao.ExamenUnidadRepository;
 import org.educa.core.dao.MaterialUnidadRepository;
+import org.educa.core.dao.OpcionExamenRepository;
+import org.educa.core.dao.PreguntaExamenRepository;
 import org.educa.core.dao.UnidadRepository;
 import org.educa.core.dao.VideoUnidadRepository;
 import org.educa.core.entities.constants.ConstantesDelModelo;
+import org.educa.core.entities.model.ComponenteId;
 import org.educa.core.entities.model.Curso;
 import org.educa.core.entities.model.Estado;
 import org.educa.core.entities.model.ExamenUnidad;
@@ -71,6 +74,14 @@ public class DetalleUnidadController {
 	@Autowired
 	@Qualifier("materialTeoricoValidator")
 	private MaterialTeoricoValidator materialTeoricoValidator;
+	
+	@Autowired
+	@Qualifier("preguntaExamenRepository")
+	private PreguntaExamenRepository preguntaExamenRepository;
+	
+	@Autowired
+	@Qualifier("opcionExamenRepository")
+	private OpcionExamenRepository opcionExamenRepository;	
 	
 	@Autowired
 	private CursoDao cursoDao;
@@ -156,7 +167,9 @@ public class DetalleUnidadController {
 			for(PreguntaExamenUnidad pregunta : examenUnidad.getPreguntas()){
 				PreguntasForm preguntaForm = new PreguntasForm();
 				preguntaForm.setPregunta(pregunta.getEnunciado());
-				preguntaForm.setIdPregunta(pregunta.getId().getNumero());
+				preguntaForm.setIdPregunta(pregunta.getId().getIdPregunta());
+				preguntaForm.setIdCurso(pregunta.getId().getIdCurso());
+				preguntaForm.setNumero(pregunta.getId().getNumero());
 				if(!pregunta.isMultipleChoice()){
 					preguntaForm.setMultipleChoice(false);
 					preguntaForm.setRespuestaUnica(pregunta.getRespuesta());					
@@ -185,8 +198,12 @@ public class DetalleUnidadController {
 			
 			unidadForm.setPreguntas(preguntasForm);
 		}
+		if(examenUnidad!=null && examenUnidad.getCantPreguntasUsuario()!=null){
+			unidadForm.setCantidadPreguntasAlumno(examenUnidad.getCantPreguntasUsuario());
+		}
+			
+		unidadForm.setExamenUnidad(examenUnidad);
 		
-		unidadForm.setExamenUnidad(examenUnidad);				
 	}
 	
 	@RequestMapping(value = "/cambiarEstadoPublicacion", method = RequestMethod.POST)
@@ -550,13 +567,174 @@ public class DetalleUnidadController {
 		}
 		
 		System.out.println("ENTRO PARA GUARDAR LA PREGUNTA DEL EXAMEN: " + unidadForm.isPublicado());
+		if(unidadForm.isPublicado()){
+			
+		}
 		
-		model.addAttribute("unidadForm", unidadForm);
-		mostrarTab(model, false, false, false, true);		
+		index(unidadForm.getCurso().getId(), unidadForm.getCurso().getId(), unidadForm.getUnidad().getId().getNumero(), model);
+		model.addAttribute("mostrarTabMaterialTeorico", false);
+		model.addAttribute("mostrarTabVideo", false);
+		model.addAttribute("mostrarTabPracticas", false);
+		model.addAttribute("mostrarTabExamen", true);
 		model.addAttribute("mostrarMensajeCantidadPreguntas", true);
 		
 		return DETALLE_CURSO;
 	}
+	
+	@RequestMapping(value = "/actualizarPreguntaExamen", method = RequestMethod.POST)
+	public String actualizarPreguntaExamen(@ModelAttribute("pregunta") @Valid PreguntasForm preguntaForm,
+			BindingResult bindingResult, Model model) {
+		PreguntaExamenUnidadId id = new PreguntaExamenUnidadId();
+		id.setIdCurso(preguntaForm.getIdCurso());
+		id.setIdExamen(1);
+		id.setIdPregunta(preguntaForm.getIdPregunta());
+		id.setNumero(preguntaForm.getNumero());
+
+		PreguntaExamenUnidad preguntaModelo = preguntaExamenRepository.findOne(id);
+
+		List<OpcionExamenUnidad> opciones = new ArrayList<OpcionExamenUnidad>();
+		if (preguntaForm.isMultipleChoice()) {
+
+			OpcionExamenUnidadId opcionId1 = new OpcionExamenUnidadId();
+			opcionId1.setIdCurso(preguntaForm.getIdCurso());
+			opcionId1.setNumero(preguntaForm.getNumero());
+			opcionId1.setIdExamen(1);
+			opcionId1.setIdPregunta(preguntaForm.getIdPregunta());
+			opcionId1.setIdOpcion(1);
+			
+			OpcionExamenUnidad opcion1 = opcionExamenRepository.findOne(opcionId1);
+			opcion1.setEsCorrecta(preguntaForm.isOpcionUnoSeleccionada());
+			opcion1.setTexto(preguntaForm.getRespuestaOpcionUno());
+			
+			opcionExamenRepository.save(opcion1);
+
+			OpcionExamenUnidadId opcionId2 = new OpcionExamenUnidadId();
+			opcionId2.setIdCurso(preguntaForm.getIdCurso());
+			opcionId2.setNumero(preguntaForm.getNumero());
+			opcionId2.setIdExamen(1);
+			opcionId2.setIdPregunta(preguntaForm.getIdPregunta());
+			opcionId2.setIdOpcion(2);
+
+			OpcionExamenUnidad opcion2 = opcionExamenRepository.findOne(opcionId2);
+			opcion2.setId(opcionId2);
+			opcion2.setEsCorrecta(preguntaForm.isOpcionDosSeleccionada());
+			opcion2.setTexto(preguntaForm.getRespuestaOpcionDos());
+			
+			opcionExamenRepository.save(opcion2);
+
+
+			OpcionExamenUnidadId opcionId3 = new OpcionExamenUnidadId();
+			opcionId3.setIdCurso(preguntaForm.getIdCurso());
+			opcionId3.setNumero(preguntaForm.getNumero());
+			opcionId3.setIdExamen(1);
+			opcionId3.setIdPregunta(preguntaForm.getIdPregunta());
+			opcionId3.setIdOpcion(3);
+
+			OpcionExamenUnidad opcion3 = opcionExamenRepository.findOne(opcionId3);
+			opcion3.setId(opcionId3);
+			opcion3.setEsCorrecta(preguntaForm.isOpcionTresSeleccionada());
+			opcion3.setTexto(preguntaForm.getRespuestaOpcionTres());
+			
+			opcionExamenRepository.save(opcion3);
+
+
+			OpcionExamenUnidadId opcionId4 = new OpcionExamenUnidadId();
+			opcionId4.setIdCurso(preguntaForm.getIdCurso());
+			opcionId4.setNumero(preguntaForm.getNumero());
+			opcionId4.setIdExamen(1);
+			opcionId4.setIdPregunta(preguntaForm.getIdPregunta());
+			opcionId4.setIdOpcion(4);
+
+			OpcionExamenUnidad opcion4 = opcionExamenRepository.findOne(opcionId4);
+			opcion4.setId(opcionId4);
+			opcion4.setEsCorrecta(preguntaForm.isOpcionCuatroSeleccionada());
+			opcion4.setTexto(preguntaForm.getRespuestaOpcionCuatro());
+			
+			opcionExamenRepository.save(opcion4);
+
+
+			opciones.add(opcion1);
+			opciones.add(opcion2);
+			opciones.add(opcion3);
+			opciones.add(opcion4);
+
+		}
+
+		preguntaModelo.setEnunciado(preguntaForm.getPregunta());
+		preguntaModelo.setMultipleChoica(preguntaForm.isMultipleChoice());
+		preguntaModelo.setRespuesta(preguntaForm.getRespuestaUnica());
+
+		preguntaExamenRepository.save(preguntaModelo);
+
+		/*
+		//TODO FALTA HACERLO!!!
+		boolean valida = false;
+		if(unidadForm.isMultipleChoice()){
+			valida = validaMultipleChoice(unidadForm, bindingResult, model); 
+			if(valida){
+				cargarMultipleChoice(null, unidadForm);//TODO VER SI ES NULL
+			} else {
+				//ERROR DE VALIDACION - CARGA
+			}			
+		} else {
+			valida = validaPreguntaSimple(unidadForm, bindingResult, model); 
+			if(valida){
+				cargarPreguntaSimple(null, unidadForm);//TODO VER SI ES NULL
+			} else {
+				//ERROR DE VALIDACION - CARGA
+			}
+		}
+		
+		if(!valida){
+			
+		}
+		
+		System.out.println("ENTRO PARA GUARDAR LA PREGUNTA DEL EXAMEN: " + unidadForm.isPublicado());
+		if(unidadForm.isPublicado()){
+			
+		}
+		
+		model.addAttribute("unidadForm", unidadForm); */
+		index(preguntaForm.getIdCurso(), preguntaForm.getIdCurso(), preguntaForm.getNumero(), model);
+
+		model.addAttribute("mostrarTabMaterialTeorico", false);
+		model.addAttribute("mostrarTabVideo", false);
+		model.addAttribute("mostrarTabPracticas", false);
+		model.addAttribute("mostrarTabExamen", true);
+		model.addAttribute("mostrarMensajeCantidadPreguntas", true);
+		
+		return DETALLE_CURSO;
+	}
+	
+	@RequestMapping(value = "/eliminarPregunta/{idCurso}/{numero}/{idPregunta}", method = RequestMethod.GET)
+	public String eliminarPregunta(@PathVariable("idCurso") long idCurso, @PathVariable("numero") int numero, @PathVariable("idPregunta") int idPregunta, Model model) {
+		PreguntaExamenUnidadId id = new PreguntaExamenUnidadId();
+		id.setIdCurso(idCurso);
+		id.setIdExamen(1);
+		id.setIdPregunta(idPregunta);
+		id.setNumero(numero);
+
+		PreguntaExamenUnidad preguntaModelo = preguntaExamenRepository.findOne(id);
+		List<OpcionExamenUnidad> opciones = preguntaModelo.getOpciones();
+		if(opciones!=null){
+			opcionExamenRepository.delete(opciones);
+		}
+		preguntaExamenRepository.delete(preguntaModelo);
+		
+		index(idCurso, idCurso, numero, model);
+		
+		model.addAttribute("mostrarTabMaterialTeorico", false);
+		model.addAttribute("mostrarTabVideo", false);
+		model.addAttribute("mostrarTabPracticas", false);
+		model.addAttribute("mostrarTabExamen", true);
+		model.addAttribute("mostrarMensajeCantidadPreguntas", true);
+		
+		return DETALLE_CURSO;
+	}
+
+
+	
+	
 
 	private boolean validaMultipleChoice(UnidadForm unidadForm, BindingResult bindingResult, Model model) {		
 		boolean valida = validaCamposGeneral(unidadForm, bindingResult, model);
@@ -622,7 +800,7 @@ public class DetalleUnidadController {
 		
 		List<PreguntaExamenUnidad> preguntas = null;
 		if(unidadForm.getExamenUnidad()!=null){
-			unidadForm.getExamenUnidad().getPreguntas();			
+			preguntas = unidadForm.getExamenUnidad().getPreguntas();			
 		}
 		if(preguntas == null){
 			preguntas = new ArrayList<PreguntaExamenUnidad>();
@@ -632,7 +810,7 @@ public class DetalleUnidadController {
 		preguntaId.setIdCurso(unidadForm.getCurso().getId());
 		preguntaId.setNumero(unidadForm.getUnidad().getId().getNumero());
 		preguntaId.setIdExamen(1);
-		preguntaId.setIdPregunta(preguntas.size()+1);
+		preguntaId.setIdPregunta(obtenerUltimoIdPreguntas(preguntas)+1);
 		
 		List<OpcionExamenUnidad> opciones = new ArrayList<OpcionExamenUnidad>();
 		
@@ -732,7 +910,7 @@ public class DetalleUnidadController {
 		
 		List<PreguntaExamenUnidad> preguntas = null;
 		if(unidadForm.getExamenUnidad()!=null){
-			unidadForm.getExamenUnidad().getPreguntas();			
+			preguntas = unidadForm.getExamenUnidad().getPreguntas();			
 		}
 		if(preguntas == null){
 			preguntas = new ArrayList<PreguntaExamenUnidad>();
@@ -742,7 +920,7 @@ public class DetalleUnidadController {
 		preguntaId.setIdCurso(unidadForm.getCurso().getId());
 		preguntaId.setNumero(unidadForm.getUnidad().getId().getNumero());
 		preguntaId.setIdExamen(1);
-		preguntaId.setIdPregunta(preguntas.size()+1);
+		preguntaId.setIdPregunta(obtenerUltimoIdPreguntas(preguntas)+1);
 		
 		PreguntaExamenUnidad pregunta = new PreguntaExamenUnidad();
 		pregunta.setId(preguntaId);
@@ -759,6 +937,16 @@ public class DetalleUnidadController {
 		return examenUnidad;
 	}
 	
+	private Integer obtenerUltimoIdPreguntas(List<PreguntaExamenUnidad> preguntas) {
+		int max = 0;
+		for (PreguntaExamenUnidad preguntaExamenUnidad : preguntas) {
+			if(preguntaExamenUnidad.getId().getIdPregunta().intValue()>max){
+				max = preguntaExamenUnidad.getId().getIdPregunta().intValue();
+			}
+		}
+		return Integer.valueOf(max);
+	}
+
 	private boolean validaCamposGeneral(UnidadForm unidadForm, BindingResult bindingResult, Model model) {
 		boolean valida = true;
 		

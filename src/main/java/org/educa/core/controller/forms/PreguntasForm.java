@@ -13,6 +13,8 @@ public class PreguntasForm {
 	private boolean multipleChoice;
 	private String respuestaUnica;
 	private String pregunta;
+	private Long idCurso;
+	private Integer numero;
 	private Integer idPregunta;
 
 	public boolean isOpcionUnoSeleccionada() {
@@ -109,6 +111,22 @@ public class PreguntasForm {
 
 	public void setIdPregunta(Integer idPregunta) {
 		this.idPregunta = idPregunta;
+	}
+
+	public Long getIdCurso() {
+		return idCurso;
+	}
+
+	public void setIdCurso(Long idCurso) {
+		this.idCurso = idCurso;
+	}
+
+	public Integer getNumero() {
+		return numero;
+	}
+
+	public void setNumero(Integer numero) {
+		this.numero = numero;
 	}
 
 }

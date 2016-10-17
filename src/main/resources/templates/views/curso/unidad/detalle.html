@@ -236,7 +236,11 @@
 													<span th:text="${preguntaPropia.pregunta}">&nbsp;</span>
 												</div>
 												<div class="collapsible-body" style="">
-													<form action="#" th:action="@{/detalleUnidad/actualizarPreguntaExamen}" th:object="${unidadForm}" method="post" id="formularioActualizacionPreguntaExamen">
+													<form action="#" th:action="@{/detalleUnidad/actualizarPreguntaExamen}" method="post" id="formularioActualizacionPreguntaExamen">
+														<input type="hidden" th:name="idPregunta" th:value="${preguntaPropia.idPregunta}"/>
+														<input type="hidden" th:name="idCurso" th:value="${preguntaPropia.idCurso}"/>
+														<input type="hidden" th:name="numero" th:value="${preguntaPropia.numero}"/>
+													
 														<!-- Mensajes de actualizacion pregunta -->								
 														<div th:if="${mostrarMensajeActualizacionPregunta} == true" class="alert alert-success alert-dismissable">
 															<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
@@ -248,17 +252,17 @@
 																<div class="row">
 																	<div class="input-field col s8">
 																		<i class="small material-icons prefix">mode_edit</i>
-																		<input id="icon_prefix" type="text" class="validate" th:value="${preguntaPropia.pregunta}"/>
+																		<input id="icon_prefix" type="text" class="validate" th:name="pregunta" th:value="${preguntaPropia.pregunta}"/>
 																		<label for="icon_prefix" style="position: absolute;">Pregunta para incluir en el examen</label>
 																	</div>
 																	<div class="input-field col s4">
-																		<input id="multipleChoiceCheckbox" type="checkbox" th:value="${preguntaPropia.multipleChoice}" th:checked="${preguntaPropia.multipleChoice}"/>
-																		<label for="multipleChoiceCheckbox">Multiple choice</label>
+																		<input id="multipleChoiceCheckboxUpdate" type="checkbox" th:name="multipleChoice" th:value="${preguntaPropia.multipleChoice}" th:checked="${preguntaPropia.multipleChoice}"/>
+																		<label for="multipleChoiceCheckboxUpdate">Multiple choice</label>
 																	</div>
 																</div>
 															</div>
 														</div>
-														<div id="opcionesMultipleChoice" class="row">
+														<div id="opcionesMultipleChoiceUpdate" class="row">
 															<div class="col l2 s12">											
 															</div>
 															<div class="col l8 s12">
@@ -267,34 +271,34 @@
 															</div>
 															<div class="col-xs-6">
 																<div class="form-group input-field">
-																	<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion1" th:checked="${preguntaPropia.opcionUnoSeleccionada}" th:value="${preguntaPropia.opcionUnoSeleccionada}"/>
-																	<label for="filled-in-box-opcion1">
-																		<input id="opcion1" type="text" class="validate" th:value="${preguntaPropia.respuestaOpcionUno}" />
+																	<input name="groupoPreguntasMultipleChoice" type="checkbox" id="filled-in-box-opcion1-update" th:name="opcionUnoSeleccionada" th:value="${preguntaPropia.opcionUnoSeleccionada}" th:checked="${preguntaPropia.opcionUnoSeleccionada}" />
+																	<label for="filled-in-box-opcion1-update">
+																		<input id="opcion1" type="text" class="validate" th:value="${preguntaPropia.respuestaOpcionUno}" th:name="respuestaOpcionUno" />
 																		<label for="opcion1" style="position: absolute;">Opci&oacute;n 1</label>
 																	</label>
 																</div>
 																<br></br>
 																<div class="form-group input-field">
-																	<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion2" th:checked="${preguntaPropia.opcionDosSeleccionada}" th:value="${preguntaPropia.opcionDosSeleccionada}"/>														
-																	<label for="filled-in-box-opcion2">
-																		<input id="opcion2" type="text" class="validate" th:value="${preguntaPropia.respuestaOpcionDos}"/>
+																	<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion2-update" th:name="opcionDosSeleccionada" th:checked="${preguntaPropia.opcionDosSeleccionada}" th:value="${preguntaPropia.opcionDosSeleccionada}"/>														
+																	<label for="filled-in-box-opcion2-update">
+																		<input id="opcion2" type="text" class="validate" th:value="${preguntaPropia.respuestaOpcionDos}" th:name="respuestaOpcionDos"/>
 																		<label for="opcion2" style="position: absolute;">Opci&oacute;n 2</label>
 																	</label>
 																</div>													
 																</div>
 																<div class="col-xs-6">
 																	<div class="form-group input-field">
-																		<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion3" th:checked="${preguntaPropia.opcionTresSeleccionada}" th:value="${preguntaPropia.opcionTresSeleccionada}"/>
-																		<label for="filled-in-box-opcion3">
-																			<input id="opcion3" type="text" class="validate" th:value="${preguntaPropia.respuestaOpcionTres}"/>
+																		<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion3-update" th:checked="${preguntaPropia.opcionTresSeleccionada}" th:value="${preguntaPropia.opcionTresSeleccionada}" th:name="opcionTresSeleccionada"/>
+																		<label for="filled-in-box-opcion3-update">
+																			<input id="opcion3" type="text" class="validate" th:value="${preguntaPropia.respuestaOpcionTres}" th:name="respuestaOpcionTres"/>
 																			<label for="opcion3" style="position: absolute;">Opci&oacute;n 3</label>	      													
 																		</label>
 																	</div>
 																	<br></br>
 																	<div class="form-group input-field">
-																		<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion4" th:checked="${preguntaPropia.opcionCuatroSeleccionada}" th:value="${preguntaPropia.opcionCuatroSeleccionada}"/>
-																		<label for="filled-in-box-opcion4">
-																			<input id="opcion4" type="text" class="validate" th:value="${preguntaPropia.respuestaOpcionCuatro}"/>
+																		<input name="groupoPreguntasMultipleChoice" type="checkbox" class="filled-in" id="filled-in-box-opcion4-update" th:checked="${preguntaPropia.opcionCuatroSeleccionada}" th:value="${preguntaPropia.opcionCuatroSeleccionada}" th:name="opcionCuatroSeleccionada"/>
+																		<label for="filled-in-box-opcion4-update">
+																			<input id="opcion4" type="text" class="validate" th:value="${preguntaPropia.respuestaOpcionCuatro}" th:name="respuestaOpcionCuatro"/>
 																			<label for="opcion4" style="position: absolute;">Opci&oacute;n 4</label>	      													
 																		</label>
 																	</div>
@@ -303,13 +307,13 @@
 															<div class="col l2 s12">
 															</div>
 														</div>
-														<div id="preguntaUnica">
+														<div id="preguntaUnicaUpdate">
 															<div class="col l12 s12">
 																<div class="form-group input-field">
 																	<div class="row">
 																		<div class="input-field col s8">
 																		  <i class="small material-icons prefix">question_answer</i>									          
-																		  <input id="icon_prefix" type="text" class="validate" th:value="${preguntaPropia.respuestaUnica}"/>
+																		  <input id="icon_prefix" type="text" class="validate" th:value="${preguntaPropia.respuestaUnica}" th:name="respuestaUnica"/>
 																		  <label for="icon_prefix" style="position: absolute;">Respuesta</label>
 																		</div>												        
 																	 </div>
@@ -322,12 +326,11 @@
 																<hr></hr>
 															</div>
 														</div>
-													
-														<div class="col l12 s12">			    					    				
 															<div class="form-group">
-																<button type="submit" class="btn orange-effect orange darken-4">Acualizar</button>                       		
+															 	<a class="btn orange-effect orange" href="#"
+																th:href="@{/detalleUnidad/eliminarPregunta/{idCurso}/{numero}/{idPregunta}(idCurso=${preguntaPropia.idCurso}, numero=${preguntaPropia.numero}, idPregunta=${preguntaPropia.idPregunta})}">Eliminar</a>
 															 </div>
-														</div>								
+								
 													</form>				
 												</div>
 											</li>											
@@ -492,6 +495,17 @@
         		$("#opcionesMultipleChoice").hide();
     		}
     	});
+    	
+    	$(function () {
+    		var estaSeleccionado =  $( '#multipleChoiceCheckboxUpdate' ).is(':checked');
+    		if(estaSeleccionado){
+    			$("#preguntaUnicaUpdate").hide();
+        		$("#opcionesMultipleChoiceUpdate").show();
+    		} else {
+    			$("#preguntaUnicaUpdate").show();
+        		$("#opcionesMultipleChoiceUpdate").hide();
+    		}
+    	});
 	    
 	    $( '#multipleChoiceCheckbox' ).on( 'click', function() {
 	        if( $(this).is(':checked') ){
@@ -500,6 +514,16 @@
 	        } else {
 	        	$("#preguntaUnica").show();
 	    		$("#opcionesMultipleChoice").hide();
+	        }
+	    });
+	    
+	    $( '#multipleChoiceCheckboxUpdate' ).on( 'click', function() {
+	        if( $(this).is(':checked') ){
+	        	$("#preguntaUnicaUpdate").hide();
+	    		$("#opcionesMultipleChoiceUpdate").show();
+	        } else {
+	        	$("#preguntaUnicaUpdate").show();
+	    		$("#opcionesMultipleChoiceUpdate").hide();
 	        }
 	    });
 	</script>
