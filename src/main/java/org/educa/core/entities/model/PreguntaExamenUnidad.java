@@ -12,8 +12,6 @@ import javax.persistence.JoinColumns;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @Entity
 @Table(name = "pregunta_examen_unidad")
 public class PreguntaExamenUnidad implements Serializable {

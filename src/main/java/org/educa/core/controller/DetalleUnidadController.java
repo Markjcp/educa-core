@@ -1,7 +1,8 @@
 package org.educa.core.controller;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,9 +31,7 @@ import org.educa.core.entities.model.Unidad;
 import org.educa.core.entities.model.VideoUnidad;
 import org.educa.core.entities.model.VideoUnidadId;
 import org.educa.core.services.CursoService;
-import org.jdom2.Document;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
+import org.educa.core.validator.MaterialTeoricoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -69,30 +68,80 @@ public class DetalleUnidadController {
 	
 	@Autowired
 	@Qualifier("videoUnidadRepository")
-	private VideoUnidadRepository videoUnidadRepository;	
+	private VideoUnidadRepository videoUnidadRepository;
+	
+	@Autowired
+	@Qualifier("materialTeoricoValidator")
+	private MaterialTeoricoValidator materialTeoricoValidator;
 	
 	@RequestMapping(value = "/{idCurso}/{idUnidad}/{numeroUnidad}", method = RequestMethod.GET)
 	public String index(@PathVariable("idCurso") long idCurso, @PathVariable("idUnidad") long idUnidad, 
 			@PathVariable("numeroUnidad") int numeroUnidad, Model model) {		
 		//No se validad que no sea null ya que no deberia de suceder, en caso de que pase, es porque hay un error entonces se espera verlo.
 		Curso curso = this.cursoService.encontrarCursoPorId(idCurso);
-		Unidad unidad = null;
-		for(Unidad unaUnidad : curso.getUnidades()){
-			if(unaUnidad.getId().getIdCurso() == idUnidad && unaUnidad.getId().getNumero() == numeroUnidad){
-				unidad = unaUnidad;
-				break;
-			}
-		}
+		
+		ComponenteId unidadId = new ComponenteId();
+		unidadId.setIdCurso(idCurso);
+		unidadId.setNumero(numeroUnidad);
+		Unidad unidad = unidadRepository.findOne(unidadId);
 		
 		UnidadForm unidadForm = new UnidadForm();
+		//Carga Examen
+		cargarExamen(curso, unidad, unidadForm);
 		
+		unidadForm.setCurso(curso);
+		unidadForm.setUnidad(unidad);
+		unidadForm.setPublicado(unidad.isPublicado());
+		
+		//Carga material teorico
+		String contenidoMaterialGuardado = null;
+		if(unidad.getMaterial() != null && !unidad.getMaterial().isEmpty() && unidad.getMaterial().get(0) != null){
+			if(unidad.getMaterial().get(0).getMaterial() != null 
+					&& unidad.getMaterial().get(0).getMaterial().length > 0){
+				contenidoMaterialGuardado = new String(unidad.getMaterial().get(0).getMaterial());
+			}			
+		}		
+		unidadForm.setMaterialTeorico(contenidoMaterialGuardado);
+		
+		//Carga video
+		if(unidad.getVideos() != null && !unidad.getVideos().isEmpty() && unidad.getVideos().get(0) != null){
+			if(unidad.getVideos().get(0).getVideo() != null && unidad.getVideos().get(0).getVideo().length > 0){
+				cargarVideoBase64(unidadForm, unidad.getVideos().get(0).getVideo());
+			}			
+		}		
+		
+		model.addAttribute("unidadForm", unidadForm);
+		mostrarTab(model, true, false, false, false);
+		model.addAttribute("mostrarMensajeCantidadPreguntas", true);
+		
+		return DETALLE_CURSO;
+	}
+	
+	private void mostrarTab(Model model, boolean tabMaterialTeorico, boolean tabVideo, boolean tabPractica, boolean tabExamen){
+		model.addAttribute("mostrarTabMaterialTeorico", tabMaterialTeorico);
+		model.addAttribute("mostrarTabVideo", tabVideo);
+		model.addAttribute("mostrarTabPracticas", tabPractica);
+		model.addAttribute("mostrarTabExamen", tabExamen);		
+	}
+	
+	private void cargarVideoBase64(UnidadForm unidadForm, byte[] bytes){		
+		String base64 = Base64.encodeBase64String(bytes);
+		//data:video/mp4;base64,${video en base 64}
+		String videoGuardado = "data:video/mp4;base64,";
+		videoGuardado +=base64;
+		
+		unidadForm.setVideoBytes(videoGuardado);
+		unidadForm.setEdicion(true);
+	}
+	
+	private void cargarExamen(Curso curso, Unidad unidad, UnidadForm unidadForm) {
 		ExamenUnidadId examenId = new ExamenUnidadId();
 		examenId.setIdCurso(curso.getId());
 		examenId.setIdExamen(1);
 		examenId.setNumero(unidad.getId().getNumero());
 		
 		ExamenUnidad examenUnidad = examenUnidadRepository.findOne(examenId);
-		if(examenUnidad.getPreguntas() != null && !examenUnidad.getPreguntas().isEmpty()){
+		if(examenUnidad != null && examenUnidad.getPreguntas() != null && !examenUnidad.getPreguntas().isEmpty()){
 			List<PreguntasForm> preguntasForm = new ArrayList<PreguntasForm>();
 			for(PreguntaExamenUnidad pregunta : examenUnidad.getPreguntas()){
 				PreguntasForm preguntaForm = new PreguntasForm();
@@ -127,27 +176,7 @@ public class DetalleUnidadController {
 			unidadForm.setPreguntas(preguntasForm);
 		}
 		
-		unidadForm.setCurso(curso);
-		unidadForm.setUnidad(unidad);
-		unidadForm.setPublicado(false);
-		unidadForm.setExamenUnidad(examenUnidad);
-		
-		String contenidoMaterialGuardado = null;
-		if(unidad.getMaterial() != null && !unidad.getMaterial().isEmpty()){
-			contenidoMaterialGuardado = new String(unidad.getMaterial().get(0).getMaterial());
-		}		
-		unidadForm.setMaterialTeorico(contenidoMaterialGuardado);
-		
-		unidadForm.setPublicado(unidad.isPublicado());		
-		
-		model.addAttribute("unidadForm", unidadForm);
-		model.addAttribute("mostrarTabMaterialTeorico", true);
-		model.addAttribute("mostrarTabVideo", false);
-		model.addAttribute("mostrarTabPracticas", false);
-		model.addAttribute("mostrarTabExamen", false);
-		model.addAttribute("mostrarMensajeCantidadPreguntas", true);
-		
-		return DETALLE_CURSO;
+		unidadForm.setExamenUnidad(examenUnidad);				
 	}
 	
 	@RequestMapping(value = "/cambiarEstadoPublicacion", method = RequestMethod.POST)
@@ -188,11 +217,8 @@ public class DetalleUnidadController {
 			model.addAttribute("mostrarMensajeErrorPublicacion", true);				
 			model.addAttribute("mensajeErrorPublicacion", mensaje);
 			
-			model.addAttribute("unidadForm", unidadForm);
-			model.addAttribute("mostrarTabMaterialTeorico", true);
-			model.addAttribute("mostrarTabVideo", false);
-			model.addAttribute("mostrarTabPracticas", false);
-			model.addAttribute("mostrarTabExamen", false);
+			model.addAttribute("unidadForm", unidadForm);			
+			mostrarTab(model, true, false, false, false);			
 			model.addAttribute("mostrarMensajeCantidadPreguntas", true);
 			
 			return DETALLE_CURSO;
@@ -208,10 +234,7 @@ public class DetalleUnidadController {
 		unidadForm.setPublicado(unidadPersistida.isPublicado());
 		
 		model.addAttribute("unidadForm", unidadForm);
-		model.addAttribute("mostrarTabMaterialTeorico", true);
-		model.addAttribute("mostrarTabVideo", false);
-		model.addAttribute("mostrarTabPracticas", false);
-		model.addAttribute("mostrarTabExamen", false);
+		mostrarTab(model, true, false, false, false);		
 		model.addAttribute("mostrarMensajeCantidadPreguntas", true);
 		
 		return DETALLE_CURSO;
@@ -223,19 +246,16 @@ public class DetalleUnidadController {
 		
 		Unidad unidad = unidadRepository.findOne(unidadForm.getUnidad().getId());//Voy a buscarla porque las listas se cargaron en otra sesion de hibernate (no en la actual).
 		
-		boolean intentaLimpiar = intentaLimpiarContenido(unidadForm.getMaterialTeorico(), unidad);
+		boolean intentaLimpiar = materialTeoricoValidator.intentaLimpiarContenido(unidadForm.getMaterialTeorico(), unidad);
 		if(!intentaLimpiar){
-			String mensajeError = validaContenidoMaterialUnidad(unidadForm);
+			String mensajeError = materialTeoricoValidator.validaContenidoMaterialUnidad(unidadForm);
 			
 			if(mensajeError != null && !mensajeError.isEmpty()){
 				model.addAttribute("mostrarErrorContenidoMaterialTeoricoVacio", true);
 				model.addAttribute("mensajeErrorContenidoMaterialTeoricoVacio", mensajeError);
 				
 				model.addAttribute("unidadForm", unidadForm);
-				model.addAttribute("mostrarTabMaterialTeorico", true);
-				model.addAttribute("mostrarTabVideo", false);
-				model.addAttribute("mostrarTabPracticas", false);
-				model.addAttribute("mostrarTabExamen", false);
+				mostrarTab(model, true, false, false, false);
 				model.addAttribute("mostrarMensajeCantidadPreguntas", true);
 				
 				return DETALLE_CURSO;
@@ -247,9 +267,15 @@ public class DetalleUnidadController {
 			material = new MaterialUnidad();
 			
 			MaterialUnidadId id = new MaterialUnidadId();
+
+			/*
+			 * numero = numero_componente (es el de la unidad)
+			 * idCurso = id del curso
+			 * idMaterial = numero_material
+			 */			
 			id.setIdCurso(unidadForm.getCurso().getId());
-			id.setIdMaterial(new Long(unidad.getId().getNumero()));
-			id.setNumero(1);
+			id.setIdMaterial(1L);
+			id.setNumero(unidad.getId().getNumero());
 			
 			material.setId(id);
 			unidad.addMaterial(material);
@@ -279,103 +305,11 @@ public class DetalleUnidadController {
 		unidadForm.setMaterialTeorico(contenidoMaterialGuardado);
 		
 		model.addAttribute("unidadForm", unidadForm);
-		model.addAttribute("mostrarTabMaterialTeorico", true);
-		model.addAttribute("mostrarTabVideo", false);
-		model.addAttribute("mostrarTabPracticas", false);
-		model.addAttribute("mostrarTabExamen", false);
+		mostrarTab(model, true, false, false, false);
 		model.addAttribute("mostrarMensajeCantidadPreguntas", true);
 		model.addAttribute("mostrarMensajeMaterialGuardado", true);
 		
 		return DETALLE_CURSO;
-	}
-
-	private boolean intentaLimpiarContenido(String materialTeorico, Unidad unidad) {		
-		if(unidad.getMaterial() != null && !unidad.getMaterial().isEmpty()){
-			MaterialUnidad materialUnidad = unidad.getMaterial().get(0);			
-			if(materialUnidad.getMaterial() != null && materialUnidad.getMaterial().length > 0){
-				boolean contenidoVacio = estaContenidoVacio(materialTeorico);
-				//Contiene material y lo intenta limpiar
-				if(contenidoVacio){
-					return true;
-				}				
-			}
-		}
-		
-		return false;
-	}
-	
-	private boolean estaContenidoVacio2(String contenido){
-		/*
-		 * Si el contenido viene vacio, tiene la siguiente estructura:
-		 * <p><br />
-		 *	</p>
-		 */
-		
-		//Esto deberia de hacerse con un parse de xhtml pero no me funciono y ya no tengo tiempo. Ver si pasa todas las pruebas, sino reveer esto.
-		String contenidoInicial = "<p><br />";
-		int indexInicio = contenido.indexOf(contenidoInicial);
-		if(indexInicio == -1 || indexInicio != 0){
-			return false;
-		}
-		
-		int indexContenido = indexInicio + contenidoInicial.length();//En ese index deberia de comenzar el contenido real si escribio algo distinto de espacios.
-		String contenidoFinal = "</p>";
-		//Busco el primer contenidoFinal. Si no escribio nada, deberia de no tener nada mas.
-		int indexFinal = contenido.indexOf(contenidoFinal);
-		
-		//Voy a verificar que no haya mas contenido xhtml que el que viene por defecto.
-		int indexFinalExtra = contenido.length() - (indexFinal + contenidoFinal.length());		
-		if(indexFinalExtra > 0){
-			return false;
-		}
-		
-		String contenidoEfectivo = contenido.substring(indexContenido, indexFinal);
-		contenidoEfectivo = contenidoEfectivo.trim();//Saco los espacios en blanco al comienzo y al final
-		
-		if(contenidoEfectivo.length() > 0){
-			return false;
-		}
-		
-		return true;
-	}
-	
-	private boolean estaContenidoVacio(String contenido){
-		//org.jdom.input.SAXBuilder saxBuilder = new SAXBuilder();
-		SAXBuilder saxBuilder = new SAXBuilder();
-		try {
-		    //org.jdom.Document doc = saxBuilder.build(new StringReader(xml));
-			Document doc = saxBuilder.build(new StringReader(contenido));
-		    String contenidoPuro = doc.getRootElement().getText();
-		    contenidoPuro = contenidoPuro.trim();
-		    System.out.println(contenidoPuro);
-		    
-		    if(contenidoPuro == null || contenidoPuro.isEmpty()){
-		    	return true;
-		    }
-		} catch (JDOMException e) {
-			System.out.println(e);
-		    // handle JDOMException
-		} catch (IOException e) {			
-		    // handle IOException
-			System.out.println(e);
-		}
-		
-		return false;
-	}
-
-	private String validaContenidoMaterialUnidad(UnidadForm unidadForm) {
-		String mensaje = null;
-		String materialTeorico = unidadForm.getMaterialTeorico();
-		if(materialTeorico == null || materialTeorico.isEmpty() || estaContenidoVacio(materialTeorico)){
-			mensaje = "Debe de cargar material teórico para poder guardarlo.";
-		} else {
-			byte[] materialBytes = unidadForm.getMaterialTeorico().getBytes();
-			if(materialBytes.length > ConstantesDelModelo.MAX_TAM_MATERIAL_TEORICO){
-				mensaje = "El tamaño del material teorico debe ser menor a " + ConstantesDelModelo.MAX_TAM_MATERIAL_TEORICO + " " + ConstantesDelModelo.UNIDAD_TAM_MATERIAL_TEORICO;
-			}
-		}
-		
-		return mensaje;
 	}
 	
 	@RequestMapping(value = "/guardarVideo", method = RequestMethod.POST)
@@ -385,10 +319,7 @@ public class DetalleUnidadController {
 			model.addAttribute("mensajeWarningVideo", "No existe un video cargado para realizar la operación solicitada.");
 			
 			model.addAttribute("unidadForm", unidadForm);
-			model.addAttribute("mostrarTabMaterialTeorico", false);
-			model.addAttribute("mostrarTabVideo", true);
-			model.addAttribute("mostrarTabPracticas", false);
-			model.addAttribute("mostrarTabExamen", false);
+			mostrarTab(model, false, true, false, false);			
 			model.addAttribute("mostrarMensajeCantidadPreguntas", true);
 			
 			return DETALLE_CURSO;
@@ -397,26 +328,18 @@ public class DetalleUnidadController {
 		boolean valida = validaVideo(unidadForm); 
 		if(!valida){
 			model.addAttribute("mostrarMensajeErrorValidacionCargaVideo", true);
-			
-			String base64 = null;
+						
 			try {
-				base64 = Base64.encodeBase64String(unidadForm.getVideo().getBytes());
+				cargarVideoBase64(unidadForm, unidadForm.getVideo().getBytes());
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			
-			//data:video/mp4;base64,${video en base 64}
-			String videoGuardado = "data:video/mp4;base64,";
-			videoGuardado +=base64;
-			
-			unidadForm.setVideoBytes(videoGuardado);
 			unidadForm.setEdicion(true);
 			
 			model.addAttribute("unidadForm", unidadForm);
-			model.addAttribute("mostrarTabMaterialTeorico", false);
-			model.addAttribute("mostrarTabVideo", true);
-			model.addAttribute("mostrarTabPracticas", false);
-			model.addAttribute("mostrarTabExamen", false);
+			mostrarTab(model, false, true, false, false);
 			model.addAttribute("mostrarMensajeCantidadPreguntas", true);
 			
 			return DETALLE_CURSO;
@@ -427,10 +350,15 @@ public class DetalleUnidadController {
 		if(unidad.getVideos() == null || unidad.getVideos().isEmpty()){
 			video = new VideoUnidad();
 			
-			VideoUnidadId id = new VideoUnidadId();
+			VideoUnidadId id = new VideoUnidadId();			
+			/*
+			 * numero = numero_componente (es el de la unidad)
+			 * idCurso = id del curso
+			 * idVideo = numero_video
+			 */			
 			id.setIdCurso(unidadForm.getCurso().getId());
-			id.setIdVideo(new Long(unidad.getId().getNumero()));
-			id.setNumero(1);
+			id.setIdVideo(1L);
+			id.setNumero(unidad.getId().getNumero());
 			
 			video.setId(id);
 			unidad.addVideo(video);
@@ -484,10 +412,7 @@ public class DetalleUnidadController {
 		unidadForm.setVideoBytes(videoGuardado);
 		unidadForm.setEdicion(true);
 		model.addAttribute("unidadForm", unidadForm);
-		model.addAttribute("mostrarTabMaterialTeorico", false);
-		model.addAttribute("mostrarTabVideo", true);
-		model.addAttribute("mostrarTabPracticas", false);
-		model.addAttribute("mostrarTabExamen", false);
+		mostrarTab(model, false, true, false, false);
 		model.addAttribute("mostrarMensajeCantidadPreguntas", true);
 		model.addAttribute("mostrarMensajeMaterialGuardado", false);
 		
@@ -543,7 +468,6 @@ public class DetalleUnidadController {
 		UnidadForm unidadForm = new UnidadForm();
 		unidadForm.setCurso(curso);
 		unidadForm.setUnidad(unidad);
-		unidadForm.setPublicado(false);
 		
 		String contenidoMaterialGuardado = null;
 		if(unidad.getMaterial() != null && !unidad.getMaterial().isEmpty()){
@@ -551,32 +475,21 @@ public class DetalleUnidadController {
 		}		
 		unidadForm.setMaterialTeorico(contenidoMaterialGuardado);
 		
-		if(Estado.PUBLICADO.equals(curso.getEstadoCurso())){
-			unidadForm.setPublicado(true);
-		}		
+		unidadForm.setPublicado(unidad.isPublicado());		
 		
-		if(intentoEliminar){
-			String videoGuardado = null;
+		if(intentoEliminar){			
 			if(unidad.getVideos() != null && !unidad.getVideos().isEmpty()){
 				//Esto lo hago para verificar que el video se a eliminado correctamente de la unidad
-				
-				//data:video/webm;base64,${video en base 64}
-				videoGuardado = "data:video/mp4;base64,";
-				String base64 = Base64.encodeBase64String(unidad.getVideos().get(0).getVideo());
-				videoGuardado +=base64;
-				unidadForm.setVideoBytes(videoGuardado);
+				cargarVideoBase64(unidadForm, unidad.getVideos().get(0).getVideo());				
 			} else {
 				model.addAttribute("mostrarMensajeEliminarVideo", true);
 			}
 		}		
 		
 		unidadForm.setEdicion(true);		
-		
+		cargarExamen(curso, unidad, unidadForm);
 		model.addAttribute("unidadForm", unidadForm);
-		model.addAttribute("mostrarTabMaterialTeorico", false);
-		model.addAttribute("mostrarTabVideo", true);
-		model.addAttribute("mostrarTabPracticas", false);
-		model.addAttribute("mostrarTabExamen", false);
+		mostrarTab(model, false, true, false, false);		
 		model.addAttribute("mostrarMensajeCantidadPreguntas", true);
 		
 		return DETALLE_CURSO;
@@ -607,15 +520,9 @@ public class DetalleUnidadController {
 		}
 		
 		System.out.println("ENTRO PARA GUARDAR LA PREGUNTA DEL EXAMEN: " + unidadForm.isPublicado());
-		if(unidadForm.isPublicado()){
-			
-		}
 		
 		model.addAttribute("unidadForm", unidadForm);
-		model.addAttribute("mostrarTabMaterialTeorico", true);
-		model.addAttribute("mostrarTabVideo", false);
-		model.addAttribute("mostrarTabPracticas", false);
-		model.addAttribute("mostrarTabExamen", false);
+		mostrarTab(model, false, false, false, true);		
 		model.addAttribute("mostrarMensajeCantidadPreguntas", true);
 		
 		return DETALLE_CURSO;
