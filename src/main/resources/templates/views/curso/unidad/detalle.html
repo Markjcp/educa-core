@@ -361,13 +361,45 @@
 											</div>
 										</div>
 										
+										<div class="col l12 s12">
 										<!-- Mensajes de alta pregunta -->								
 										<div th:if="${mostrarMensajeAltaPregunta} == true" class="alert alert-success alert-dismissable">
 										   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
 										   <a href="#" class="alert-link">Bien Hecho!</a> La pregunta se cre&oacute; con &eacute;xito.	                   
 										</div>
+										<div th:if="${ErrorCantidadRespuestasCorrectas} == true"
+											class="alert alert-danger alert-dismissable">
+											<button type="button" class="close" data-dismiss="alert"
+												aria-hidden="true">×</button>
+											<a href="#" class="alert-link">Error</a> Debe seleccionar una respuesta como correcta.
+										</div>
+										<div th:if="${respuestaOpcion} == true"
+											class="alert alert-danger alert-dismissable">
+											<button type="button" class="close" data-dismiss="alert"
+												aria-hidden="true">×</button>
+											<a href="#" class="alert-link">Error</a> Debe ingresar todas las opciones.
+										</div>
+										<div th:if="${respuestaUnica} == true"
+											class="alert alert-danger alert-dismissable">
+											<button type="button" class="close" data-dismiss="alert"
+												aria-hidden="true">×</button>
+											<a href="#" class="alert-link">Error</a> Debe ingresar la respuesta.
+										</div>
+										<div th:if="${cantidadPreguntasAlumno} == true"
+											class="alert alert-danger alert-dismissable">
+											<button type="button" class="close" data-dismiss="alert"
+												aria-hidden="true">×</button>
+											<a href="#" class="alert-link">Error</a> Debe ingresar la cantidad de preguntas.
+										</div>
+										<div th:if="${pregunta} == true"
+											class="alert alert-danger alert-dismissable">
+											<button type="button" class="close" data-dismiss="alert"
+												aria-hidden="true">×</button>
+											<a href="#" class="alert-link">Error</a> Debe ingresar una pregunta.
+										</div>
+																				
 										<!-- FIN de Mensajes de alta pregunta -->
-									
+									</div>
 										<div class="col l12 s12">
 											<div class="form-group input-field">
 												<div class="row">

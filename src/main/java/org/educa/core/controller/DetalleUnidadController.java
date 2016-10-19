@@ -562,9 +562,7 @@ public class DetalleUnidadController {
 			}
 		}
 		
-		if(!valida){
-			
-		}
+		
 		
 		System.out.println("ENTRO PARA GUARDAR LA PREGUNTA DEL EXAMEN: " + unidadForm.isPublicado());
 		if(unidadForm.isPublicado()){
@@ -572,11 +570,17 @@ public class DetalleUnidadController {
 		}
 		
 		index(unidadForm.getCurso().getId(), unidadForm.getCurso().getId(), unidadForm.getUnidad().getId().getNumero(), model);
+		
+		if(valida){
+			model.addAttribute("mostrarMensajeAltaPregunta", true);			
+		}
+		
 		model.addAttribute("mostrarTabMaterialTeorico", false);
 		model.addAttribute("mostrarTabVideo", false);
 		model.addAttribute("mostrarTabPracticas", false);
 		model.addAttribute("mostrarTabExamen", true);
 		model.addAttribute("mostrarMensajeCantidadPreguntas", true);
+		
 		
 		return DETALLE_CURSO;
 	}
@@ -755,29 +759,33 @@ public class DetalleUnidadController {
 		}
 		
 		if(cantidadPreguntasValidas == 0){
-			model.addAttribute("ErrorCantidadRespuestasCorrectas", "Debe de seleccionar una respuesta como correcta.");
+			model.addAttribute("ErrorCantidadRespuestasCorrectas", true);
 			valida = false;
 		}
 		if(cantidadPreguntasValidas > 1){
-			model.addAttribute("ErrorCantidadRespuestasCorrectas", "Debe de seleccionar una única respuesta como correcta.");
+			model.addAttribute("ErrorCantidadRespuestasCorrectas", true);
 			valida = false;
 		}
 		
 		//Las opciones de respuesta no deben de ser vacias ni nulas
 		if(unidadForm.getRespuestaOpcionUno() == null || unidadForm.getRespuestaOpcionUno().isEmpty()){
-			bindingResult.rejectValue("respuestaOpcionUna", "ERROR-RTA-OPCION-UNO" ,"Debe de ingresar una opción de respuesta.");
+			//bindingResult.rejectValue("respuestaOpcionUna", "ERROR-RTA-OPCION-UNO" ,"Debe de ingresar una opción de respuesta.");
+			model.addAttribute("respuestaOpcion", true);
 			valida = false;
 		}
 		if(unidadForm.getRespuestaOpcionDos() == null || unidadForm.getRespuestaOpcionDos().isEmpty()){
-			bindingResult.rejectValue("respuestaOpcionUna", "ERROR-RTA-OPCION-UNO" ,"Debe de ingresar una opción de respuesta.");
+			//bindingResult.rejectValue("respuestaOpcionUna", "ERROR-RTA-OPCION-UNO" ,"Debe de ingresar una opción de respuesta.");
+			model.addAttribute("respuestaOpcion", true);
 			valida = false;
 		}
 		if(unidadForm.getRespuestaOpcionTres() == null || unidadForm.getRespuestaOpcionTres().isEmpty()){
-			bindingResult.rejectValue("respuestaOpcionTres", "ERROR-RTA-OPCION-TRES" ,"Debe de ingresar una opción de respuesta.");
+			//bindingResult.rejectValue("respuestaOpcionTres", "ERROR-RTA-OPCION-TRES" ,"Debe de ingresar una opción de respuesta.");
+			model.addAttribute("respuestaOpcion", true);
 			valida = false;
 		}
 		if(unidadForm.getRespuestaOpcionCuatro() == null || unidadForm.getRespuestaOpcionCuatro().isEmpty()){
-			bindingResult.rejectValue("respuestaOpcionCuatro", "ERROR-RTA-OPCION-CUATRO" ,"Debe de ingresar una opción de respuesta.");
+			//bindingResult.rejectValue("respuestaOpcionCuatro", "ERROR-RTA-OPCION-CUATRO" ,"Debe de ingresar una opción de respuesta.");
+			model.addAttribute("respuestaOpcion", true);
 			valida = false;
 		}
 		
@@ -887,7 +895,8 @@ public class DetalleUnidadController {
 		boolean valida = validaCamposGeneral(unidadForm, bindingResult, model);
 		
 		if(unidadForm.getRespuestaUnica() == null || unidadForm.getRespuestaUnica().isEmpty()){
-			bindingResult.rejectValue("respuestaUnica", "ERROR-RTA-OPCION-CUATRO" ,"Debe de ingresar la respuesta correcta.");
+			//bindingResult.rejectValue("respuestaUnica", "ERROR-RTA-OPCION-CUATRO" ,"Debe de ingresar la respuesta correcta.");
+			model.addAttribute("respuestaUnica", true);
 			valida = false;
 		}
 		
@@ -952,12 +961,14 @@ public class DetalleUnidadController {
 		
 		if(unidadForm.getCantidadPreguntasAlumno() != null && unidadForm.getCantidadPreguntasAlumno() < 1){
 			//Deberia de ser mayor o igual a 1
-			bindingResult.rejectValue("cantidadPreguntasAlumno", "ERROR-CANTIDAD-PREG-ALUMNO" ,"Debe de ingresar una cantidad mayor a 0 (número entero mayor a 0).");
+			//bindingResult.rejectValue("cantidadPreguntasAlumno", "ERROR-CANTIDAD-PREG-ALUMNO" ,"Debe de ingresar una cantidad mayor a 0 (número entero mayor a 0).");
+			model.addAttribute("cantidadPreguntasAlumno", true);
 			valida = false;
 		}
 		
 		if(unidadForm.getPregunta() == null || unidadForm.getPregunta().isEmpty()){
-			bindingResult.rejectValue("pregunta", "ERROR-PREGUNTA" ,"Debe de ingresar una pregunta.");
+			//bindingResult.rejectValue("pregunta", "ERROR-PREGUNTA" ,"Debe de ingresar una pregunta.");
+			model.addAttribute("pregunta", true);
 			valida = false;
 		}
 		
