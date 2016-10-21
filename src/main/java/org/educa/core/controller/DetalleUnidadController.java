@@ -13,11 +13,11 @@ import org.educa.core.dao.CursoDao;
 import org.educa.core.dao.ExamenUnidadRepository;
 import org.educa.core.dao.MaterialUnidadRepository;
 import org.educa.core.dao.OpcionExamenRepository;
+import org.educa.core.dao.ParametroRepository;
 import org.educa.core.dao.PreguntaExamenRepository;
 import org.educa.core.dao.UnidadRepository;
 import org.educa.core.dao.VideoUnidadRepository;
 import org.educa.core.entities.constants.ConstantesDelModelo;
-import org.educa.core.entities.model.ComponenteId;
 import org.educa.core.entities.model.Curso;
 import org.educa.core.entities.model.Estado;
 import org.educa.core.entities.model.ExamenUnidad;
@@ -81,7 +81,11 @@ public class DetalleUnidadController {
 	
 	@Autowired
 	@Qualifier("opcionExamenRepository")
-	private OpcionExamenRepository opcionExamenRepository;	
+	private OpcionExamenRepository opcionExamenRepository;
+	
+	@Autowired
+	@Qualifier("parametroRepository")
+	private ParametroRepository parametroRepository;
 	
 	@Autowired
 	private CursoDao cursoDao;
@@ -96,12 +100,17 @@ public class DetalleUnidadController {
 		unidad = hidratarUnidad(unidad);
 		
 		UnidadForm unidadForm = new UnidadForm();
+		Integer multiplicador = Integer.valueOf(parametroRepository.findOne("MULTIPLICADOR_PREGUNTAS").getValor());
 		//Carga Examen
-		cargarExamen(curso, unidad, unidadForm);
+		ExamenUnidad examen = cargarExamen(curso, unidad, unidadForm);
+		if(examen.getPreguntas().size()<examen.getCantPreguntasUsuario()*multiplicador){
+			model.addAttribute("examenIncompleto", true);
+		}
 		
 		unidadForm.setCurso(curso);
 		unidadForm.setUnidad(unidad);
 		unidadForm.setPublicado(unidad.isPublicado());
+		unidadForm.setMultiplicadorPreguntas(multiplicador);
 		
 		//Carga material teorico
 		String contenidoMaterialGuardado = null;
@@ -155,7 +164,7 @@ public class DetalleUnidadController {
 		return unidad;
 	}
 	
-	private void cargarExamen(Curso curso, Unidad unidad, UnidadForm unidadForm) {
+	private ExamenUnidad cargarExamen(Curso curso, Unidad unidad, UnidadForm unidadForm) {
 		ExamenUnidadId examenId = new ExamenUnidadId();
 		examenId.setIdCurso(curso.getId());
 		examenId.setIdExamen(1);
@@ -203,7 +212,7 @@ public class DetalleUnidadController {
 		}
 			
 		unidadForm.setExamenUnidad(examenUnidad);
-		
+		return examenUnidad;		
 	}
 	
 	@RequestMapping(value = "/cambiarEstadoPublicacion", method = RequestMethod.POST)
@@ -572,7 +581,11 @@ public class DetalleUnidadController {
 		index(unidadForm.getCurso().getId(), unidadForm.getCurso().getId(), unidadForm.getUnidad().getId().getNumero(), model);
 		
 		if(valida){
-			model.addAttribute("mostrarMensajeAltaPregunta", true);			
+			if(unidadForm.getExamenUnidad().getPreguntas().size()>=unidadForm.getCantidadPreguntasAlumno()*unidadForm.getMultiplicadorPreguntas()){
+				model.addAttribute("mostrarMensajeAltaExamen", true);
+			}else{
+				model.addAttribute("mostrarMensajeAltaPregunta", true);			
+			}
 		}
 		
 		model.addAttribute("mostrarTabMaterialTeorico", false);
@@ -724,6 +737,23 @@ public class DetalleUnidadController {
 			opcionExamenRepository.delete(opciones);
 		}
 		preguntaExamenRepository.delete(preguntaModelo);
+		
+		ExamenUnidadId examenId = new ExamenUnidadId();
+		examenId.setIdCurso(idCurso);
+		examenId.setIdExamen(1);
+		examenId.setNumero(numero);
+		
+		ExamenUnidad examen = examenUnidadRepository.findOne(examenId);
+		Integer multiplicador = Integer.valueOf(parametroRepository.findOne("MULTIPLICADOR_PREGUNTAS").getValor());
+
+		if(examen.getPreguntas().size()>=examen.getCantPreguntasUsuario()*multiplicador){
+			examen.setCompleto(true);
+			model.addAttribute("mostrarMensajeEliminaExamenCompleto", true);
+		}else{
+			examen.setCompleto(false);
+			model.addAttribute("mostrarMensajeEliminaExamenIncompleto", true);
+		}
+		examenUnidadRepository.save(examen);
 		
 		index(idCurso, idCurso, numero, model);
 		
@@ -884,6 +914,12 @@ public class DetalleUnidadController {
 		
 		preguntas.add(pregunta);
 		
+		if(preguntas.size()>=unidadForm.getCantidadPreguntasAlumno()*unidadForm.getMultiplicadorPreguntas()){
+			examenUnidad.setCompleto(true);
+		}else{
+			examenUnidad.setCompleto(false);
+		}
+		
 		examenUnidad.setPreguntas(preguntas);
 		
 		examenUnidadRepository.save(examenUnidad);
@@ -939,7 +975,18 @@ public class DetalleUnidadController {
 		
 		preguntas.add(pregunta);
 		
+		if(preguntas.size()>=examenUnidad.getCantPreguntasUsuario()*unidadForm.getMultiplicadorPreguntas()){
+			examenUnidad.setCompleto(true);
+		}else{
+			examenUnidad.setCompleto(false);
+		}
+		
 		examenUnidad.setPreguntas(preguntas);
+		if(preguntas.size()>=unidadForm.getCantidadPreguntasAlumno()*unidadForm.getMultiplicadorPreguntas()){
+			examenUnidad.setCompleto(true);
+		}else{
+			examenUnidad.setCompleto(false);
+		}
 		
 		examenUnidadRepository.save(examenUnidad);
 		

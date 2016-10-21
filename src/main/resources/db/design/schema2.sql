@@ -452,3 +452,8 @@ ENGINE = InnoDB;
 ALTER TABLE `educa`.`unidad`
   ADD `estado_unidad` VARCHAR(45) NOT NULL DEFAULT 'NO_PUBLICADO';
   
+-- 20/10  
+ALTER TABLE `educa`.`examen_unidad` 
+ADD COLUMN `completo` VARCHAR(45) NOT NULL DEFAULT 'false' AFTER `cant_preguntas_alumno`;
+
+  

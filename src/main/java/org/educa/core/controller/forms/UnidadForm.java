@@ -32,6 +32,8 @@ public class UnidadForm {
 	private String pregunta;	
 	private Integer cantidadPreguntasAlumno;	
 	private List<PreguntasForm> preguntas;
+	private Integer multiplicadorPreguntas;
+	private boolean examenCompleto;
 	//Fin - Examen
 	
 	//Video
@@ -40,7 +42,7 @@ public class UnidadForm {
 	private boolean edicion;
 	private List<String> errores;
 	//Fin - video
-
+	
 	public UnidadForm() {
 		super();		
 	}
@@ -148,6 +150,14 @@ public class UnidadForm {
 	public void setPregunta(String pregunta) {
 		this.pregunta = pregunta;
 	}
+	
+	public Integer getMultiplicadorPreguntas() {
+		return multiplicadorPreguntas;
+	}
+
+	public void setMultiplicadorPreguntas(Integer multiplicadorPreguntas) {
+		this.multiplicadorPreguntas = multiplicadorPreguntas;
+	}
 
 	public boolean isMultipleChoice() {
 		return multipleChoice;
@@ -163,6 +173,14 @@ public class UnidadForm {
 
 	public void setCantidadPreguntasAlumno(Integer cantidadPreguntasAlumno) {
 		this.cantidadPreguntasAlumno = cantidadPreguntasAlumno;
+	}
+	
+	public boolean isExamenCompleto() {
+		return examenCompleto;
+	}
+
+	public void setExamenCompleto(boolean examenCompleto) {
+		this.examenCompleto = examenCompleto;
 	}
 
 	public String getMaterialTeorico() {

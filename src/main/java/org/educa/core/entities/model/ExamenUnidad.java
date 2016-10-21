@@ -38,6 +38,10 @@ public class ExamenUnidad implements Serializable {
 			@JoinColumn(name = "id_curso", referencedColumnName = "id_curso", insertable = false, updatable = false),
 			@JoinColumn(name = "numero_examen", referencedColumnName= "numero_examen", insertable = false, updatable = false) })
 	private List<PreguntaExamenUnidad> preguntas;
+	
+	@JsonIgnore
+	@Column(name = "completo")
+	private boolean completo;
 
 	public ExamenUnidadId getId() {
 		return id;
@@ -69,6 +73,14 @@ public class ExamenUnidad implements Serializable {
 
 	public void setPreguntas(List<PreguntaExamenUnidad> preguntas) {
 		this.preguntas = preguntas;
+	}
+	
+	public boolean isCompleto() {
+		return completo;
+	}
+
+	public void setCompleto(boolean completo) {
+		this.completo = completo;
 	}
 
 	@Override

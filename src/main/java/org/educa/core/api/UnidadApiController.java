@@ -75,7 +75,7 @@ public class UnidadApiController {
 		id.setIdExamen(PRIMER_EXAMEN_ID);
 		id.setNumero(numeroUnidad);
 		ExamenUnidad resultado = examenUnidadRepository.findOne(id);
-		if(resultado==null){
+		if(resultado==null || !resultado.isCompleto()){
 			return new ResponseEntity<ExamenUnidad>(HttpStatus.NOT_FOUND);			
 		}
 		ObjectMapper mapper = new ObjectMapper();
