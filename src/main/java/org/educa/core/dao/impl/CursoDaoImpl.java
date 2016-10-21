@@ -15,6 +15,7 @@ import org.educa.core.entities.model.Categoria;
 import org.educa.core.entities.model.ComponenteId;
 import org.educa.core.entities.model.Curso;
 import org.educa.core.entities.model.Docente;
+import org.educa.core.entities.model.Estado;
 import org.educa.core.entities.model.ExamenUnidad;
 import org.educa.core.entities.model.MaterialUnidad;
 import org.educa.core.entities.model.Sesion;
@@ -32,8 +33,8 @@ public class CursoDaoImpl extends GeneralDaoSupport<Curso>implements CursoDao {
 		EntityManager em = getEntityManager();
 		return (List<Curso>) em
 				.createQuery(
-						"from Curso c where c.fechaEstimadaProximaSesion>= :desde and c.fechaEstimadaProximaSesion<= :hasta")
-				.setParameter("desde", desde).setParameter("hasta", hasta).getResultList();
+						"from Curso c where c.fechaEstimadaProximaSesion>= :desde and c.fechaEstimadaProximaSesion<= :hasta and c.estadoCurso = :estado")
+				.setParameter("desde", desde).setParameter("hasta", hasta).setParameter("estado", Estado.PUBLICADO).getResultList();
 
 	}
 
