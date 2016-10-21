@@ -37,7 +37,7 @@ public class CursoApiController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "listar")
 	public List<Curso> listar() {
-		List<Curso> cursos = (List<Curso>) cursoRepository.findAll();
+		List<Curso> cursos = (List<Curso>) cursoRepository.findByEstadoCurso(Estado.PUBLICADO);
 		return cursos;
 	}
 

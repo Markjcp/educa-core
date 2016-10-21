@@ -15,5 +15,7 @@ public interface CursoRepository extends CrudRepository<Curso, Long>{
 	List<Curso> findByNombre(String nombre);
 	
 	List<Curso> findByCategoriaIdAndEstadoCurso(Long categoriaId, Estado estado);
+	
+	List<Curso> findByEstadoCurso(Estado estado);
 
 }
