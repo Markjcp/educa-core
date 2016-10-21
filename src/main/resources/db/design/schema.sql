@@ -276,6 +276,7 @@ CREATE TABLE IF NOT EXISTS `educa`.`examen_unidad` (
   `id_curso` INT NOT NULL,
   `numero_examen` INT NOT NULL,
   `cant_preguntas_alumno` INT NOT NULL,
+  `completo` TINYINT(1) NOT NULL DEFAULT false,
   PRIMARY KEY (`numero_componente`, `id_curso`, `numero_examen`),
   CONSTRAINT `fk_examen_unidad_unidad1`
     FOREIGN KEY (`numero_componente` , `id_curso`)
@@ -283,7 +284,6 @@ CREATE TABLE IF NOT EXISTS `educa`.`examen_unidad` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
 
 -- -----------------------------------------------------
 -- Table `educa`.`pregunta_examen_unidad`

@@ -36,3 +36,5 @@ INSERT INTO `educa`.`email_template` (`clave`, `valor`) VALUES ('EMAIL_ACTIVACIO
 INSERT INTO `educa`.`usuario` (`nombre`, `apellido`, `email`, `foto`, `id_rol_usuario`, `password`, `activado`) VALUES ('Marcos', 'Forlenza', 'admin@mail.com', '', '1', 'VIyIwyC5YYs0fVrl/Wsl4XdUgqpFgNVG', 1);
 INSERT INTO `educa`.`parametro` (`key`, `value`) VALUES ('RECAPTCHA_SECRET', '6LcnlgcUAAAAAKg9iDvUH1jyFhM-9i0s0wpnc5IQ');
 
+-- 20/10
+INSERT INTO `educa`.`parametro` (`key`, `value`) VALUES ('MULTIPLICADOR_PREGUNTAS', '2');
