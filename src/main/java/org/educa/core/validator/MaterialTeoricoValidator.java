@@ -34,6 +34,7 @@ public class MaterialTeoricoValidator {
 		return false;
 	}
 	
+	@Deprecated
 	public boolean estaContenidoVacio(String contenido){
 		SAXBuilder saxBuilder = new SAXBuilder();
 		try {
@@ -61,7 +62,7 @@ public class MaterialTeoricoValidator {
 	public String validaContenidoMaterialUnidad(UnidadForm unidadForm) {
 		String mensaje = null;
 		String materialTeorico = unidadForm.getMaterialTeorico();
-		if(materialTeorico == null || materialTeorico.isEmpty() || estaContenidoVacio(materialTeorico)){
+		if(materialTeorico == null || materialTeorico.isEmpty()){
 			mensaje = "Debe de cargar material teórico para poder guardarlo.";
 		} else {
 			byte[] materialBytes = unidadForm.getMaterialTeorico().getBytes();
