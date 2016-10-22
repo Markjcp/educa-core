@@ -176,7 +176,7 @@ CREATE TABLE IF NOT EXISTS `educa`.`unidad` (
   `numero_componente` INT NOT NULL,
   `id_curso` INT NOT NULL,
   `titulo` VARCHAR(45) NOT NULL,
-  `descripcion` VARCHAR(45) NOT NULL,
+  `descripcion` VARCHAR(255) NOT NULL,
   `duracion_estimada` INT NOT NULL,
   `estado_unidad` VARCHAR(45) NOT NULL DEFAULT 'NO_PUBLICADO',
   PRIMARY KEY (`numero_componente`, `id_curso`),

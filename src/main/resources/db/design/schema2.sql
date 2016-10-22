@@ -456,4 +456,7 @@ ALTER TABLE `educa`.`unidad`
 ALTER TABLE `educa`.`examen_unidad` 
 ADD COLUMN `completo` VARCHAR(45) NOT NULL DEFAULT 'false' AFTER `cant_preguntas_alumno`;
 
+ALTER TABLE `educa`.`unidad` 
+CHANGE COLUMN `descripcion` `descripcion` VARCHAR(255) NOT NULL ;
+
   

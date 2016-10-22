@@ -103,7 +103,7 @@ public class DetalleUnidadController {
 		Integer multiplicador = Integer.valueOf(parametroRepository.findOne("MULTIPLICADOR_PREGUNTAS").getValor());
 		//Carga Examen
 		ExamenUnidad examen = cargarExamen(curso, unidad, unidadForm);
-		if(examen.getPreguntas().size()<examen.getCantPreguntasUsuario()*multiplicador){
+		if(examen==null ||examen.getPreguntas()==null || examen.getPreguntas().size()<examen.getCantPreguntasUsuario()*multiplicador){
 			model.addAttribute("examenIncompleto", true);
 		}
 		
@@ -581,11 +581,7 @@ public class DetalleUnidadController {
 		index(unidadForm.getCurso().getId(), unidadForm.getCurso().getId(), unidadForm.getUnidad().getId().getNumero(), model);
 		
 		if(valida){
-			if(unidadForm.getExamenUnidad().getPreguntas().size()>=unidadForm.getCantidadPreguntasAlumno()*unidadForm.getMultiplicadorPreguntas()){
-				model.addAttribute("mostrarMensajeAltaExamen", true);
-			}else{
-				model.addAttribute("mostrarMensajeAltaPregunta", true);			
-			}
+			model.addAttribute("mostrarMensajeAltaExamen", true);			
 		}
 		
 		model.addAttribute("mostrarTabMaterialTeorico", false);
@@ -746,14 +742,13 @@ public class DetalleUnidadController {
 		ExamenUnidad examen = examenUnidadRepository.findOne(examenId);
 		Integer multiplicador = Integer.valueOf(parametroRepository.findOne("MULTIPLICADOR_PREGUNTAS").getValor());
 
-		if(examen.getPreguntas().size()>=examen.getCantPreguntasUsuario()*multiplicador){
+		if(examen.getPreguntas()!=null && examen.getPreguntas().size()>=examen.getCantPreguntasUsuario()*multiplicador){
 			examen.setCompleto(true);
-			model.addAttribute("mostrarMensajeEliminaExamenCompleto", true);
 		}else{
 			examen.setCompleto(false);
-			model.addAttribute("mostrarMensajeEliminaExamenIncompleto", true);
 		}
 		examenUnidadRepository.save(examen);
+		model.addAttribute("mostrarMensajeEliminaExamen", true);
 		
 		index(idCurso, idCurso, numero, model);
 		
@@ -975,14 +970,8 @@ public class DetalleUnidadController {
 		
 		preguntas.add(pregunta);
 		
-		if(preguntas.size()>=examenUnidad.getCantPreguntasUsuario()*unidadForm.getMultiplicadorPreguntas()){
-			examenUnidad.setCompleto(true);
-		}else{
-			examenUnidad.setCompleto(false);
-		}
-		
 		examenUnidad.setPreguntas(preguntas);
-		if(preguntas.size()>=unidadForm.getCantidadPreguntasAlumno()*unidadForm.getMultiplicadorPreguntas()){
+		if(preguntas.size()>=examenUnidad.getCantPreguntasUsuario()*unidadForm.getMultiplicadorPreguntas()){
 			examenUnidad.setCompleto(true);
 		}else{
 			examenUnidad.setCompleto(false);

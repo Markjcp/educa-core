@@ -367,21 +367,13 @@
 										   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
 										   <a href="#" class="alert-link">Atención!</a> No se cargaron la cantidad de preguntas necesarias. Deber&aacute;n ser dos veces la cantidad de preguntas para el alumno.	                   
 										</div>																		
-										<div th:if="${mostrarMensajeAltaPregunta} == true" class="alert alert-success alert-dismissable">
-										   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-										   <a href="#" class="alert-link">Bien Hecho!</a> La pregunta se cre&oacute; con &eacute;xito. Todavía te faltan preguntas para completarlo.	                   
-										</div>
 										<div th:if="${mostrarMensajeAltaExamen} == true" class="alert alert-success alert-dismissable">
 										   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-										   <a href="#" class="alert-link">Bien Hecho!</a> La cantidad de preguntas son suficientes.	                   
+										   <a href="#" class="alert-link">Bien Hecho!</a> La pregunta se cre&oacute; con &eacute;xito.	                   
 										</div>
-										<div th:if="${mostrarMensajeEliminaExamenCompleto} == true" class="alert alert-success alert-dismissable">
+										<div th:if="${mostrarMensajeEliminaExamen} == true" class="alert alert-success alert-dismissable">
 										   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-										   <a href="#" class="alert-link">Bien Hecho!</a> Pregunta eliminada. La cantidad de preguntas actuales son suficientes.	                   
-										</div>
-										<div th:if="${mostrarMensajeEliminaExamenIncompleto} == true" class="alert alert-success alert-dismissable">
-										   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-										   <a href="#" class="alert-link">Bien Hecho!</a> Pregunta eliminada. La cantidad de preguntas actuales son insuficientes.	                   
+										   <a href="#" class="alert-link">Bien Hecho!</a> Pregunta eliminada.	                   
 										</div>
 										<div th:if="${ErrorCantidadRespuestasCorrectas} == true"
 											class="alert alert-danger alert-dismissable">
