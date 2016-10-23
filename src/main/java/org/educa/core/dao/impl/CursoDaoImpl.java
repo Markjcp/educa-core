@@ -128,7 +128,7 @@ public class CursoDaoImpl extends GeneralDaoSupport<Curso>implements CursoDao {
 		// Datos basicos del curso
 		StringBuilder query = new StringBuilder();
 		query.append(" select c.id_curso , c.nombre , c.descripcion , c.legajo_docente ,  d.id_usuario , c.id_categoria , cat.descripcion as descripcionCategoria , c.imagen ,  ");
-		query.append(" c.link_imagen , c.valoracion_promedio , c.cantidad_valoraciones , c.fecha_estimada_prox_sesion ");
+		query.append(" c.link_imagen , c.valoracion_promedio , c.cantidad_valoraciones , c.fecha_estimada_prox_sesion , c.estado_curso ");
 		query.append(" from curso c  ");
 		query.append(" inner join docente d  on (c.legajo_docente = d.legajo) ");
 		query.append(" inner join categoria cat  on (c.id_categoria = cat.id_categoria) ");
@@ -160,6 +160,14 @@ public class CursoDaoImpl extends GeneralDaoSupport<Curso>implements CursoDao {
 				curso.setImagen((byte[]) fila[7]);
 				curso.setLinkImagen((String) fila[8]);
 				curso.setValoracionesPromedio(((Integer) fila[9]).intValue());
+				String estadoCursoBase = (String) fila[12];
+				
+				if(Estado.PUBLICADO.name().equals(estadoCursoBase)){
+					curso.setEstadoCurso(Estado.PUBLICADO);
+				} else {
+					curso.setEstadoCurso(Estado.NO_PUBLICADO);
+				}
+				
 				//curso.setFechaEstimadaProximaSesion();						
 			}
 			

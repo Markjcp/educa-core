@@ -126,6 +126,7 @@ public class CursoNoAdminController {
 		
 		model.addAttribute("cursoForm", cursoForm);
 		cargarValoresBasicosParaSesion(cursoHidratado, model, false, false, false, false, false);
+		cursoForm.setPublicado(cursoHidratado.isPublicado());
 		
 		return CONFIGURACION_CURSO;
 	}
@@ -134,6 +135,7 @@ public class CursoNoAdminController {
 	public String actualizarUnidad(@PathVariable("idCurso") long idCurso, @ModelAttribute("unidad") @Valid Unidad unidad, BindingResult bindingResult, Model model) {		
 		Curso curso = this.cursoService.encontrarCursoPorId(idCurso);
 		CursoForm cursoForm = new CursoForm();
+		cursoForm.setPublicado(curso.isPublicado());
 		cursoForm.setCurso(curso);
 		model.addAttribute("mostrarTabUnidad", true);
 		
@@ -157,7 +159,7 @@ public class CursoNoAdminController {
 		this.unidadRepository.save(unidad);
 		Curso cursoHidratado = this.cursoService.encontrarCursoPorIdHidratado(curso.getId());		
 		cursoForm.setCurso(cursoHidratado);
-		
+		cursoForm.setPublicado(cursoHidratado.isPublicado());
 		model.addAttribute("cursoForm", cursoForm);
 		
 		cargarValoresBasicosParaUnidad(model, false, true, false, false, false);
@@ -179,7 +181,7 @@ public class CursoNoAdminController {
 		//Seteo los nuevos valores		
 		CursoForm cursoForm = new CursoForm();
 		cursoForm.setCurso(cursoHidratado);
-		
+		cursoForm.setPublicado(cursoHidratado.isPublicado());
 		model.addAttribute("cursoForm", cursoForm);
 		
 		cargarValoresBasicosParaUnidad(model, false, false, false, eliminada, false);
@@ -226,7 +228,7 @@ public class CursoNoAdminController {
 		//Seteo los nuevos valores
 		cursoForm = new CursoForm();
 		cursoForm.setCurso(cursoHidratado);
-		
+		cursoForm.setPublicado(cursoHidratado.isPublicado());
 		model.addAttribute("cursoForm", cursoForm);		
 		cargarValoresBasicosParaUnidad(model, false, false, false, false, false);		
 		
@@ -238,6 +240,7 @@ public class CursoNoAdminController {
 		Curso curso = this.cursoService.encontrarCursoPorId(idCurso);
 		CursoForm cursoForm = new CursoForm();
 		cursoForm.setCurso(curso);
+		cursoForm.setPublicado(curso.isPublicado());
 		model.addAttribute("mostrarTabUnidad", false);
 		
 		if (bindingResult.hasErrors()) {
@@ -262,7 +265,7 @@ public class CursoNoAdminController {
 		this.sesionRepository.save(sesion);
 		Curso cursoHidratado = this.cursoService.encontrarCursoPorIdHidratado(curso.getId());		
 		cursoForm.setCurso(cursoHidratado);
-		
+		cursoForm.setPublicado(cursoHidratado.isPublicado());
 		model.addAttribute("cursoForm", cursoForm);
 		
 		cargarValoresBasicosParaUnidad(model, false, false, false, false, false);
@@ -284,7 +287,7 @@ public class CursoNoAdminController {
 		//Seteo los nuevos valores		
 		CursoForm cursoForm = new CursoForm();
 		cursoForm.setCurso(cursoHidratado);
-		
+		cursoForm.setPublicado(cursoHidratado.isPublicado());
 		model.addAttribute("cursoForm", cursoForm);
 		
 		cargarValoresBasicosParaUnidad(model, false, false, false, false, false);
