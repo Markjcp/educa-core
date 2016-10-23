@@ -69,13 +69,13 @@ public class CursoDaoImpl extends GeneralDaoSupport<Curso>implements CursoDao {
 		}
 		
 		if(unidad!= null && unidad.getId()!=null && unidad.getExamenes()!= null && !unidad.getExamenes().isEmpty()){
-			String queryDeletePreguntas = crearQueryDeleteUnidad("pregunta_examen_unidad", unidad.getId().getIdCurso(), unidad.getId().getNumero());
-			Query qPreguntas = this.getEntityManager().createNativeQuery(queryDeletePreguntas);			
-			qPreguntas.executeUpdate();
-			
 			String queryDeleteOpciones = crearQueryDeleteUnidad("opcion_examen_unidad", unidad.getId().getIdCurso(), unidad.getId().getNumero());
 			Query q1 = this.getEntityManager().createNativeQuery(queryDeleteOpciones);			
 			q1.executeUpdate();
+			
+			String queryDeletePreguntas = crearQueryDeleteUnidad("pregunta_examen_unidad", unidad.getId().getIdCurso(), unidad.getId().getNumero());
+			Query qPreguntas = this.getEntityManager().createNativeQuery(queryDeletePreguntas);			
+			qPreguntas.executeUpdate();			
 			
 			String queryDeleteExamen = crearQueryDeleteUnidad("examen_unidad", unidad.getId().getIdCurso(), unidad.getId().getNumero());
 			Query q = this.getEntityManager().createNativeQuery(queryDeleteExamen);			
