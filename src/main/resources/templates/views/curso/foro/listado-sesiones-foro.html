@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head> 
+    <title>Taller Desarrollo II - FIUBA</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+	
+	<link href="css/bootstrap.css" th:href="@{/css/bootstrap.css}" rel="stylesheet" media="screen,projection" />
+	<link href="css/sb-admin-2.css" th:href="@{/css/sb-admin-2.css}" rel="stylesheet" media="screen,projection" />
+	<link href="css/materialize.css" th:href="@{/css/materialize.css}" rel="stylesheet" media="screen,projection" />
+	<link href="css/style.css" th:href="@{/css/style.css}" rel="stylesheet" media="screen,projection" />
+	<link href="css/style.css" th:href="@{/css/educa.css}" rel="stylesheet" media="screen,projection" />
+</head>
+<body>
+	<div th:replace="views/fragments/header :: header">&nbsp;</div>
+	 
+	<div class="container">
+		<div class="section">
+			<div class="row">
+				<h1>Configuraci&oacute;n sesiones - foros</h1>
+				<form id="cursoForm" action="#" th:object="${foroForm}">
+			    	<div class="row">
+				    	<div class="col s4"> 
+				    		<div class="form-group input-field">
+				    			<input type="text" th:field="*{curso.nombre}" placeholder="Nombre del curso" disabled="disabled" style="color: #000; border-bottom: 1px solid #26a69a;"/>			    			
+				    		</div>
+				    	</div>
+				    	<div class="col s1"></div>
+				    	<div class="col s3">	
+				        	<div class="form-group input-field">
+				        		 <input type="text" th:field="*{curso.categoria.descripcion}" placeholder="Categor&iacute;a del curso" disabled="disabled" style="color: #000; border-bottom: 1px solid #26a69a;"/>                                                        
+	                         </div>		 			    		 	                        
+				    	</div>				    	
+			    	</div>
+			    </form>
+			    
+			    <div class="row">
+			    	<!-- Se listan las sesiones activas del curso. -->					                
+					<div th:if="${sesiones} != null">
+						<div th:if="${not #lists.isEmpty(sesiones)}">							
+							<ul class="collection with-header">
+								<li class="collection-header"><h4>Sesiones activas</h4></li>								
+								<li  th:each="sesion : ${sesiones}" class="collection-item">
+									<div>
+										<span th:text="${sesion.descripcionCorta}"></span>
+										<a href="#!"  th:href="@{/foro/detalleForo/{cursoId}/{nroSesion}(cursoId=${sesion.id.idCurso},nroSesion=${sesion.id.numero})}" class="secondary-content"><i class="material-icons">send</i></a>
+									</div>
+								</li>								
+							</ul>
+						</div>
+					</div>
+					
+					<!-- No hay sesiones activas del curso para mostrar. -->
+					<div th:if="${#lists.isEmpty(cursoForm.curso.unidades)}">
+						<div class="alert alert-warning">
+							No hay sesiones creadas o activas para mostrar.
+						</div>
+					</div>		    
+			    </div>
+			    
+			    <div class="row">        		
+					<div class="col l12 s12">			    					    				
+						<div class="form-group">
+							<button type="submit" class="btn orange-effect orange darken-4">Guardar</button>                       		
+							<a class="btn orange-effect orange darken-4" href="#" th:href="@{/docente/{idUsuarioDocente}/bandeja-cursos(idUsuarioDocente=${foroForm.curso.docente.id})}">Salir</a>
+						 </div>
+					</div>
+				</div>			                                    
+			</div>
+		</div>
+	</div>
+	
+	<!--  Scripts-->
+    <script src="../../static/js/jquery-2.1.1.js" th:src="@{/js/jquery-2.1.1.js}"></script>
+    <script src="js/bootstrap.js" th:src="@{/js/bootstrap.js}"></script>
+    <script src="js/sb-admin-2.js" th:src="@{/js/sb-admin-2.js}"></script>
+    <script src="js/materialize.js" th:src="@{/js/materialize.js}"></script>
+    <script src="js/init.js" th:src="@{/js/init.js}"></script>    
+</body>
+</html>

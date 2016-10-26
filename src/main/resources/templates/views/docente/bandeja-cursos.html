@@ -71,6 +71,7 @@
 			                                    <th tabindex="0" aria-controls="dataTables-example">Rol</th>
 			                                    <th tabindex="0" aria-controls="dataTables-example">Publicado</th>
 			                                    <th>&nbsp;</th>			                                    
+			                                    <th>&nbsp;</th>
 			                                </tr>
 			                            </thead>
 			                            <tbody>			                                
@@ -92,6 +93,9 @@
 										        <td>										        	
 										        	<a type="button" class="btn btn-default btn-educa-basico" th:href="@{/cursoNoAdmin/configuracionCurso/{cursoId}(cursoId=${curso.id})}">Editar</a>
 										        </td>
+										        <td>										        	
+													<a type="button" class="btn btn-default btn-educa-basico" th:href="@{/foro/{cursoId}(cursoId=${curso.id})}">Foro</a>
+												</td>							        
 										    </tr>
 			                                
 			                            </tbody>

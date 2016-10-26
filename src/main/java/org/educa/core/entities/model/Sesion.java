@@ -56,6 +56,10 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	@Column(name = "fecha_hasta_inscripcion")	
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date fechaHastaInscripcion;
+	
+	private Foro foro;
+	
+	private boolean tieneForo;
 
 	public Sesion() {
 		super();
@@ -131,6 +135,26 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	
 	public String getDescripcionLargaError() {		
 		return "Sesión Nro. " + (this.getId().getNumero() == null ? "" : this.getId().getNumero()) ;
+	}
+	
+	public String getDescripcionCorta() {		
+		return "Sesión Nro. " + (this.getId().getNumero() == null ? "" : this.getId().getNumero());
+	}
+
+	public Foro getForo() {
+		return foro;
+	}
+
+	public void setForo(Foro foro) {
+		this.foro = foro;
+	}
+
+	public boolean isTieneForo() {
+		return tieneForo;
+	}
+
+	public void setTieneForo(boolean tieneForo) {
+		this.tieneForo = tieneForo;
 	}
 
 	@Override

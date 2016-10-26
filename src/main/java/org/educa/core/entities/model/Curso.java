@@ -102,7 +102,7 @@ public class Curso implements Persistible {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "estado_curso")
 	@JsonIgnore
-	private Estado estadoCurso;
+	private Estado estadoCurso;	
 	
 	public Curso() {
 		super();
