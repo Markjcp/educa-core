@@ -43,7 +43,7 @@ public class Tema implements Serializable, Comparable<Tema> {
 	private String descripcion;// TODO ver si esto va o no
 
 	@OneToMany
-	@JoinColumn(name = "id_foro", insertable = false, updatable = false)
+	@JoinColumn(name = "id_tema", insertable = false, updatable = false)
 	@OrderBy(clause = "fechaCreacion asc")
 	private SortedSet<Comentario> comentarios;
 

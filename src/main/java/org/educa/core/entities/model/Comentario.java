@@ -14,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "comentario")
 public class Comentario implements Serializable, Comparable<Comentario> {
@@ -31,6 +33,14 @@ public class Comentario implements Serializable, Comparable<Comentario> {
 	@ManyToOne
 	@JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
 	private Usuario usuario;
+	
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "id_tema", referencedColumnName = "id_tema")
+	private Tema tema;
+	
+	@Column(name = "id_tema", insertable = false, updatable = false)
+	private Long idTema;
 
 	@Column(name = "descripcion")
 	private String descripcion;
@@ -87,6 +97,22 @@ public class Comentario implements Serializable, Comparable<Comentario> {
 	@Override
 	public int compareTo(Comentario o) {
 		return getFechaCreacion().compareTo(o.getFechaCreacion());
+	}
+	
+	public Tema getTema() {
+		return tema;
+	}
+
+	public void setTema(Tema tema) {
+		this.tema = tema;
+	}
+
+	public Long getIdTema() {
+		return idTema;
+	}
+
+	public void setIdTema(Long idTema) {
+		this.idTema = idTema;
 	}
 
 	@Override
