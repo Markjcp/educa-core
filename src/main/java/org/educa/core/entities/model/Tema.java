@@ -38,6 +38,9 @@ public class Tema implements Serializable, Comparable<Tema> {
 	
 	@Column(name = "id_usuario")
 	private Long idUsuario;
+	
+	@Column(name = "id_foro")
+	private Long idForo;
 
 	@Column(name = "titulo")
 	private String titulo;
@@ -123,6 +126,14 @@ public class Tema implements Serializable, Comparable<Tema> {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public Long getIdForo() {
+		return idForo;
+	}
+
+	public void setIdForo(Long idForo) {
+		this.idForo = idForo;
 	}
 
 	@Override
