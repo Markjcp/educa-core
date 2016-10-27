@@ -463,12 +463,24 @@ CHANGE COLUMN `descripcion` `descripcion` VARCHAR(255) NOT NULL ;
 -- -----------------------------------------------------
 -- Table `educa`.`foro`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `educa`.`comentario` ;
+DROP TABLE IF EXISTS `educa`.`tema` ;
+DROP TABLE IF EXISTS `educa`.`foro` ;
+
 DROP TABLE IF EXISTS `educa`.`foro` ;
 
 CREATE TABLE IF NOT EXISTS `educa`.`foro` (
   `id_foro` BIGINT NOT NULL AUTO_INCREMENT,
   `estado_foro` VARCHAR(45) NOT NULL DEFAULT 'HABILITADO',
-  PRIMARY KEY (`id_foro`))
+  `numero_componente` INT NOT NULL,
+  `id_curso` INT NOT NULL,
+  PRIMARY KEY (`id_foro`),
+  INDEX `fk_foro_sesion1_idx` (`numero_componente` ASC, `id_curso` ASC),
+  CONSTRAINT `fk_foro_sesion1`
+    FOREIGN KEY (`numero_componente` , `id_curso`)
+    REFERENCES `educa`.`sesion` (`numero_componente` , `id_curso`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -527,3 +539,6 @@ CREATE TABLE IF NOT EXISTS `educa`.`comentario` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
+
+
+

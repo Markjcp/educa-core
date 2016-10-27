@@ -11,7 +11,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.OrderBy;
@@ -35,6 +37,13 @@ public class Foro implements Serializable {
 	@JoinColumn(name = "id_foro", insertable = false, updatable = false)
 	@OrderBy(clause = "fechaCreacion desc")
 	private SortedSet<Tema> temas;
+	
+	@OneToOne
+	@JoinColumns({
+		@JoinColumn(name = "numero_componente", referencedColumnName = "numero_componente"),
+		@JoinColumn(name = "id_curso", referencedColumnName = "id_curso" )
+	})
+	private Sesion sesion;
 
 	public Foro() {
 		super();
@@ -64,6 +73,14 @@ public class Foro implements Serializable {
 		this.temas = temas;
 	}
 	
+	public Sesion getSesion() {
+		return sesion;
+	}
+
+	public void setSesion(Sesion sesion) {
+		this.sesion = sesion;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -57,9 +57,15 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date fechaHastaInscripcion;
 	
-	private Foro foro;
-	
-	private boolean tieneForo;
+//	@JsonIgnore
+//	@OneToOne
+//	@JoinColumns({
+//		@JoinColumn(name = "numero_componente", referencedColumnName = "numero_componente", insertable = false, updatable = false),
+//		@JoinColumn(name = "id_curso", referencedColumnName = "id_curso", insertable = false, updatable = false)
+//	})
+//	private Foro foro;
+//	
+//	private boolean tieneForo;
 
 	public Sesion() {
 		super();
@@ -141,21 +147,21 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 		return "Sesión Nro. " + (this.getId().getNumero() == null ? "" : this.getId().getNumero());
 	}
 
-	public Foro getForo() {
-		return foro;
-	}
-
-	public void setForo(Foro foro) {
-		this.foro = foro;
-	}
-
-	public boolean isTieneForo() {
-		return tieneForo;
-	}
-
-	public void setTieneForo(boolean tieneForo) {
-		this.tieneForo = tieneForo;
-	}
+//	public Foro getForo() {
+//		return foro;
+//	}
+//
+//	public void setForo(Foro foro) {
+//		this.foro = foro;
+//	}
+//
+//	public boolean isTieneForo() {
+//		return tieneForo;
+//	}
+//
+//	public void setTieneForo(boolean tieneForo) {
+//		this.tieneForo = tieneForo;
+//	}
 
 	@Override
 	public int hashCode() {
