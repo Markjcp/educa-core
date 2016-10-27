@@ -472,17 +472,8 @@ DROP TABLE IF EXISTS `educa`.`foro` ;
 CREATE TABLE IF NOT EXISTS `educa`.`foro` (
   `id_foro` BIGINT NOT NULL AUTO_INCREMENT,
   `estado_foro` VARCHAR(45) NOT NULL DEFAULT 'HABILITADO',
-  `numero_componente` INT NOT NULL,
-  `id_curso` INT NOT NULL,
-  PRIMARY KEY (`id_foro`),
-  INDEX `fk_foro_sesion1_idx` (`numero_componente` ASC, `id_curso` ASC),
-  CONSTRAINT `fk_foro_sesion1`
-    FOREIGN KEY (`numero_componente` , `id_curso`)
-    REFERENCES `educa`.`sesion` (`numero_componente` , `id_curso`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`id_foro`))
 ENGINE = InnoDB;
-
 
 -- -----------------------------------------------------
 -- Table `educa`.`tema`
@@ -539,6 +530,16 @@ CREATE TABLE IF NOT EXISTS `educa`.`comentario` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
+
+ALTER TABLE `educa`.`sesion` 
+ADD COLUMN `id_foro` BIGINT NULL AFTER `fecha_hasta_inscripcion`,
+ADD INDEX `fk_sesion_foro1_idx` (`id_foro` ASC);
+ALTER TABLE `educa`.`sesion` 
+ADD CONSTRAINT `fk_sesion_foro1`
+  FOREIGN KEY (`id_foro`)
+  REFERENCES `educa`.`foro` (`id_foro`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
 
 
 

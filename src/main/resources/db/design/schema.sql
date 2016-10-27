@@ -111,6 +111,18 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `educa`.`foro`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `educa`.`foro` ;
+
+CREATE TABLE IF NOT EXISTS `educa`.`foro` (
+  `id_foro` BIGINT NOT NULL AUTO_INCREMENT,
+  `estado_foro` VARCHAR(45) NOT NULL DEFAULT 'HABILITADO',
+  PRIMARY KEY (`id_foro`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `educa`.`sesion`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `educa`.`sesion` ;
@@ -124,11 +136,18 @@ CREATE TABLE IF NOT EXISTS `educa`.`sesion` (
   `costo` DECIMAL NULL,
   `fecha_desde_inscripcion` DATE NULL,
   `fecha_hasta_inscripcion` DATE NULL,
+  `id_foro` BIGINT NULL,
   PRIMARY KEY (`numero_componente`, `id_curso`),
   INDEX `fk_sesion_curso_idx` (`id_curso` ASC),
+  INDEX `fk_sesion_foro1_idx` (`id_foro` ASC),
   CONSTRAINT `fk_sesion_curso`
     FOREIGN KEY (`id_curso`)
     REFERENCES `educa`.`curso` (`id_curso`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sesion_foro1`
+    FOREIGN KEY (`id_foro`)
+    REFERENCES `educa`.`foro` (`id_foro`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -325,26 +344,6 @@ CREATE TABLE IF NOT EXISTS `educa`.`opcion_examen_unidad` (
   CONSTRAINT `fk_opcion_examen_unidad_pregunta_examen_unidad1`
     FOREIGN KEY (`numero_componente` , `id_curso` , `numero_examen` , `numero_pregunta`)
     REFERENCES `educa`.`pregunta_examen_unidad` (`numero_componente` , `id_curso` , `numero_examen` , `numero_pregunta`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `educa`.`foro`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `educa`.`foro` ;
-
-CREATE TABLE IF NOT EXISTS `educa`.`foro` (
-  `id_foro` BIGINT NOT NULL AUTO_INCREMENT,
-  `estado_foro` VARCHAR(45) NOT NULL DEFAULT 'HABILITADO',
-  `numero_componente` INT NOT NULL,
-  `id_curso` INT NOT NULL,
-  PRIMARY KEY (`id_foro`),
-  INDEX `fk_foro_sesion1_idx` (`numero_componente` ASC, `id_curso` ASC),
-  CONSTRAINT `fk_foro_sesion1`
-    FOREIGN KEY (`numero_componente` , `id_curso`)
-    REFERENCES `educa`.`sesion` (`numero_componente` , `id_curso`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

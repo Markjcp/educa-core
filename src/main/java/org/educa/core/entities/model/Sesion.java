@@ -10,6 +10,7 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -57,13 +58,9 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date fechaHastaInscripcion;
 	
-//	@JsonIgnore
-//	@OneToOne
-//	@JoinColumns({
-//		@JoinColumn(name = "numero_componente", referencedColumnName = "numero_componente", insertable = false, updatable = false),
-//		@JoinColumn(name = "id_curso", referencedColumnName = "id_curso", insertable = false, updatable = false)
-//	})
-//	private Foro foro;
+	@OneToOne
+	@JoinColumn(name = "id_foro", referencedColumnName = "id_foro")
+	private Foro foro;
 //	
 //	private boolean tieneForo;
 
@@ -147,13 +144,13 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 		return "Sesión Nro. " + (this.getId().getNumero() == null ? "" : this.getId().getNumero());
 	}
 
-//	public Foro getForo() {
-//		return foro;
-//	}
-//
-//	public void setForo(Foro foro) {
-//		this.foro = foro;
-//	}
+	public Foro getForo() {
+		return foro;
+	}
+
+	public void setForo(Foro foro) {
+		this.foro = foro;
+	}
 //
 //	public boolean isTieneForo() {
 //		return tieneForo;
