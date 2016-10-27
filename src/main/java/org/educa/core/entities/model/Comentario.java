@@ -14,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "comentario")
 public class Comentario implements Serializable, Comparable<Comentario> {
@@ -29,8 +31,19 @@ public class Comentario implements Serializable, Comparable<Comentario> {
 	private Date fechaCreacion;
 
 	@ManyToOne
-	@JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
+	@JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario", insertable = false, updatable = false)
 	private Usuario usuario;
+	
+	@Column(name = "id_usuario")
+	private Long idUsuario;
+	
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "id_tema", referencedColumnName = "id_tema", insertable = false, updatable = false)
+	private Tema tema;
+	
+	@Column(name = "id_tema")
+	private Long idTema;
 
 	@Column(name = "descripcion")
 	private String descripcion;
@@ -58,6 +71,14 @@ public class Comentario implements Serializable, Comparable<Comentario> {
 
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+	
+	public Long getIdUsuario() {
+		return idUsuario;
+	}
+
+	public void setIdUsuario(Long idUsuario) {
+		this.idUsuario = idUsuario;
 	}
 
 	public String getDescripcion() {
@@ -88,7 +109,23 @@ public class Comentario implements Serializable, Comparable<Comentario> {
 	public int compareTo(Comentario o) {
 		return getFechaCreacion().compareTo(o.getFechaCreacion());
 	}
+	
+	public Tema getTema() {
+		return tema;
+	}
 
+	public void setTema(Tema tema) {
+		this.tema = tema;
+	}
+
+	public Long getIdTema() {
+		return idTema;
+	}
+
+	public void setIdTema(Long idTema) {
+		this.idTema = idTema;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
