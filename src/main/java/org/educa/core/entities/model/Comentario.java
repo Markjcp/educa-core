@@ -39,10 +39,10 @@ public class Comentario implements Serializable, Comparable<Comentario> {
 	
 	@JsonIgnore
 	@ManyToOne
-	@JoinColumn(name = "id_tema", referencedColumnName = "id_tema")
+	@JoinColumn(name = "id_tema", referencedColumnName = "id_tema", insertable = false, updatable = false)
 	private Tema tema;
 	
-	@Column(name = "id_tema", insertable = false, updatable = false)
+	@Column(name = "id_tema")
 	private Long idTema;
 
 	@Column(name = "descripcion")
@@ -125,7 +125,7 @@ public class Comentario implements Serializable, Comparable<Comentario> {
 	public void setIdTema(Long idTema) {
 		this.idTema = idTema;
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
