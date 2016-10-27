@@ -459,4 +459,71 @@ ADD COLUMN `completo` VARCHAR(45) NOT NULL DEFAULT 'false' AFTER `cant_preguntas
 ALTER TABLE `educa`.`unidad` 
 CHANGE COLUMN `descripcion` `descripcion` VARCHAR(255) NOT NULL ;
 
-  
+-- 26/10
+-- -----------------------------------------------------
+-- Table `educa`.`foro`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `educa`.`foro` ;
+
+CREATE TABLE IF NOT EXISTS `educa`.`foro` (
+  `id_foro` BIGINT NOT NULL AUTO_INCREMENT,
+  `estado_foro` VARCHAR(45) NOT NULL DEFAULT 'HABILITADO',
+  PRIMARY KEY (`id_foro`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `educa`.`tema`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `educa`.`tema` ;
+
+CREATE TABLE IF NOT EXISTS `educa`.`tema` (
+  `id_tema` BIGINT NOT NULL AUTO_INCREMENT,
+  `fecha_creacion` DATE NOT NULL,
+  `id_usuario` BIGINT NOT NULL,
+  `titulo` VARCHAR(45) NULL,
+  `descripcion` VARCHAR(200) NOT NULL,
+  `estado_tema` VARCHAR(45) NOT NULL DEFAULT 'INDEFINIDO',
+  `id_foro` BIGINT NOT NULL,
+  PRIMARY KEY (`id_tema`),
+  INDEX `fk_tema_usuario1_idx` (`id_usuario` ASC),
+  INDEX `fk_tema_foro1_idx` (`id_foro` ASC),
+  CONSTRAINT `fk_tema_usuario1`
+    FOREIGN KEY (`id_usuario`)
+    REFERENCES `educa`.`usuario` (`id_usuario`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tema_foro1`
+    FOREIGN KEY (`id_foro`)
+    REFERENCES `educa`.`foro` (`id_foro`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `educa`.`comentario`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `educa`.`comentario` ;
+
+CREATE TABLE IF NOT EXISTS `educa`.`comentario` (
+  `id_comentario` BIGINT NOT NULL AUTO_INCREMENT,
+  `fecha_creacion` DATE NOT NULL,
+  `id_usuario` BIGINT NOT NULL,
+  `descripcion` VARCHAR(500) NOT NULL,
+  `estado_comentario` VARCHAR(45) NOT NULL DEFAULT 'INDEFINIDO',
+  `id_tema` BIGINT NOT NULL,
+  PRIMARY KEY (`id_comentario`),
+  INDEX `fk_comentario_usuario1_idx` (`id_usuario` ASC),
+  INDEX `fk_comentario_tema1_idx` (`id_tema` ASC),
+  CONSTRAINT `fk_comentario_usuario1`
+    FOREIGN KEY (`id_usuario`)
+    REFERENCES `educa`.`usuario` (`id_usuario`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_comentario_tema1`
+    FOREIGN KEY (`id_tema`)
+    REFERENCES `educa`.`tema` (`id_tema`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
