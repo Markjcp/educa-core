@@ -33,8 +33,11 @@ public class Tema implements Serializable, Comparable<Tema> {
 	private Date fechaCreacion;
 
 	@ManyToOne
-	@JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
+	@JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario", insertable = false, updatable = false)
 	private Usuario usuario;
+	
+	@Column(name = "id_usuario")
+	private Long idUsuario;
 
 	@Column(name = "titulo")
 	private String titulo;
@@ -72,6 +75,14 @@ public class Tema implements Serializable, Comparable<Tema> {
 
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+	
+	public Long getIdUsuario() {
+		return idUsuario;
+	}
+
+	public void setIdUsuario(Long idUsuario) {
+		this.idUsuario = idUsuario;
 	}
 
 	public String getTitulo() {
