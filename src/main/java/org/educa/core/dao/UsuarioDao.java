@@ -7,9 +7,9 @@ import org.educa.core.entities.model.SesionUsuarioId;
 
 public interface UsuarioDao {
 	
-	public void persistirUsuarioFacebookSinValidaciones(String idFacebook, Long rolId);
+	public void persistirUsuarioFacebookSinValidaciones(String idFacebook, Long rolId, String nombre, String apellido);
 	
-	public void persistirUsuarioGoogleSinValidaciones(String idGoogle, Long rolId);
+	public void persistirUsuarioGoogleSinValidaciones(String idGoogle, Long rolId, String nombre, String apellido);
 	
 	public List<Curso> obtenerMisCursos(Long usuarioId);
 	
