@@ -3,6 +3,10 @@ package org.educa.core.bean;
 public class FacebookLoginBean implements TokenUsuario {
 
 	private String token;
+	private String nombre;
+	private String apellido;
+	
+	private String nombreYApellido;
 
 	public String getToken() {
 		return token;
@@ -11,5 +15,31 @@ public class FacebookLoginBean implements TokenUsuario {
 	public void setToken(String token) {
 		this.token = token;
 	}
+
+	public String getApellido() {
+		return apellido;
+	}
+
+	public void setApellido(String apellido) {
+		this.apellido = apellido;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public String getNombreYApellido() {
+		return nombreYApellido;
+	}
+
+	public void setNombreYApellido(String nombreYApellido) {
+		this.nombreYApellido = nombreYApellido;
+	}
+	
+	
 
 }

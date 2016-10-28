@@ -34,8 +34,14 @@ public class Tema implements Serializable, Comparable<Tema> {
 	private Date fechaCreacion;
 
 	@ManyToOne
-	@JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
+	@JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario", insertable = false, updatable = false)
 	private Usuario usuario;
+	
+	@Column(name = "id_usuario")
+	private Long idUsuario;
+	
+	@Column(name = "id_foro")
+	private Long idForo;
 
 	@Column(name = "titulo")
 	private String titulo;
@@ -44,7 +50,7 @@ public class Tema implements Serializable, Comparable<Tema> {
 	private String descripcion;// TODO ver si esto va o no
 
 	@OneToMany
-	@JoinColumn(name = "id_foro", insertable = false, updatable = false)
+	@JoinColumn(name = "id_tema", insertable = false, updatable = false)
 	@OrderBy(clause = "fechaCreacion asc")
 	private SortedSet<Comentario> comentarios;
 
@@ -77,6 +83,14 @@ public class Tema implements Serializable, Comparable<Tema> {
 
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+	
+	public Long getIdUsuario() {
+		return idUsuario;
+	}
+
+	public void setIdUsuario(Long idUsuario) {
+		this.idUsuario = idUsuario;
 	}
 
 	public String getTitulo() {
@@ -117,6 +131,14 @@ public class Tema implements Serializable, Comparable<Tema> {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public Long getIdForo() {
+		return idForo;
+	}
+
+	public void setIdForo(Long idForo) {
+		this.idForo = idForo;
 	}
 	
 	public boolean isAprobado(){
