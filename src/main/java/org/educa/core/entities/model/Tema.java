@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.OrderBy;
 
@@ -50,6 +51,10 @@ public class Tema implements Serializable, Comparable<Tema> {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "estado_tema")
 	private EstadoPublicacion estado;
+	
+	//TODO VER SI ESTO LO AGREGAMOS A LOS CAMPOS DE LA BASE - seria ideal q este en la base y q con cada add de cosas se actualice automaticamente
+	@Transient
+	private int cantidadComentariosPorAprobar = 20;
 
 	public Tema() {
 		super();
@@ -113,10 +118,29 @@ public class Tema implements Serializable, Comparable<Tema> {
 	public void setId(Long id) {
 		this.id = id;
 	}
+	
+	public boolean isAprobado(){
+		return (EstadoPublicacion.APROBADO.equals(getEstado()));
+	}
+	
+	public int getCantidadComentariosPorAprobar() {
+		return cantidadComentariosPorAprobar;
+	}
+
+	public void setCantidadComentariosPorAprobar(int cantidadComentariosPorAprobar) {
+		this.cantidadComentariosPorAprobar = cantidadComentariosPorAprobar;
+	}
 
 	@Override
 	public int compareTo(Tema o) {
-		// TODO Auto-generated method stub
+		if(getFechaCreacion() == null && o.getFechaCreacion() != null){
+			return -1;
+		}
+		
+		if(getFechaCreacion() == null && o.getFechaCreacion() == null){
+			return 0;
+		}
+		
 		return getFechaCreacion().compareTo(o.getFechaCreacion());
 	}
 
