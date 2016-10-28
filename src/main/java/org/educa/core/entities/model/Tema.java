@@ -43,11 +43,11 @@ public class Tema implements Serializable, Comparable<Tema> {
 	@Column(name = "id_foro")
 	private Long idForo;
 
-	@Column(name = "titulo")
+	@Column(name = "titulo") //TODO largo = 45 obligatorio
 	private String titulo;
 
-	@Column(name = "descripcion")
-	private String descripcion;// TODO ver si esto va o no
+	@Column(name = "descripcion")  //TODO largo = 200 obligatorio
+	private String descripcion;
 
 	@OneToMany
 	@JoinColumn(name = "id_tema", insertable = false, updatable = false)

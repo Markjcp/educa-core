@@ -13,6 +13,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SesionRepository extends CrudRepository<Sesion, ComponenteId> {
 
-	@Query(" select u from Sesion u where u.fechaHasta = :fechaHasta and u.id.idCurso = :idCurso  ")
+	@Query(" select u from Sesion u join u.id d where u.fechaHasta >= :fechaHasta and d.idCurso = :idCurso  ")
 	SortedSet<Sesion> findByFechaAndIdCurso(@Param("fechaHasta") Date fechaHasta, @Param("idCurso") Long idCurso);
 }
