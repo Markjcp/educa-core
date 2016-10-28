@@ -5,6 +5,8 @@ public class FacebookLoginBean implements TokenUsuario {
 	private String token;
 	private String nombre;
 	private String apellido;
+	
+	private String nombreYApellido;
 
 	public String getToken() {
 		return token;
@@ -28,6 +30,14 @@ public class FacebookLoginBean implements TokenUsuario {
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
+	}
+
+	public String getNombreYApellido() {
+		return nombreYApellido;
+	}
+
+	public void setNombreYApellido(String nombreYApellido) {
+		this.nombreYApellido = nombreYApellido;
 	}
 	
 	

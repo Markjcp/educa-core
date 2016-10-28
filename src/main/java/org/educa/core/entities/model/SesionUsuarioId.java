@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Embeddable
 public class SesionUsuarioId implements Serializable {
@@ -52,7 +55,8 @@ public class SesionUsuarioId implements Serializable {
 		result = prime * result + ((numero == null) ? 0 : numero.hashCode());
 		return result;
 	}
-
+	
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

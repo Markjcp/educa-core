@@ -19,24 +19,22 @@ public class UsuarioDaoImpl implements UsuarioDao {
 
 	@Override
 	@Transactional
-	public void persistirUsuarioFacebookSinValidaciones(String idFacebook, Long rolId, String nombre, String apellido) {
-		em.createNativeQuery("insert into usuario (id_facebook,id_rol_usuario, nombre, apellido) values ( :idFacebook , :idRol, :nombre, :apellido)")
+	public void persistirUsuarioFacebookSinValidaciones(String idFacebook, Long rolId, String nombreYApellido) {
+		em.createNativeQuery("insert into usuario (id_facebook,id_rol_usuario, nombre) values ( :idFacebook , :idRol, :nombre)")
 				.setParameter("idFacebook", idFacebook)
 				.setParameter("idRol", rolId)
-				.setParameter("nombre", nombre)
-				.setParameter("apellido", apellido)
+				.setParameter("nombre", nombreYApellido)
 				.executeUpdate();
 
 	}
 
 	@Override
 	@Transactional
-	public void persistirUsuarioGoogleSinValidaciones(String idGoogle, Long rolId, String nombre, String apellido) {
-		em.createNativeQuery("insert into usuario (id_google,id_rol_usuario, nombre, apellido) values ( :idGoogle , :idRol, :nombre, :apellido)")
+	public void persistirUsuarioGoogleSinValidaciones(String idGoogle, Long rolId, String nombreYApellido) {
+		em.createNativeQuery("insert into usuario (id_google,id_rol_usuario, nombre) values ( :idGoogle , :idRol, :nombre)")
 				.setParameter("idGoogle", idGoogle)
 				.setParameter("idRol", rolId)
-				.setParameter("nombre", nombre)
-				.setParameter("apellido", apellido)
+				.setParameter("nombre", nombreYApellido)
 				.executeUpdate();
 
 	}

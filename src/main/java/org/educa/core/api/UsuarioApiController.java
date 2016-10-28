@@ -49,7 +49,7 @@ public class UsuarioApiController {
 		Usuario resultado = buildUsuario(usuarios);
 		if(resultado.getId()==null){
 			usuarioDao.persistirUsuarioFacebookSinValidaciones(facebookLoginBean.getToken()
-				, USUARIO_ROL, facebookLoginBean.getNombre(), facebookLoginBean.getApellido());
+				, USUARIO_ROL, facebookLoginBean.getNombreYApellido());
 			resultado = usuarioRepository.findByIdFacebook(facebookLoginBean.getToken()).iterator().next();
 		}		
 		return resultado;
@@ -61,7 +61,7 @@ public class UsuarioApiController {
 		Usuario resultado = buildUsuario(usuarios);
 		if(resultado.getId()==null){
 			usuarioDao.persistirUsuarioGoogleSinValidaciones(googleLoginBean.getToken()
-					, USUARIO_ROL, googleLoginBean.getNombre(), googleLoginBean.getApellido());
+					, USUARIO_ROL, googleLoginBean.getNombreYApellido());
 			resultado = usuarioRepository.findByIdGoogle(googleLoginBean.getToken()).iterator().next();
 		}
 		return resultado;
