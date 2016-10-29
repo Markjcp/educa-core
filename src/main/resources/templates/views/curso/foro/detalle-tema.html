@@ -69,6 +69,7 @@
 							
 						<div class="col l12 s12">
 							<a type="submit" class="btn orange-effect orange darken-4" th:href="@{/foro/aprobarTema/{idCurso}/{nroSesion}/{idTema}(idCurso=${foroForm.curso.id},nroSesion=${foroForm.sesion.id.numero},idTema=${tema.id})}">Publicar</a>
+							<a type="submit" class="btn orange-effect orange darken-4" th:href="@{/foro/ocultarTema/{idCurso}/{nroSesion}/{idTema}(idCurso=${foroForm.curso.id},nroSesion=${foroForm.sesion.id.numero},idTema=${tema.id})}">Ocultar</a>
 							<a class="btn orange-effect orange darken-4" th:href="@{/foro/{cursoId}(cursoId=${foroForm.curso.id})}">Salir</a>
 						</div>
 			    	</div>
@@ -161,7 +162,7 @@
 			    <div th:if="${tema.aprobado} == true or ${foroForm.sesion.foro.moderado} == false" class="row">        		
 					<div class="col l12 s12">			    					    				
 						<div class="form-group">							                       		
-							<a class="btn orange-effect orange darken-4" href="#" th:href="@{/docente/{idUsuarioDocente}/bandeja-cursos(idUsuarioDocente=${foroForm.curso.docente.id})}">Salir</a>
+							<a class="btn orange-effect orange darken-4" href="#" th:href="@{/foro/{cursoId}(cursoId=${foroForm.curso.id})}">Salir</a>
 						 </div>
 					</div>
 				</div>

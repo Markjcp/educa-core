@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.validator.constraints.Length;
@@ -64,10 +65,9 @@ public class Tema implements Serializable, Comparable<Tema> {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "estado_tema")
 	private EstadoPublicacion estado;
-	
-	//TODO VER SI ESTO LO AGREGAMOS A LOS CAMPOS DE LA BASE - seria ideal q este en la base y q con cada add de cosas se actualice automaticamente
-	//@Transient
-	//private int cantidadComentariosPorAprobar = 20;
+		
+	@Transient
+	private int cantidadComentariosPorAprobar;
 
 	public Tema() {
 		super();
@@ -122,6 +122,19 @@ public class Tema implements Serializable, Comparable<Tema> {
 
 	public void setComentarios(SortedSet<Comentario> comentarios) {
 		this.comentarios = comentarios;
+		calcularComentariosPorAprobar();
+	}
+
+	private void calcularComentariosPorAprobar() {
+		this.cantidadComentariosPorAprobar = 0;
+		if(this.comentarios == null || this.comentarios.isEmpty()){
+			return;
+		}
+		for(Comentario comentario : this.comentarios){
+			if(!EstadoPublicacion.APROBADO.equals(comentario.getEstado())){
+				this.cantidadComentariosPorAprobar ++;
+			}
+		}
 	}
 
 	public EstadoPublicacion getEstado() {
@@ -156,13 +169,9 @@ public class Tema implements Serializable, Comparable<Tema> {
 		return (EstadoPublicacion.RECHAZADO.equals(getEstado()));
 	}
 	
-//	public int getCantidadComentariosPorAprobar() {
-//		return cantidadComentariosPorAprobar;
-//	}
-//
-//	public void setCantidadComentariosPorAprobar(int cantidadComentariosPorAprobar) {
-//		this.cantidadComentariosPorAprobar = cantidadComentariosPorAprobar;
-//	}
+	public int getCantidadComentariosPorAprobar() {
+		return cantidadComentariosPorAprobar;
+	}
 	
 	public void addComentario(Comentario comentario){
 		if(comentario == null){
@@ -174,7 +183,7 @@ public class Tema implements Serializable, Comparable<Tema> {
 		}
 		
 		this.comentarios.add(comentario);
-		//actualizarCantidades;
+		calcularComentariosPorAprobar();
 	}
 
 	@Override

@@ -2,17 +2,19 @@ package org.educa.core.controller;
 
 import java.util.Calendar;
 import java.util.SortedSet;
-import java.util.TreeSet;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.educa.core.bean.UsuarioSeguridad;
 import org.educa.core.controller.forms.ForoForm;
+import org.educa.core.dao.ComentarioRepository;
 import org.educa.core.dao.ForoRepository;
 import org.educa.core.dao.SesionRepository;
+import org.educa.core.dao.TemaRepository;
 import org.educa.core.entities.model.Comentario;
 import org.educa.core.entities.model.ComponenteId;
 import org.educa.core.entities.model.Curso;
-import org.educa.core.entities.model.EstadoForo;
 import org.educa.core.entities.model.EstadoPublicacion;
 import org.educa.core.entities.model.Foro;
 import org.educa.core.entities.model.Sesion;
@@ -21,6 +23,7 @@ import org.educa.core.entities.model.Usuario;
 import org.educa.core.services.CursoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -46,6 +49,14 @@ public class ForoController {
 	@Autowired
 	@Qualifier("foroRepository")
 	private ForoRepository foroRepository;
+	
+	@Autowired
+	@Qualifier("temaRepository")
+	private TemaRepository temaRepository;
+	
+	@Autowired
+	@Qualifier("comentarioRepository")
+	private ComentarioRepository comentarioRepository;
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public String index(@PathVariable("id") long id, Model model) {
@@ -62,12 +73,10 @@ public class ForoController {
 	}
 	
 	@RequestMapping(value = "/agregarTema/{idCurso}/{nroSesion}", method = RequestMethod.POST)
-	public String agregarTema(@PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @ModelAttribute @Valid ForoForm foroForm, BindingResult bindingResult, Model model) {
-		//TODO
-		System.out.println("ENTRO A DAR AGREGAR UN TEMA");
-		SortedSet<Sesion> sesiones = sesionRepository.findByFechaAndIdCurso(Calendar.getInstance().getTime(), idCurso);
-		
-		if (bindingResult.hasFieldErrors("tema.*")) {			
+	public String agregarTema(@PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @ModelAttribute @Valid ForoForm foroForm, 
+			BindingResult bindingResult, Model model, HttpServletRequest request) {		
+		if (bindingResult.hasFieldErrors("tema.*")) {
+			SortedSet<Sesion> sesiones = sesionRepository.findByFechaAndIdCurso(Calendar.getInstance().getTime(), idCurso);
 			model.addAttribute("abrirPopupAltaTemaError", true);//TODO EDIAZ ESTO HAY Q HACERLO EN LA VISTA, NO ESTA ACTUALMENTE
 			model.addAttribute("foroForm", foroForm);
 			model.addAttribute("sesiones", sesiones);
@@ -76,140 +85,239 @@ public class ForoController {
 		}
 		
 		//addTema
-		for(Sesion sesion : sesiones){
-			if(sesion.getId() != null && sesion.getId().getIdCurso() == idCurso && sesion.getId().getNumero() == nroSesion){
-				Foro foro = sesion.getForo();
-				Tema tema = foroForm.getTema();
-				//Tema creado por un profesor, por eso va en estado APROBADO
-				tema.setEstado(EstadoPublicacion.APROBADO);
-				tema.setFechaCreacion(Calendar.getInstance().getTime());
-				tema.setIdForo(foro.getId());
-				
-//				//Guardo los datos de usuario logueado
-//				SecurityContext contexto = 
-//						(SecurityContext)request.getSession().getAttribute("ACEGI_SECURITY_CONTEXT");
-//						 
-//						String login = ((org.acegisecurity.userdetails.User)
-//						                            (context.getAuthentication().getPrincipal())).getUsername();
-//				tema.setIdUsuario(   );
-				
-				//foro.addTema(foroForm.a);
-			}
+		ComponenteId id = new ComponenteId();
+		id.setIdCurso(idCurso);
+		id.setNumero(nroSesion);
+		Sesion sesion = sesionRepository.findOne(id);
+		if(sesion.getId() != null && sesion.getId().getIdCurso() == idCurso && sesion.getId().getNumero() == nroSesion){
+			Foro foro = sesion.getForo();
+			Tema tema = foroForm.getTema();
+			//Tema creado por un profesor, por eso va en estado APROBADO
+			tema.setEstado(EstadoPublicacion.APROBADO);
+			tema.setFechaCreacion(Calendar.getInstance().getTime());
+			tema.setIdForo(foro.getId());
+			
+			//Guardo los datos de usuario logueado
+			Usuario usuarioLogeado = this.obtenerUsuarioLogueado(request);
+			tema.setIdUsuario(usuarioLogeado == null ? null : usuarioLogeado.getId());
+			tema.setUsuario(usuarioLogeado);
+			
+			foro.addTema(tema);
+			foroRepository.save(foro);
+			model.addAttribute("mensajeAltaTemaOk", true);//TODO EDIAZ ESTO HAY Q MOSTRARLO EN LA VISTA
 		}
+		
+		cargarDatosListadoSesionForo(idCurso, new ForoForm(), nroSesion, model);
 		
 		return LISTADO_SESION_FORO;
 	}	
 	
 	@RequestMapping(value = "/detalleTema/{idCurso}/{nroSesion}/{idTema}", method = RequestMethod.GET)
-	public String detalleTema(@PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @PathVariable("idTema") long idTema, Model model) {
-		//TODO HAY Q HACERLO!
-		System.out.println("ENTRO PARA VER EL DETALLE DE UN TEMA");
-		
-		Tema tema = new Tema();
-		tema.setTitulo("Tema de prueba");
-		tema.setDescripcion("Esto es una descripcion para el tema 1 de prueba.");
-		tema.setId(1l);
-		
-		SortedSet<Comentario> comentarios = new TreeSet<Comentario>();
-		Comentario comentario = new Comentario();
-		comentario.setId(1l);
-		comentario.setDescripcion("Comentario 1");
-		comentario.setFechaCreacion(Calendar.getInstance().getTime());
-		comentario.setEstado(EstadoPublicacion.APROBADO);
-		Usuario usuario = new Usuario();
-		usuario.setId(1l);
-		usuario.setNombre("Pepe");
-		usuario.setApellido("Sanchez");
-		comentario.setUsuario(usuario);
-		comentarios.add(comentario);
-		
-		Comentario comentario2 = new Comentario();
-		comentario2.setId(1l);
-		comentario2.setDescripcion("Comentario 2");
-		comentario2.setFechaCreacion(Calendar.getInstance().getTime());
-		comentario2.setEstado(EstadoPublicacion.RECHAZADO);
-		Usuario usuario2 = new Usuario();
-		usuario2.setId(2l);
-		usuario2.setNombre("Andres");
-		usuario2.setApellido("Tata");
-		comentario2.setUsuario(usuario2);
-		comentarios.add(comentario2);
-		
-		Comentario comentario3 = new Comentario();
-		comentario3.setId(1l);
-		comentario3.setDescripcion("Comentario 3");
-		comentario3.setFechaCreacion(Calendar.getInstance().getTime());
-		comentario3.setEstado(EstadoPublicacion.INDEFINIDO);
-		Usuario usuario3 = new Usuario();
-		usuario3.setId(3l);
-		usuario3.setNombre("Carla");
-		usuario3.setApellido("Mendez");
-		comentario3.setUsuario(usuario3);
-		comentarios.add(comentario3);
-		tema.setComentarios(comentarios);
-		
-		tema.setEstado(EstadoPublicacion.APROBADO);
-		
-		model.addAttribute("tema", tema);
-		
-		//TODO en el form hay q mandar el curso y la sesion
-		Curso curso = this.cursoService.encontrarCursoPorId(idCurso);
-		ForoForm foroForm = new ForoForm();
-		foroForm.setCurso(curso);
-		ComponenteId idSesion = new ComponenteId();
-		idSesion.setIdCurso(idCurso);
-		idSesion.setNumero(nroSesion);
-		Sesion sesion = this.sesionRepository.findOne(idSesion);
-		
-		if(sesion.getForo() == null){
-			Foro foro = new Foro();
-			SortedSet<Tema> temas = new TreeSet<Tema>();
-			temas.add(tema);
-			foro.setTemas(temas);
-			foro.setEstado(EstadoForo.MODERADO);
-			sesion.setForo(foro);
-		}
-		
-		foroForm.setSesion(sesion);
-		
-		model.addAttribute("foroForm", foroForm);
+	public String detalleTema(@PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @PathVariable("idTema") long idTema, Model model) {		
+		cargarDatosDetalleTema(idTema, model, idCurso, nroSesion);
 		
 		return DETALLE_TEMA;
 	}
 	
 	@RequestMapping(value = "/aprobarTema/{idCurso}/{nroSesion}/{idTema}", method = RequestMethod.GET)
 	public String aprobarTema(@PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @PathVariable("idTema") long idTema,
-			@ModelAttribute @Valid ForoForm foroForm, BindingResult bindingResult, Model model) {
-		//TODO
-		System.out.println("ENTRO A DAR APROBAR UN TEMA");
+			@ModelAttribute @Valid ForoForm foroForm, BindingResult bindingResult, Model model) {		
+		Tema tema = temaRepository.findOne(idTema);
+		tema.setEstado(EstadoPublicacion.APROBADO);
+		temaRepository.save(tema);
+		
+		tema = temaRepository.findOne(idTema);//Lo vuelvo a buscar para que este actualizado
+		model.addAttribute("tema", tema);
+		
+		cargarDatosListadoSesionForo(idCurso, new ForoForm(), nroSesion, model);
+		
+		return LISTADO_SESION_FORO;
+	}
+	
+	@RequestMapping(value = "/ocultarTema/{idCurso}/{nroSesion}/{idTema}", method = RequestMethod.GET)
+	public String ocultarTema(@PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @PathVariable("idTema") long idTema,
+			@ModelAttribute @Valid ForoForm foroForm, BindingResult bindingResult, Model model) {		
+		Tema tema = temaRepository.findOne(idTema);
+		tema.setEstado(EstadoPublicacion.RECHAZADO);
+		temaRepository.save(tema);
+		
+		tema = temaRepository.findOne(idTema);//Lo vuelvo a buscar para que este actualizado
+		model.addAttribute("tema", tema);
+				
+		cargarDatosListadoSesionForo(idCurso, new ForoForm(), nroSesion, model);
 		
 		return LISTADO_SESION_FORO;
 	}
 	
 	@RequestMapping(value = "/aprobarComentario/{idCurso}/{nroSesion}/{idTema}/{idComentario}", method = RequestMethod.POST)
 	public String aprobarComentario(@PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @PathVariable("idTema") long idTema, 
-			@PathVariable("idComentario") long idComentario, Model model) {
-		//TODO
-		System.out.println("ENTRO A APROBAR UN COMENTARIO");
-		
-		return DETALLE_TEMA;
+			@PathVariable("idComentario") long idComentario, Model model) {		
+		return cambiarEstadoComentario(idCurso, nroSesion, idTema, idComentario, model, EstadoPublicacion.APROBADO);
 	}
 	
 	@RequestMapping(value = "/ocultarComentario/{idCurso}/{nroSesion}/{idTema}/{idComentario}", method = RequestMethod.POST)
 	public String ocultarComentario(@PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @PathVariable("idTema") long idTema, 
 			@PathVariable("idComentario") long idComentario, Model model) {
-		//TODO
-		System.out.println("ENTRO A OCULTAR UN COMENTARIO");
-		
-		return DETALLE_TEMA;
+		return cambiarEstadoComentario(idCurso, nroSesion, idTema, idComentario, model, EstadoPublicacion.RECHAZADO);
 	}
 	
 	@RequestMapping(value = "/agregarComentario/{idCurso}/{nroSesion}/{idTema}", method = RequestMethod.POST)
 	public String agregarComentario(@PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @PathVariable("idTema") long idTema, 
-			@ModelAttribute @Valid ForoForm foroForm, BindingResult bindingResult, Model model) {
+			@ModelAttribute @Valid ForoForm foroForm, BindingResult bindingResult, Model model, HttpServletRequest request) {
 		//TODO
 		System.out.println("ENTRO A DAR DE ALTA UN COMENTARIO");
+		if (bindingResult.hasFieldErrors("comentario.*")) {			
+			model.addAttribute("altaComentarioError", true);//TODO EDIAZ ESTO HAY Q HACERLO EN LA VISTA, NO ESTA ACTUALMENTE
+			cargarDatosDetalleTema(idTema, model, idCurso, nroSesion);
+			
+			return LISTADO_SESION_FORO;
+		}
 		
-		return LISTADO_SESION_FORO;
+		Comentario comentario = foroForm.getComentario();
+		comentario.setEstado(EstadoPublicacion.APROBADO);//Lo creo el profesor asi que se publica directamente
+		comentario.setFechaCreacion(Calendar.getInstance().getTime());
+		comentario.setIdTema(idTema);
+		Tema tema = this.temaRepository.findOne(idTema);
+		comentario.setTema(tema);
+		//Guardo los datos de usuario logueado
+		Usuario usuarioLogeado = this.obtenerUsuarioLogueado(request);
+		comentario.setIdUsuario(usuarioLogeado == null ? null : usuarioLogeado.getId());
+		comentario.setUsuario(usuarioLogeado);
+		comentario = comentarioRepository.save(comentario);
+		//TODO mucha de las cosas que sigue se pueden refactorizar xq se repiten en otra parte pero ahora queda asi
+		
+		/*
+		 * Si bien este metodo se puede hacer directo buscando el comentario y persistiendo en la base de una,
+		 * lo hago asi porque necesito informacion de las cantidades, evitando tener que iterar varias veces las
+		 * mismas colecciones.
+		 */
+		ComponenteId idSesion = new ComponenteId();
+		idSesion.setIdCurso(idCurso);
+		idSesion.setNumero(nroSesion);
+		Sesion sesion = this.sesionRepository.findOne(idSesion);
+		if(sesion == null){
+			return DETALLE_TEMA;
+		}
+		
+		Foro foro = sesion.getForo();
+		if(foro == null){
+			return DETALLE_TEMA;
+		}
+		
+		//Busco el tema
+		Tema temaActualizar = null;
+		for(Tema unTema : foro.getTemas()){
+			if(unTema.getId() == idTema){
+				temaActualizar = unTema;
+				break;
+			}
+		}
+		
+		if(temaActualizar == null){
+			return DETALLE_TEMA;
+		}
+					
+		temaActualizar.addComentario(comentario);
+		foro.actualizarTema(temaActualizar);
+		foro = this.foroRepository.save(foro);
+		
+		cargarDatosDetalleTema(idTema, model, idCurso, nroSesion);
+		model.addAttribute("altaComentarioOk", true);//TODO EDIAZ ESTO HAY Q HACERLO EN LA VISTA, NO ESTA ACTUALMENTE
+		
+		return DETALLE_TEMA;
+	}
+	
+	private void cargarDatosDetalleTema(long idTema, Model model, long idCurso, int nroSesion){
+		Tema tema = temaRepository.findOne(idTema);
+		model.addAttribute("tema", tema);
+		
+		Curso curso = this.cursoService.encontrarCursoPorId(idCurso);
+		ForoForm foroForm = new ForoForm();
+		foroForm.setCurso(curso);
+		
+		ComponenteId idSesion = new ComponenteId();
+		idSesion.setIdCurso(idCurso);
+		idSesion.setNumero(nroSesion);
+		Sesion sesion = this.sesionRepository.findOne(idSesion);		
+		foroForm.setSesion(sesion);
+		
+		model.addAttribute("foroForm", foroForm);
+	}
+	
+	public String cambiarEstadoComentario(long idCurso, int nroSesion, long idTema, long idComentario, Model model, EstadoPublicacion estado) {		
+		/*
+		 * Si bien este metodo se puede hacer directo buscando el comentario y persistiendo en la base de una,
+		 * lo hago asi porque necesito informacion de las cantidades, evitando tener que iterar varias veces las
+		 * mismas colecciones.
+		 */
+		ComponenteId idSesion = new ComponenteId();
+		idSesion.setIdCurso(idCurso);
+		idSesion.setNumero(nroSesion);
+		Sesion sesion = this.sesionRepository.findOne(idSesion);
+		if(sesion == null){
+			return DETALLE_TEMA;
+		}
+		
+		Foro foro = sesion.getForo();
+		if(foro == null){
+			return DETALLE_TEMA;
+		}
+		
+		//Busco el tema
+		Tema temaActualizar = null;
+		for(Tema unTema : foro.getTemas()){
+			if(unTema.getId() == idTema){
+				temaActualizar = unTema;
+				break;
+			}
+		}
+		
+		if(temaActualizar == null){
+			return DETALLE_TEMA;
+		}
+		
+		//Busco comentario
+		Comentario comentarioActualizado = null;
+		for(Comentario comentario : temaActualizar.getComentarios()){
+			if(comentario.getId() == idComentario){
+				comentarioActualizado = comentario;
+				break;
+			}
+		}
+		
+		comentarioActualizado.setEstado(estado);		
+		temaActualizar.addComentario(comentarioActualizado);
+		foro.actualizarTema(temaActualizar);
+		foro = this.foroRepository.save(foro);
+		
+		cargarDatosDetalleTema(idTema, model, idCurso, nroSesion);
+		
+		return DETALLE_TEMA;
+	}
+	
+	private void cargarDatosListadoSesionForo(long idCurso, ForoForm foroForm, int nroSesion, Model model){
+		Curso curso = this.cursoService.encontrarCursoPorId(idCurso);
+		foroForm.setCurso(curso);
+		
+		ComponenteId idSesion = new ComponenteId();
+		idSesion.setIdCurso(idCurso);
+		idSesion.setNumero(nroSesion);
+		Sesion sesion = this.sesionRepository.findOne(idSesion);		
+		foroForm.setSesion(sesion);
+		
+		model.addAttribute("foroForm", foroForm);
+		
+		SortedSet<Sesion> sesiones = sesionRepository.findByFechaAndIdCurso(Calendar.getInstance().getTime(), idCurso);
+		model.addAttribute("sesiones", sesiones);
+	}
+	
+	private Usuario obtenerUsuarioLogueado(HttpServletRequest request){
+		SecurityContext contexto = (SecurityContext)request.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
+		Usuario usuarioLogeado = null;
+		if(contexto != null){
+			usuarioLogeado = contexto.getAuthentication() == null ? null : (((UsuarioSeguridad)contexto.getAuthentication().getPrincipal()).getUsuario());
+		}
+		
+		return usuarioLogeado;
 	}
 }

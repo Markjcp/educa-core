@@ -60,4 +60,11 @@ public class UsuarioSeguridad implements UserDetails {
 		return usuario.getActivado() != null && usuario.getActivado();
 	}
 
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
 }
