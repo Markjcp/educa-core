@@ -107,7 +107,14 @@ public class Comentario implements Serializable, Comparable<Comentario> {
 
 	@Override
 	public int compareTo(Comentario o) {
-		return getFechaCreacion().compareTo(o.getFechaCreacion());
+		int resultado = getFechaCreacion().compareTo(o.getFechaCreacion());
+		if (resultado == 0 && usuario!= null && o.getUsuario() != null) {
+			resultado = usuario.getId().compareTo(o.getUsuario().getId());
+		}
+		if(resultado == 0 && id != null && o.getId() != null){
+			resultado = id.compareTo(o.getId());
+		}
+		return resultado;
 	}
 	
 	public Tema getTema() {
