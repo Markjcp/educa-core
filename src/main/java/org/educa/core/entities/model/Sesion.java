@@ -2,6 +2,7 @@ package org.educa.core.entities.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -61,8 +62,6 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	@OneToOne
 	@JoinColumn(name = "id_foro", referencedColumnName = "id_foro")
 	private Foro foro;
-//	
-//	private boolean tieneForo;
 
 	public Sesion() {
 		super();
@@ -131,6 +130,14 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	public void setFechaHastaInscripcion(Date fechaHastaInscripcion) {
 		this.fechaHastaInscripcion = fechaHastaInscripcion;
 	}
+
+	public Foro getForo() {
+		return foro;
+	}
+
+	public void setForo(Foro foro) {
+		this.foro = foro;
+	}
 	
 	public String getDescripcionLarga() {		
 		return "Sesión Nro. " + (this.getId().getNumero() == null ? "" : this.getId().getNumero())  + ": Inicia el " + FechaUtil.cadenaFechaDDMMYYYYEs(this.fechaDesde);
@@ -140,25 +147,34 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 		return "Sesión Nro. " + (this.getId().getNumero() == null ? "" : this.getId().getNumero()) ;
 	}
 	
-	public String getDescripcionCorta() {		
-		return "Sesión Nro. " + (this.getId().getNumero() == null ? "" : this.getId().getNumero());
+	public String getDescripcionForo() {
+		String estado = "no moderado";
+		if(foro != null && EstadoForo.MODERADO.equals(foro.getEstado())){
+			estado = "moderado";
+		}
+		
+		return "Sesión Nro. " + (this.getId().getNumero() == null ? "" : this.getId().getNumero()) + ": Foro " + estado;
 	}
-
-	public Foro getForo() {
-		return foro;
+	
+	public String getMensajeEstado(){
+		//TODO me falta poner esto [ediaz]
+		String estado = "inactiva.";
+		if(Calendar.getInstance().getTime().compareTo(getFechaHasta()) <= 0 && Calendar.getInstance().getTime().compareTo(getFechaDesde()) >= 0){
+			estado = "activa.";
+		} else if(Calendar.getInstance().getTime().compareTo(getFechaDesde()) <= 0 ){
+			estado = "sin comenzar.";
+		}
+		
+		return "Sesión " + estado;
 	}
-
-	public void setForo(Foro foro) {
-		this.foro = foro;
+	
+	public boolean isForoModerado(){
+		if(this.getForo() == null){
+			return false;
+		}
+		
+		return (EstadoForo.MODERADO.equals(this.getForo().getEstado()));
 	}
-//
-//	public boolean isTieneForo() {
-//		return tieneForo;
-//	}
-//
-//	public void setTieneForo(boolean tieneForo) {
-//		this.tieneForo = tieneForo;
-//	}
 
 	@Override
 	public int hashCode() {

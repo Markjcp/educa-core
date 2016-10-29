@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.OrderBy;
 
@@ -35,6 +36,16 @@ public class Foro implements Serializable {
 	@JoinColumn(name = "id_foro", insertable = false, updatable = false)
 	@OrderBy(clause = "fechaCreacion desc")
 	private SortedSet<Tema> temas;
+	
+	//TODO VER SI ESTO LO AGREGAMOS A LOS CAMPOS DE LA BASE - seria ideal q este en la base y q con cada add de cosas se actualice automaticamente
+	@Transient
+	private int cantidadTemasPorAprobar = 5;	
+	@Transient
+	private int cantidadTemasAprobados = 10;
+	@Transient
+	private int cantidadComentariosPorAprobar = 6;
+	@Transient
+	private int cantidadComentariosAprobados = 12;
 	
 	public Foro() {
 		super();
@@ -62,6 +73,38 @@ public class Foro implements Serializable {
 
 	public void setTemas(SortedSet<Tema> temas) {
 		this.temas = temas;
+	}
+
+	public int getCantidadTemasPorAprobar() {
+		return cantidadTemasPorAprobar;
+	}
+
+	public void setCantidadTemasPorAprobar(int cantidadTemasPorAprobar) {
+		this.cantidadTemasPorAprobar = cantidadTemasPorAprobar;
+	}
+
+	public int getCantidadTemasAprobados() {
+		return cantidadTemasAprobados;
+	}
+
+	public void setCantidadTemasAprobados(int cantidadTemasAprobados) {
+		this.cantidadTemasAprobados = cantidadTemasAprobados;
+	}
+
+	public int getCantidadComentariosPorAprobar() {
+		return cantidadComentariosPorAprobar;
+	}
+
+	public void setCantidadComentariosPorAprobar(int cantidadComentariosPorAprobar) {
+		this.cantidadComentariosPorAprobar = cantidadComentariosPorAprobar;
+	}
+
+	public int getCantidadComentariosAprobados() {
+		return cantidadComentariosAprobados;
+	}
+
+	public void setCantidadComentariosAprobados(int cantidadComentariosAprobados) {
+		this.cantidadComentariosAprobados = cantidadComentariosAprobados;
 	}
 
 	@Override

@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.OrderBy;
 
@@ -42,11 +43,11 @@ public class Tema implements Serializable, Comparable<Tema> {
 	@Column(name = "id_foro")
 	private Long idForo;
 
-	@Column(name = "titulo")
+	@Column(name = "titulo") //TODO largo = 45 obligatorio
 	private String titulo;
 
-	@Column(name = "descripcion")
-	private String descripcion;// TODO ver si esto va o no
+	@Column(name = "descripcion")  //TODO largo = 200 obligatorio
+	private String descripcion;
 
 	@OneToMany
 	@JoinColumn(name = "id_tema", insertable = false, updatable = false)
@@ -56,6 +57,10 @@ public class Tema implements Serializable, Comparable<Tema> {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "estado_tema")
 	private EstadoPublicacion estado;
+	
+	//TODO VER SI ESTO LO AGREGAMOS A LOS CAMPOS DE LA BASE - seria ideal q este en la base y q con cada add de cosas se actualice automaticamente
+	@Transient
+	private int cantidadComentariosPorAprobar = 20;
 
 	public Tema() {
 		super();
@@ -135,10 +140,29 @@ public class Tema implements Serializable, Comparable<Tema> {
 	public void setIdForo(Long idForo) {
 		this.idForo = idForo;
 	}
+	
+	public boolean isAprobado(){
+		return (EstadoPublicacion.APROBADO.equals(getEstado()));
+	}
+	
+	public int getCantidadComentariosPorAprobar() {
+		return cantidadComentariosPorAprobar;
+	}
+
+	public void setCantidadComentariosPorAprobar(int cantidadComentariosPorAprobar) {
+		this.cantidadComentariosPorAprobar = cantidadComentariosPorAprobar;
+	}
 
 	@Override
 	public int compareTo(Tema o) {
-		// TODO Auto-generated method stub
+		if(getFechaCreacion() == null && o.getFechaCreacion() != null){
+			return -1;
+		}
+		
+		if(getFechaCreacion() == null && o.getFechaCreacion() == null){
+			return 0;
+		}
+		
 		return getFechaCreacion().compareTo(o.getFechaCreacion());
 	}
 
