@@ -33,7 +33,7 @@ public class Foro implements Serializable {
 	private EstadoForo estado;
 
 	@OneToMany
-	@JoinColumn(name = "id_foro", insertable = false, updatable = false)
+	@JoinColumn(name = "id_foro", referencedColumnName = "id_foro",insertable = false, updatable = false)
 	@OrderBy(clause = "fechaCreacion desc")
 	private SortedSet<Tema> temas;
 	

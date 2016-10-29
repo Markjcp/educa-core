@@ -50,7 +50,7 @@ public class Tema implements Serializable, Comparable<Tema> {
 	private String descripcion;
 
 	@OneToMany
-	@JoinColumn(name = "id_tema", insertable = false, updatable = false)
+	@JoinColumn(name = "id_tema", referencedColumnName= "id_tema",insertable = false, updatable = false)
 	@OrderBy(clause = "fechaCreacion asc")
 	private SortedSet<Comentario> comentarios;
 
@@ -163,7 +163,14 @@ public class Tema implements Serializable, Comparable<Tema> {
 			return 0;
 		}
 		
-		return getFechaCreacion().compareTo(o.getFechaCreacion());
+		int resultado = getFechaCreacion().compareTo(o.getFechaCreacion());
+		if (resultado == 0 && usuario!= null && o.getUsuario() != null) {
+			resultado = usuario.getId().compareTo(o.getUsuario().getId());
+		}
+		if(resultado == 0 && id != null && o.getId() != null){
+			resultado = id.compareTo(o.getId());
+		}
+		return resultado;
 	}
 
 	@Override
