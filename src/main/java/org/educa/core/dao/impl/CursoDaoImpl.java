@@ -11,21 +11,29 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.educa.core.dao.CursoDao;
+import org.educa.core.dao.ForoRepository;
 import org.educa.core.entities.model.Categoria;
 import org.educa.core.entities.model.ComponenteId;
 import org.educa.core.entities.model.Curso;
 import org.educa.core.entities.model.Docente;
 import org.educa.core.entities.model.Estado;
 import org.educa.core.entities.model.ExamenUnidad;
+import org.educa.core.entities.model.Foro;
 import org.educa.core.entities.model.MaterialUnidad;
 import org.educa.core.entities.model.Sesion;
 import org.educa.core.entities.model.Unidad;
 import org.educa.core.entities.model.VideoUnidad;
 import org.educa.core.util.FechaUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 @Repository(value = "cursoDao")
 public class CursoDaoImpl extends GeneralDaoSupport<Curso>implements CursoDao {
+	
+	@Autowired
+	@Qualifier("foroRepository")
+	private ForoRepository foroRepository;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -216,7 +224,7 @@ public class CursoDaoImpl extends GeneralDaoSupport<Curso>implements CursoDao {
 		
 		//Le actualizo las sesiones		
 		query = new StringBuilder();
-		query.append(" select numero_componente , id_curso, fecha_desde, fecha_hasta, cupos, costo, fecha_desde_inscripcion, fecha_hasta_inscripcion  ");		
+		query.append(" select numero_componente , id_curso, fecha_desde, fecha_hasta, cupos, costo, fecha_desde_inscripcion, fecha_hasta_inscripcion , id_foro ");		
 		query.append(" from sesion   ");
 		query.append(" where id_curso = " + id);
 		
@@ -242,6 +250,10 @@ public class CursoDaoImpl extends GeneralDaoSupport<Curso>implements CursoDao {
 					
 					sesion.setFechaDesdeInscripcion(FechaUtil.formateFechaDDMMYYYYUsa((Date) fila[6]));
 					sesion.setFechaHastaInscripcion(FechaUtil.formateFechaDDMMYYYYUsa((Date) fila[7]));
+					
+					long idForo = ((BigInteger) fila[8]).longValue();					
+					Foro foro = foroRepository.findOne(idForo);
+					sesion.setForo(foro);
 					
 					sesiones.add(sesion);
 				}

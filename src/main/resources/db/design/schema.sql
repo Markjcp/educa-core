@@ -118,6 +118,10 @@ DROP TABLE IF EXISTS `educa`.`foro` ;
 CREATE TABLE IF NOT EXISTS `educa`.`foro` (
   `id_foro` BIGINT NOT NULL AUTO_INCREMENT,
   `estado_foro` VARCHAR(45) NOT NULL DEFAULT 'HABILITADO',
+  `temas_por_aprobar` INT NOT NULL DEFAULT 0,
+  `temas_aprobados` INT NOT NULL DEFAULT 0,
+  `comentarios_por_aprobar` INT NOT NULL DEFAULT 0,
+  `comentarios_aprobados` INT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id_foro`))
 ENGINE = InnoDB;
 

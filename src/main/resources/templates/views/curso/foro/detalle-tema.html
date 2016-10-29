@@ -1,0 +1,201 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head> 
+    <title>Taller Desarrollo II - FIUBA</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+	
+	<link href="css/bootstrap.css" th:href="@{/css/bootstrap.css}" rel="stylesheet" media="screen,projection" />
+	<link href="css/sb-admin-2.css" th:href="@{/css/sb-admin-2.css}" rel="stylesheet" media="screen,projection" />
+	<link href="css/materialize.css" th:href="@{/css/materialize.css}" rel="stylesheet" media="screen,projection" />
+	<link href="css/style.css" th:href="@{/css/style.css}" rel="stylesheet" media="screen,projection" />
+	<link href="css/style.css" th:href="@{/css/educa.css}" rel="stylesheet" media="screen,projection" />
+	<link href="../../static/css/font-awesome.css" th:href="@{/css/font-awesome.css}" rel="stylesheet" media="screen,projection" />	
+	
+</head>
+<body>
+	<div th:replace="views/fragments/header :: header">&nbsp;</div>
+	 
+	<div class="container">
+		<div class="section">
+			<div class="row">
+				<h1>Foro - Tema</h1>
+				<form id="cursoForm" action="#" th:object="${foroForm}">
+			    	<div class="row">
+			    		<div class="col s4">
+				    		<div class="form-group input-field">
+				    			<input type="text" th:field="*{sesion.descripcionForo}" placeholder="Nombre sesi&oacute;n" disabled="disabled" style="color: #000; border-bottom: 1px solid #26a69a;"/>			    			
+				    		</div>
+				    	</div>
+				    	<div class="col s1"></div>
+				    	<div class="col s3">
+				    		<div class="form-group input-field">
+				    			<input type="text" th:field="*{curso.nombre}" placeholder="Nombre del curso" disabled="disabled" style="color: #000; border-bottom: 1px solid #26a69a;"/>			    			
+				    		</div>
+				    	</div>
+				    	<div class="col s1"></div>
+				    	<div class="col s3">	
+				        	<div class="form-group input-field">
+				        		 <input type="text" th:field="*{curso.categoria.descripcion}" placeholder="Categor&iacute;a del curso" disabled="disabled" style="color: #000; border-bottom: 1px solid #26a69a;"/>                                                        
+	                         </div>		 			    		 	                        
+				    	</div>				    	
+			    	</div>
+			    </form>
+			    
+			    <div class="row">
+			    	<div class="col l12 s12">
+			    		<div class="form-group input-group input-field">
+							<label for="temaTitulo" class="" style="color: black; font-weight: inherit;">
+								T&iacute;tulo:&nbsp;
+								<span th:text="${tema.titulo}">&nbsp;</span>
+							</label>																																																							
+						</div>
+						<div class="form-group input-group input-field">
+							<label for="temaDescripcion" class="" style="color: black; font-weight: inherit;">
+								Descripci&oacute;n:&nbsp;
+								<span th:text="${tema.descripcion}">&nbsp;</span>
+							</label>
+						</div>
+			    	</div>
+			    	
+			    	<div th:if="${tema.aprobado} == false and ${foroForm.sesion.foro.moderado} == true">
+			    		<!-- Se da la posibilidad de aprobar el tema cuando el tema no esta aprobado y es un foro moderado. -->
+			    		<div class="row">
+							<div class="col-xs-12">
+								<hr></hr>
+							</div>
+						</div>
+							
+						<div class="col l12 s12">
+							<a type="submit" class="btn orange-effect orange darken-4" th:href="@{/foro/aprobarTema/{idCurso}/{nroSesion}/{idTema}(idCurso=${foroForm.curso.id},nroSesion=${foroForm.sesion.id.numero},idTema=${tema.id})}">Publicar</a>
+							<a class="btn orange-effect orange darken-4" th:href="@{/foro/{cursoId}(cursoId=${foroForm.curso.id})}">Salir</a>
+						</div>
+			    	</div>
+			    	
+			    	<div class="col l12 s12" th:if="${tema.aprobado} == true or ${foroForm.sesion.foro.moderado} == false">
+			    		<!-- Si el tema esta aprobado o el foro no es moderado, listo los comentarios -->
+			    		<div class="panel panel-default">
+							<div class="panel-heading">
+								Comentarios
+							</div>
+							<div class="panel-body">
+								<ul class="timeline">
+					    			<li th:each="comentario : ${tema.comentarios}">
+					    				<!-- Icono de estado del comentario -->
+					    				<div th:if="${comentario.aprobado} == true or ${foroForm.sesion.foro.moderado} == false" class="timeline-badge success">
+					    					<!-- Comentario OK -->					    					
+					    					<i class="fa fa-thumbs-o-up"></i>
+										</div>
+										<div th:if="${comentario.rechazado} == true" class="timeline-badge danger">
+					    					<!-- Comentario RECHAZADO -->					    					
+					    					<i class="fa fa-thumbs-o-down"></i>
+										</div>
+										<div th:if="${comentario.rechazado} == false and ${comentario.aprobado} == false and ${foroForm.sesion.foro.moderado} == true" class="timeline-badge warning">
+					    					<!-- Comentario INDEFINIDO para foro MODERADO -->
+					    					<i class="fa fa-thumbs-o-up"></i>
+					    					<i class="fa fa-thumbs-o-down"></i>
+										</div>
+										<!-- FIN - Icono de estado del comentario -->
+										<div class="timeline-panel">
+											<div class="timeline-heading">
+												<h4 class="timeline-title">
+													<i class="material-icons">perm_identity</i>   
+													<label for="temaDescripcion" class="" style="color: black; font-weight: inherit;">
+														Usuario:&nbsp;
+														<span th:text="${comentario.nombreCompletoUsuario}">&nbsp;</span>
+													</label>
+												</h4>
+												<p>
+													<small class="text-muted">
+														<i class="fa fa-clock-o"></i> 
+														<label for="temaDescripcion" class="" style="color: black; font-weight: inherit;">
+															Fecha:&nbsp;
+															<span th:text="${#dates.format(comentario.fechaCreacion, 'dd-MM-yyyy')}">&nbsp;</span>
+														</label>
+													</small>
+												</p>
+											</div>
+											<div class="timeline-body">
+												<div th:if="${comentario.rechazado} == true" class="alert alert-warning">										
+													El siguiente comentario no est&aacute; visible para los alumnos.
+												</div>
+												<br></br>
+												<p th:if="${comentario.rechazado} == true">
+													<span style="color: #a0a0a0" th:text="${comentario.descripcion}">&nbsp;</span>
+												</p>
+												<p th:if="${comentario.rechazado} == false">
+													<span th:text="${comentario.descripcion}">&nbsp;</span>
+												</p>
+											</div>
+											
+											<div th:if="${comentario.rechazado} == false and ${comentario.aprobado} == false and ${foroForm.sesion.foro.moderado} == true">
+						    					<!-- Comentario INDEFINIDO para foro MODERADO -->
+						    					<div class="row">
+													<div class="col-xs-12">
+														<hr></hr>
+													</div>
+												</div>
+												
+												<div class="row">        		
+													<div class="col-xs-12" style="text-align: right;">
+														<a type="submit" class="btn orange-effect orange darken-4" th:href="@{/foro/aprobarComentario/{idCurso}/{nroSesion}/{idTema}/{idComentario}(idCurso=${foroForm.curso.id},nroSesion=${foroForm.sesion.id.numero},idTema=${tema.id},idComentario=${comentario.id})}">Aprobar</a>
+														<a type="submit" class="btn orange-effect orange darken-4" th:href="@{/foro/ocultarComentario/{idCurso}/{nroSesion}/{idTema}/{idComentario}(idCurso=${foroForm.curso.id},nroSesion=${foroForm.sesion.id.numero},idTema=${tema.id},idComentario=${comentario.id})}">Ocultar</a>																    	
+													</div>
+												</div>
+											</div>
+										</div>
+					    			</li>			    		
+					    		</ul>
+							</div>
+						</div>			    		
+			    	</div>	    	    
+			    </div>
+			    
+			    <div th:if="${tema.aprobado} == true or ${foroForm.sesion.foro.moderado} == false" class="row">
+					<div class="col-xs-12">
+						<hr></hr>
+					</div>
+				</div>
+			    
+			    <div th:if="${tema.aprobado} == true or ${foroForm.sesion.foro.moderado} == false" class="row">        		
+					<div class="col l12 s12">			    					    				
+						<div class="form-group">							                       		
+							<a class="btn orange-effect orange darken-4" href="#" th:href="@{/docente/{idUsuarioDocente}/bandeja-cursos(idUsuarioDocente=${foroForm.curso.docente.id})}">Salir</a>
+						 </div>
+					</div>
+				</div>
+				
+				<div th:if="${tema.aprobado} == true or ${foroForm.sesion.foro.moderado} == false" id="chat-box" class="row">
+					<form action="#" th:action="@{/foro/agregarComentario/{idCurso}/{nroSesion}/{idTema}(idCurso=${foroForm.curso.id},nroSesion=${foroForm.sesion.id.numero},idTema=${tema.id})}" th:object="${foroForm}" method="post" id="formularioAltaComentario">
+						<div class="message-input-wrapper">
+							<textarea class="materialize-textarea" th:field="*{comentario.descripcion}" placeholder="Ingrese un nuevo comentario" length="500"></textarea>
+							<p id="descripcionComentarioError" th:errors="*{comentario.descripcion}" class="has-error-custom"></p>
+						</div>
+						<button type="submit" class="btn orange-effect orange darken-4">Publicar</button>
+					</form>
+				</div>					                                    
+			</div>
+		</div>
+	</div>
+	
+	<!--  Scripts-->
+    <script src="../../static/js/jquery-2.1.1.js" th:src="@{/js/jquery-2.1.1.js}"></script>
+    <script src="js/bootstrap.js" th:src="@{/js/bootstrap.js}"></script>
+    <script src="../../static/js/metisMenu.js" th:src="@{/js/metisMenu.js}"></script>
+    <script src="js/sb-admin-2.js" th:src="@{/js/sb-admin-2.js}"></script>
+    <script src="js/materialize.js" th:src="@{/js/materialize.js}"></script>
+    <script src="js/init.js" th:src="@{/js/init.js}"></script>
+    
+    <script type="text/javascript">
+    	function abrirPopupNuevoTema(){
+    		$('#modalAltaTema').openModal();	
+    	}    
+    
+    	function cerrarModalAltaTema(){
+    		$('#modalAltaTema').closeModal();    		
+    	}
+    </script>
+    
+</body>
+</html>

@@ -12,6 +12,8 @@ import org.educa.core.dao.SesionRepository;
 import org.educa.core.dao.UnidadRepository;
 import org.educa.core.entities.model.Curso;
 import org.educa.core.entities.model.Estado;
+import org.educa.core.entities.model.EstadoForo;
+import org.educa.core.entities.model.Foro;
 import org.educa.core.entities.model.Sesion;
 import org.educa.core.entities.model.Unidad;
 import org.educa.core.services.CursoService;
@@ -219,6 +221,18 @@ public class CursoNoAdminController {
 			}
 			 
 			sesionNueva = cargarFechasFinSesion(sesionNueva);
+			
+			//Cargo los datos del foro
+			Foro foro = sesionNueva.getForo();
+			if(foro == null){
+				//Todas las sesiones vienen con foro en estado no moderado por defecto
+				foro = new Foro();
+				foro.setEstado(EstadoForo.NO_MODERADO);
+			}
+			
+			foro.setEstado(sesionNueva.isForoModerado() ? EstadoForo.MODERADO : EstadoForo.NO_MODERADO);			
+			sesionNueva.setForo(foro);
+			
 			this.cursoService.crearSesion(curso, sesionNueva);
 			
 			cursoHidratado = this.cursoService.encontrarCursoPorIdHidratado(curso.getId());
@@ -227,6 +241,7 @@ public class CursoNoAdminController {
 				
 		//Seteo los nuevos valores
 		cursoForm = new CursoForm();
+		
 		cursoForm.setCurso(cursoHidratado);
 		cursoForm.setPublicado(cursoHidratado.isPublicado());
 		model.addAttribute("cursoForm", cursoForm);		

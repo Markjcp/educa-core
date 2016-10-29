@@ -2,7 +2,9 @@ package org.educa.core.entities.model;
 
 import java.io.Serializable;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -13,7 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.OrderBy;
 
@@ -32,23 +33,33 @@ public class Foro implements Serializable {
 	@Column(name = "estado_foro")
 	private EstadoForo estado;
 
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "id_foro", referencedColumnName = "id_foro",insertable = false, updatable = false)
 	@OrderBy(clause = "fechaCreacion desc")
 	private SortedSet<Tema> temas;
 	
-	//TODO VER SI ESTO LO AGREGAMOS A LOS CAMPOS DE LA BASE - seria ideal q este en la base y q con cada add de cosas se actualice automaticamente
-	@Transient
-	private int cantidadTemasPorAprobar = 5;	
-	@Transient
-	private int cantidadTemasAprobados = 10;
-	@Transient
-	private int cantidadComentariosPorAprobar = 6;
-	@Transient
-	private int cantidadComentariosAprobados = 12;
+	@Column(name = "temas_por_aprobar")
+	private int cantidadTemasPorAprobar;	
 	
+	@Column(name = "temas_aprobados")
+	private int cantidadTemasAprobados;
+	
+	@Column(name = "comentarios_por_aprobar")
+	private int cantidadComentariosPorAprobar;
+	
+	@Column(name = "comentarios_aprobados")
+	private int cantidadComentariosAprobados;
+		
 	public Foro() {
 		super();
+		reiniciarCantidades();
+	}
+
+	private void reiniciarCantidades() {
+		this.cantidadTemasPorAprobar = 0;	
+		this.cantidadTemasAprobados = 0;
+		this.cantidadComentariosPorAprobar = 0;
+		this.cantidadComentariosAprobados = 0;
 	}
 
 	public Long getId() {
@@ -111,6 +122,82 @@ public class Foro implements Serializable {
 		return EstadoForo.MODERADO.equals(this.getEstado());
 	}
 
+	public void addTema(Tema tema) {
+		if(tema == null){
+			return;
+		}
+		
+		if(this.temas == null){
+			this.temas = new TreeSet<Tema>();
+		}
+		this.temas.add(tema);
+		actualizarCantidades(tema);
+	}
+	
+	public boolean actualizarTema(Tema tema){
+		boolean encontrado = false;
+		if(tema != null){
+			for(Tema temaViejo : this.temas){
+				if(temaViejo.getId() == tema.getId()){
+					encontrado = true;
+					this.temas.remove(temaViejo);
+					this.temas.add(tema);
+					actualizarCantidadesPreexistentes(tema, temaViejo);
+					break;
+				}
+			}
+		}
+		
+		return encontrado;
+	}
+	
+	private void actualizarCantidadesPreexistentes(Tema temaNuevo, Tema temaViejo){
+		if(temaNuevo != null && temaViejo != null){
+			//Actualizo segun tema viejo (decremento cantidades)
+			decrementoCantidades(temaViejo);
+			//Actualizo por tema nuevo (aumento cantidades)
+			actualizarCantidades(temaNuevo);
+		}
+	}
+	
+	private void decrementoCantidades(Tema tema){
+		if(tema.isAprobado()){
+			this.cantidadTemasAprobados--;
+		} else if(!tema.isRechazado()){
+			this.cantidadComentariosPorAprobar--;
+		}
+		
+		if(tema.getComentarios() != null && !tema.getComentarios().isEmpty()){
+			for(Comentario comentario : tema.getComentarios()){
+				if(comentario.isAprobado()){
+					this.cantidadComentariosAprobados--;
+				} else if(!comentario.isRechazado()) {
+					this.cantidadComentariosPorAprobar--;
+				}
+			}
+		}	
+	}
+	
+	private void actualizarCantidades(Tema tema) {
+		if(tema != null){
+			if(tema.isAprobado()){
+				this.cantidadTemasAprobados++;
+			} else if(!tema.isRechazado()){
+				this.cantidadComentariosPorAprobar++;
+			}
+			
+			if(tema.getComentarios() != null && !tema.getComentarios().isEmpty()){
+				for(Comentario comentario : tema.getComentarios()){
+					if(comentario.isAprobado()){
+						this.cantidadComentariosAprobados++;
+					} else if(!comentario.isRechazado()) {
+						this.cantidadComentariosPorAprobar++;
+					}
+				}
+			}
+		}
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

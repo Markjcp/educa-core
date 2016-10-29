@@ -542,5 +542,15 @@ ADD CONSTRAINT `fk_sesion_foro1`
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
 
+  
+-- 29/10
 
+-- -----------------------------------------------------
+-- Table `educa`.`foro`
+-- -----------------------------------------------------
+ALTER TABLE `educa`.`foro`
+  ADD `temas_por_aprobar` INT NOT NULL DEFAULT 0,
+  ADD `temas_aprobados` INT NOT NULL DEFAULT 0,
+  ADD `comentarios_por_aprobar` INT NOT NULL DEFAULT 0,
+  ADD `comentarios_aprobados` INT NOT NULL DEFAULT 0;
 

@@ -284,7 +284,12 @@
 												                    <span class="glyphicon glyphicon-calendar">
 												                    </span>
 												                </span>
-															</div>     									    		
+															</div>
+															<br></br><br></br>															
+															<div class="form-group input-group input-field" id="tipoForoActualizadar">
+																<input th:id="'tipoForoCheckboxUpdate' + ${sesionPropia.id.numero}" id="tipoForoCheckboxUpdate" type="checkbox" th:name="foroModerado" th:value="${sesionPropia.foroModerado}" th:checked="${sesionPropia.foroModerado}"/>
+																<label th:for="'tipoForoCheckboxUpdate' + ${sesionPropia.id.numero}">Foro moderado</label>
+															</div> 									    		
 														</div>
 													</div>
 													
@@ -352,7 +357,12 @@
 													</div>
 													<div th:if="${mostrarErroresSesion} == true" class="form-group input-group input-field date">
 														<p id="fechaHastaError" th:errors="*{nuevaSesion.fechaHasta}" class="has-error-custom"></p>
-													</div>											                         									    		
+													</div>
+													<br></br><br></br>
+													<div class="form-group input-group input-field" id="moderado">
+														<input id="moderadoCheckbox" type="checkbox" th:field="*{nuevaSesion.foroModerado}" th:checked="*{nuevaSesion.foroModerado}" th:value="*{nuevaSesion.foroModerado}"/>
+											        	<label for="moderadoCheckbox">Foro moderado</label>							                
+													</div>												 									                         									    		
 												</div>
 											</div>
 											

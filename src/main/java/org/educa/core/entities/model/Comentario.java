@@ -14,6 +14,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -45,7 +48,9 @@ public class Comentario implements Serializable, Comparable<Comentario> {
 	@Column(name = "id_tema")
 	private Long idTema;
 
-	@Column(name = "descripcion") //TODO validar 500 caracteres
+	@Column(name = "descripcion")
+	@NotEmpty(message = "Debe ingresar una descripción.")
+	@Length(max=500, message="La longitud máxima para la descripción es de {max} caracteres.")
 	private String descripcion;
 
 	@Enumerated(EnumType.STRING)

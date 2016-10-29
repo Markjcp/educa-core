@@ -3,7 +3,9 @@ package org.educa.core.entities.model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -15,9 +17,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.OrderBy;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 @Table(name = "tema")
@@ -43,13 +46,17 @@ public class Tema implements Serializable, Comparable<Tema> {
 	@Column(name = "id_foro")
 	private Long idForo;
 
-	@Column(name = "titulo") //TODO largo = 45 obligatorio
+	@Column(name = "titulo")
+	@NotEmpty(message = "Debe ingresar un título.")
+	@Length(max=45, message="La longitud máxima para el título es de {max} caracteres.")
 	private String titulo;
 
-	@Column(name = "descripcion")  //TODO largo = 200 obligatorio
+	@Column(name = "descripcion")
+	@NotEmpty(message = "Debe ingresar una descripción.")
+	@Length(max=200, message="La longitud máxima para la descripción es de {max} caracteres.")
 	private String descripcion;
 
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "id_tema", referencedColumnName= "id_tema",insertable = false, updatable = false)
 	@OrderBy(clause = "fechaCreacion asc")
 	private SortedSet<Comentario> comentarios;
@@ -59,8 +66,8 @@ public class Tema implements Serializable, Comparable<Tema> {
 	private EstadoPublicacion estado;
 	
 	//TODO VER SI ESTO LO AGREGAMOS A LOS CAMPOS DE LA BASE - seria ideal q este en la base y q con cada add de cosas se actualice automaticamente
-	@Transient
-	private int cantidadComentariosPorAprobar = 20;
+	//@Transient
+	//private int cantidadComentariosPorAprobar = 20;
 
 	public Tema() {
 		super();
@@ -145,12 +152,29 @@ public class Tema implements Serializable, Comparable<Tema> {
 		return (EstadoPublicacion.APROBADO.equals(getEstado()));
 	}
 	
-	public int getCantidadComentariosPorAprobar() {
-		return cantidadComentariosPorAprobar;
+	public boolean isRechazado(){
+		return (EstadoPublicacion.RECHAZADO.equals(getEstado()));
 	}
-
-	public void setCantidadComentariosPorAprobar(int cantidadComentariosPorAprobar) {
-		this.cantidadComentariosPorAprobar = cantidadComentariosPorAprobar;
+	
+//	public int getCantidadComentariosPorAprobar() {
+//		return cantidadComentariosPorAprobar;
+//	}
+//
+//	public void setCantidadComentariosPorAprobar(int cantidadComentariosPorAprobar) {
+//		this.cantidadComentariosPorAprobar = cantidadComentariosPorAprobar;
+//	}
+	
+	public void addComentario(Comentario comentario){
+		if(comentario == null){
+			return;
+		}
+		
+		if(this.comentarios == null){
+			this.comentarios = new TreeSet<Comentario>();
+		}
+		
+		this.comentarios.add(comentario);
+		//actualizarCantidades;
 	}
 
 	@Override

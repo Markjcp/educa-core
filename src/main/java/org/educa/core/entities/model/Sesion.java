@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.educa.core.util.FechaUtil;
@@ -59,9 +60,12 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date fechaHastaInscripcion;
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "id_foro", referencedColumnName = "id_foro")
 	private Foro foro;
+	
+	@Transient
+	private boolean foroModerado;
 
 	public Sesion() {
 		super();
@@ -137,6 +141,10 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 
 	public void setForo(Foro foro) {
 		this.foro = foro;
+		//Actualizo el estado del foro
+		if(this.foro != null){
+			this.foroModerado = EstadoForo.MODERADO.equals(this.foro.getEstado()) ? true : false;
+		}
 	}
 	
 	public String getDescripcionLarga() {		
@@ -168,9 +176,13 @@ public class Sesion implements Serializable, Comparable<Sesion> {
 		return "Sesión " + estado;
 	}
 	
+	public void setForoModerado(boolean foroModerado) {
+		this.foroModerado = foroModerado;
+	}
+
 	public boolean isForoModerado(){
 		if(this.getForo() == null){
-			return false;
+			return this.foroModerado;
 		}
 		
 		return (EstadoForo.MODERADO.equals(this.getForo().getEstado()));
