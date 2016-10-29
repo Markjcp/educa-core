@@ -118,6 +118,7 @@ public class Comentario implements Serializable, Comparable<Comentario> {
 		return EstadoPublicacion.RECHAZADO.equals(this.getEstado());
 	}
 	
+	@JsonIgnore
 	public String getNombreCompletoUsuario(){
 		String nombre = "";
 		if(this.getUsuario().getNombre() != null){

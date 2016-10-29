@@ -5,8 +5,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.educa.core.dao.ForoRepository;
 import org.educa.core.dao.TemaRepository;
-import org.educa.core.entities.model.Comentario;
+import org.educa.core.entities.model.EstadoForo;
+import org.educa.core.entities.model.EstadoPublicacion;
+import org.educa.core.entities.model.Foro;
 import org.educa.core.entities.model.Tema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,8 +30,9 @@ public class TemaApiController {
 
 	@Autowired
 	private TemaRepository temaRepository;
-
 	
+	@Autowired
+	private ForoRepository foroRepository;	
 	
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, value = "listar/{idForo}")
@@ -52,6 +56,12 @@ public class TemaApiController {
 		Date fechaCreacion = Calendar.getInstance().getTime(); 
 		tema.setFechaCreacion(fechaCreacion);
 		try {
+			Foro foro = foroRepository.findOne(tema.getIdForo());
+			if(foro.getEstado().equals(EstadoForo.MODERADO)){
+				tema.setEstado(EstadoPublicacion.NO_APROBADO);
+			}else{
+				tema.setEstado(EstadoPublicacion.APROBADO);
+			}
 			resultado = temaRepository.save(tema);
 			return new ResponseEntity<Tema>(resultado, HttpStatus.OK);
 

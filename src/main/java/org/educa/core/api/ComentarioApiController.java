@@ -4,7 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.educa.core.dao.ComentarioRepository;
+import org.educa.core.dao.ForoRepository;
+import org.educa.core.dao.TemaRepository;
 import org.educa.core.entities.model.Comentario;
+import org.educa.core.entities.model.EstadoForo;
+import org.educa.core.entities.model.EstadoPublicacion;
+import org.educa.core.entities.model.Foro;
+import org.educa.core.entities.model.Tema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +26,12 @@ public class ComentarioApiController {
 
 	@Autowired
 	private ComentarioRepository comentarioRepository;
+	
+	@Autowired
+	private ForoRepository foroRepository;
+	
+	@Autowired
+	private TemaRepository temaRepository;
 
 	@RequestMapping(method = RequestMethod.GET, value = "listar/{idTema}")
 	public ResponseEntity<List<Comentario>> comentariosPorTema(@PathVariable Long idTema) {
@@ -36,6 +48,13 @@ public class ComentarioApiController {
 	public ResponseEntity<Comentario> crear(@RequestBody Comentario comentario) {
 		Comentario resultado = null;
 		try {
+			Tema tema = temaRepository.findOne(comentario.getIdTema());
+			Foro foro = foroRepository.findOne(tema.getIdForo());
+			if(foro.getEstado().equals(EstadoForo.MODERADO)){
+				comentario.setEstado(EstadoPublicacion.NO_APROBADO);
+			}else{
+				comentario.setEstado(EstadoPublicacion.APROBADO);
+			}
 			resultado = comentarioRepository.save(comentario);
 			return new ResponseEntity<Comentario>(resultado, HttpStatus.OK);
 
