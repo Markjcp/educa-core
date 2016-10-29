@@ -106,6 +106,10 @@ public class Foro implements Serializable {
 	public void setCantidadComentariosAprobados(int cantidadComentariosAprobados) {
 		this.cantidadComentariosAprobados = cantidadComentariosAprobados;
 	}
+	
+	public boolean isModerado(){
+		return EstadoForo.MODERADO.equals(this.getEstado());
+	}
 
 	@Override
 	public int hashCode() {

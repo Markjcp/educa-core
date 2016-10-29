@@ -45,7 +45,7 @@ public class Comentario implements Serializable, Comparable<Comentario> {
 	@Column(name = "id_tema")
 	private Long idTema;
 
-	@Column(name = "descripcion")
+	@Column(name = "descripcion") //TODO validar 500 caracteres
 	private String descripcion;
 
 	@Enumerated(EnumType.STRING)
@@ -103,6 +103,28 @@ public class Comentario implements Serializable, Comparable<Comentario> {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public boolean isAprobado(){
+		return EstadoPublicacion.APROBADO.equals(this.getEstado());
+	}
+	
+	public boolean isRechazado(){
+		return EstadoPublicacion.RECHAZADO.equals(this.getEstado());
+	}
+	
+	public String getNombreCompletoUsuario(){
+		String nombre = "";
+		if(this.getUsuario().getNombre() != null){
+			nombre = this.getUsuario().getNombre();
+		}
+		
+		String apellido = "";
+		if(this.getUsuario().getApellido() != null){
+			apellido = this.getUsuario().getApellido();
+		}
+		
+		return nombre + " " + apellido;
 	}
 
 	@Override
