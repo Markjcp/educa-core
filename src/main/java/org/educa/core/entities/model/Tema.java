@@ -51,7 +51,7 @@ public class Tema implements Serializable, Comparable<Tema> {
 
 	@OneToMany
 	@JoinColumn(name = "id_tema", referencedColumnName= "id_tema",insertable = false, updatable = false)
-	@OrderBy(clause = "fechaCreacion asc")
+	@OrderBy(clause = "id asc")
 	private SortedSet<Comentario> comentarios;
 
 	@Enumerated(EnumType.STRING)

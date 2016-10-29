@@ -34,7 +34,7 @@ public class Foro implements Serializable {
 
 	@OneToMany
 	@JoinColumn(name = "id_foro", referencedColumnName = "id_foro",insertable = false, updatable = false)
-	@OrderBy(clause = "fechaCreacion desc")
+	@OrderBy(clause = "id desc")
 	private SortedSet<Tema> temas;
 	
 	//TODO VER SI ESTO LO AGREGAMOS A LOS CAMPOS DE LA BASE - seria ideal q este en la base y q con cada add de cosas se actualice automaticamente
