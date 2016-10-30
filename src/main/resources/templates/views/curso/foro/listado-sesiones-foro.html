@@ -32,8 +32,24 @@
 				        	<div class="form-group input-field">
 				        		 <input type="text" th:field="*{curso.categoria.descripcion}" placeholder="Categor&iacute;a del curso" disabled="disabled" style="color: #000; border-bottom: 1px solid #26a69a;"/>                                                        
 	                         </div>		 			    		 	                        
-				    	</div>				    	
-			    	</div>
+				    	</div>
+				    	<div class="col s12" th:if="${mensajeAltaTemaOk} == true">
+							<div 
+								class="alert alert-success alert-dismissable">
+								<button type="button" class="close" data-dismiss="alert"
+									aria-hidden="true">×</button>
+								<a href="#" class="alert-link">Bien Hecho!</a> El tema
+								se cre&oacute; con &eacute;xito.
+							</div>
+						</div>
+						<div class="col s12" th:if="${mensajeAltaTemaError} == true">
+							<div class="alert alert-danger alert-dismissable">
+								<button type="button" class="close" data-dismiss="alert"
+									aria-hidden="true">×</button>
+								<a href="#" class="alert-link">Error al crear un tema!</a> <span th:text="${mensajeAltaTemaErrorMsj}"></span>
+							</div>
+						</div>
+					</div>
 			    </form>
 			    
 			    <div class="row">

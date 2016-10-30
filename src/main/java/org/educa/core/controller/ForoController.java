@@ -76,10 +76,15 @@ public class ForoController {
 	public String agregarTema(@PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @ModelAttribute @Valid ForoForm foroForm, 
 			BindingResult bindingResult, Model model, HttpServletRequest request) {		
 		if (bindingResult.hasFieldErrors("tema.*")) {
-			SortedSet<Sesion> sesiones = sesionRepository.findByFechaAndIdCurso(Calendar.getInstance().getTime(), idCurso);
-			model.addAttribute("abrirPopupAltaTemaError", true);//TODO EDIAZ ESTO HAY Q HACERLO EN LA VISTA, NO ESTA ACTUALMENTE
-			model.addAttribute("foroForm", foroForm);
-			model.addAttribute("sesiones", sesiones);
+// 			Esto lo comente porque no se si la idea era hacer lógica para que el popup no se cierre, se puede mejorar
+//			SortedSet<Sesion> sesiones = sesionRepository.findByFechaAndIdCurso(Calendar.getInstance().getTime(), idCurso);
+//			model.addAttribute("abrirPopupAltaTemaError", true);//TODO EDIAZ ESTO HAY Q HACERLO EN LA VISTA, NO ESTA ACTUALMENTE
+//			model.addAttribute("foroForm", foroForm);
+//			model.addAttribute("sesiones", sesiones);
+			model.addAttribute("mensajeAltaTemaError", true);
+			String errorMsj = bindingResult.getAllErrors().iterator().next().getDefaultMessage();
+			model.addAttribute("mensajeAltaTemaErrorMsj", errorMsj);			
+			cargarDatosListadoSesionForo(idCurso, new ForoForm(), nroSesion, model);
 			
 			return LISTADO_SESION_FORO;
 		}
@@ -170,9 +175,11 @@ public class ForoController {
 			@ModelAttribute @Valid ForoForm foroForm, BindingResult bindingResult, Model model, HttpServletRequest request) {
 		if (bindingResult.hasFieldErrors("comentario.*")) {			
 			model.addAttribute("altaComentarioError", true);//TODO EDIAZ ESTO HAY Q HACERLO EN LA VISTA, NO ESTA ACTUALMENTE
+			String errorMsj = bindingResult.getAllErrors().iterator().next().getDefaultMessage();
+			model.addAttribute("altaComentarioErrorMsj", errorMsj);
 			cargarDatosDetalleTema(idTema, model, idCurso, nroSesion);
 			
-			return LISTADO_SESION_FORO;
+			return DETALLE_TEMA;
 		}
 		
 		Comentario comentario = foroForm.getComentario();

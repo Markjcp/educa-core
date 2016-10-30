@@ -39,8 +39,23 @@
 				        	<div class="form-group input-field">
 				        		 <input type="text" th:field="*{curso.categoria.descripcion}" placeholder="Categor&iacute;a del curso" disabled="disabled" style="color: #000; border-bottom: 1px solid #26a69a;"/>                                                        
 	                         </div>		 			    		 	                        
-				    	</div>				    	
-			    	</div>
+				    	</div>
+						<div class="col s12" th:if="${altaComentarioOk} == true">
+							<div class="alert alert-success alert-dismissable">
+								<button type="button" class="close" data-dismiss="alert"
+									aria-hidden="true">×</button>
+								<a href="#" class="alert-link">Bien Hecho!</a> El comentario se
+								cre&oacute; con &eacute;xito.
+							</div>
+						</div>
+						<div class="col s12" th:if="${altaComentarioError} == true">
+							<div class="alert alert-danger alert-dismissable">
+								<button type="button" class="close" data-dismiss="alert"
+									aria-hidden="true">×</button>
+								<a href="#" class="alert-link">Error!</a> <span th:text="${altaComentarioErrorMsj}"></span>
+							</div>
+						</div>
+					</div>
 			    </form>
 			    
 			    <div class="row">
@@ -71,7 +86,7 @@
 						</div>
 			    	</div>
 			    	
-			    	<div th:if="${tema.aprobado} == false and ${foroForm.sesion.foro.moderado} == true">
+			    	<div>
 			    		<!-- Se da la posibilidad de aprobar el tema cuando el tema no esta aprobado y es un foro moderado. -->
 			    		<div class="row">
 							<div class="col-xs-12">
@@ -80,9 +95,15 @@
 						</div>
 							
 						<div class="col l12 s12">
-							<a type="submit" class="btn orange-effect orange darken-4" th:href="@{/foro/aprobarTema/{idCurso}/{nroSesion}/{idTema}(idCurso=${foroForm.curso.id},nroSesion=${foroForm.sesion.id.numero},idTema=${tema.id})}">Publicar</a>
-							<a type="submit" class="btn orange-effect orange darken-4" th:href="@{/foro/ocultarTema/{idCurso}/{nroSesion}/{idTema}(idCurso=${foroForm.curso.id},nroSesion=${foroForm.sesion.id.numero},idTema=${tema.id})}">Ocultar</a>
-							<a class="btn orange-effect orange darken-4" th:href="@{/foro/{cursoId}(cursoId=${foroForm.curso.id})}">Salir</a>
+							<a th:if="${tema.aprobado} == false and ${foroForm.sesion.foro.moderado} == true and ${tema.rechazado} == false" type="submit" class="btn orange-effect orange darken-4" th:href="@{/foro/aprobarTema/{idCurso}/{nroSesion}/{idTema}(idCurso=${foroForm.curso.id},nroSesion=${foroForm.sesion.id.numero},idTema=${tema.id})}">Publicar</a>
+							<a th:if="${tema.rechazado} == false" type="submit" class="btn orange-effect orange darken-4" th:href="@{/foro/ocultarTema/{idCurso}/{nroSesion}/{idTema}(idCurso=${foroForm.curso.id},nroSesion=${foroForm.sesion.id.numero},idTema=${tema.id})}">Ocultar</a>
+							<a th:if="${tema.aprobado} == false and ${foroForm.sesion.foro.moderado} == true" class="btn orange-effect orange darken-4" th:href="@{/foro/{cursoId}(cursoId=${foroForm.curso.id})}">Salir</a>
+						</div>
+						
+						<div class="row" th:if="${tema.rechazado} == false">
+							<div class="col-xs-12">
+								<br />
+							</div>
 						</div>
 			    	</div>
 			    	
