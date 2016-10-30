@@ -559,6 +559,7 @@ ALTER TABLE `educa`.`foro`
 -- -----------------------------------------------------
 -- Table `educa`.`evaluacion`
 -- -----------------------------------------------------
+
 DROP TABLE IF EXISTS `educa`.`evaluacion` ;
 CREATE TABLE IF NOT EXISTS `educa`.`evaluacion` (
   `id_evaluacion` BIGINT NOT NULL AUTO_INCREMENT,
