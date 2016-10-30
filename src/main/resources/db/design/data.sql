@@ -38,3 +38,7 @@ INSERT INTO `educa`.`parametro` (`key`, `value`) VALUES ('RECAPTCHA_SECRET', '6L
 
 -- 20/10
 INSERT INTO `educa`.`parametro` (`key`, `value`) VALUES ('MULTIPLICADOR_PREGUNTAS', '2');
+
+-- 29/10
+INSERT INTO `usuario` VALUES (4,'Nestor','Huallpa','huallpa.nestor@gmail.com',NULL,2,'3UIuxjTEnKpa3TVoftxARzTw+6XHn9wH','fnli3b21du6g7kes5aspa3trm7',NULL,NULL,1)
+

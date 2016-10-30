@@ -103,4 +103,15 @@ public class PreguntaExamenUnidad implements Serializable {
 		return true;
 	}
 
+	public boolean esOpcionValida(Integer idOpcionElegida) {
+		boolean correcta = false;
+		for (OpcionExamenUnidad opcion : this.getOpciones()) {
+			if (opcion.getId().getIdOpcion() == idOpcionElegida 
+					&& opcion.isEsCorrecta()) {
+				correcta = true;
+			}
+		}
+		return correcta;
+	}
+
 }

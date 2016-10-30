@@ -13,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.educa.core.bean.RespuestaExamenBean;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -106,6 +108,27 @@ public class ExamenUnidad implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public boolean esCorrecta(RespuestaExamenBean respuesta) {
+		
+		boolean correcta = false;
+		for ( PreguntaExamenUnidad preguntaExamen : this.getPreguntas() ) {
+			if (preguntaExamen.getId().getIdPregunta() == respuesta.getIdPregunta()) {
+				if (preguntaExamen.isMultipleChoice() && respuesta.isMultipleChoice()) {
+					if (preguntaExamen.esOpcionValida(respuesta.getIdOpcionElegida())) {
+						correcta = true;
+					}
+				} else if (!preguntaExamen.isMultipleChoice() && !respuesta.isMultipleChoice()) {
+					if (preguntaExamen.getRespuesta().toLowerCase()
+							.equals(respuesta.getRespuesta().toLowerCase())) {
+						correcta = true;
+					}
+				}
+			}
+		}
+		
+		return correcta;
 	}
 
 }

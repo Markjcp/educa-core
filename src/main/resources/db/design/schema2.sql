@@ -554,3 +554,31 @@ ALTER TABLE `educa`.`foro`
   ADD `comentarios_por_aprobar` INT NOT NULL DEFAULT 0,
   ADD `comentarios_aprobados` INT NOT NULL DEFAULT 0;
 
+
+-- 29/10
+-- -----------------------------------------------------
+-- Table `educa`.`evaluacion`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `educa`.`evaluacion` ;
+CREATE TABLE IF NOT EXISTS `educa`.`evaluacion` (
+  `id_evaluacion` BIGINT NOT NULL AUTO_INCREMENT,
+  `id_usuario` BIGINT NOT NULL,
+  `numero_componente` INT NOT NULL,
+  `cantidad_respuestas_correctas` INT NULL,
+  `cantidad_respuestas_incorrectas` INT NULL,
+  `estado_examen` VARCHAR(45) NULL,
+  `fecha_actualizacion` TIMESTAMP NULL,
+  PRIMARY KEY (`id_evaluacion`),
+  INDEX `fk_examen_1_idx` (`id_usuario` ASC),
+  INDEX `fk_examen_2_idx` (`numero_componente` ASC),
+  CONSTRAINT `fk_examen_1`
+    FOREIGN KEY (`id_usuario`)
+    REFERENCES `educa`.`usuario` (`id_usuario`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_examen_2`
+    FOREIGN KEY (`numero_componente`)
+    REFERENCES `educa`.`sesion` (`numero_componente`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+

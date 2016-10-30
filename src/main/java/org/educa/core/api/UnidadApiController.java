@@ -1,21 +1,27 @@
 package org.educa.core.api;
 
 import java.io.ByteArrayInputStream;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+import org.educa.core.bean.RespuestasExamenBean;
 import org.educa.core.dao.ExamenUnidadRepository;
 import org.educa.core.dao.MaterialUnidadRepository;
 import org.educa.core.dao.VideoUnidadRepository;
+import org.educa.core.entities.model.Evaluacion;
 import org.educa.core.entities.model.ExamenUnidad;
 import org.educa.core.entities.model.ExamenUnidadId;
 import org.educa.core.entities.model.MaterialUnidad;
 import org.educa.core.entities.model.VideoUnidad;
+import org.educa.core.services.EvaluacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -38,6 +44,10 @@ public class UnidadApiController {
 	
 	@Autowired
 	private ExamenUnidadRepository examenUnidadRepository;
+	
+	
+	@Autowired
+	private EvaluacionService evaluacionService;
 	
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, value = "{numeroUnidad}/{idCurso}/video", headers="Accept=*/*",produces = {"video/mp4"})
@@ -82,7 +92,73 @@ public class UnidadApiController {
 		System.out.println(mapper.writeValueAsString(resultado));
 		return new ResponseEntity<ExamenUnidad>(resultado,HttpStatus.OK);	
 	}
+	
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, value = "{numeroUnidad}/{idCurso}/evaluacion", produces = {"application/json"})
+	public ResponseEntity<Evaluacion> evaluacion(@PathVariable Integer numeroUnidad, 
+											@PathVariable Long idCurso,
+											@RequestBody RespuestasExamenBean respuestasBean) throws JsonProcessingException {
+		
+		
+		Evaluacion evaluacion = new Evaluacion();
+		
+		ExamenUnidadId id = new ExamenUnidadId();
+		id.setIdCurso(idCurso);
+		id.setIdExamen(PRIMER_EXAMEN_ID);
+		id.setNumero(numeroUnidad);
+		ExamenUnidad examen = examenUnidadRepository.findOne(id);
+		if(examen==null || !examen.isCompleto()){
+			return new ResponseEntity<Evaluacion>(HttpStatus.NOT_FOUND);			
+		}
+		
+		try {
+			evaluacion = evaluacionService.evaluar(examen, respuestasBean);
+		} catch (Exception e) {
+			return new ResponseEntity<Evaluacion>(evaluacion, HttpStatus.NOT_FOUND);
+
+		}
+		
+		return new ResponseEntity<Evaluacion>(evaluacion,HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.GET, value = "{numeroUnidad}/{idCurso}/evaluacion/{idUsuario}", produces = {"application/json"})
+	public ResponseEntity<Evaluacion> evaluacion(@PathVariable Integer numeroUnidad, 
+											@PathVariable Long idCurso,
+											@PathVariable Long idUsuario) throws JsonProcessingException {
+		
+		
+		Evaluacion evaluacion = new Evaluacion();
+		
+		ExamenUnidadId id = new ExamenUnidadId();
+		id.setIdCurso(idCurso);
+		id.setIdExamen(PRIMER_EXAMEN_ID);
+		id.setNumero(numeroUnidad);
+		ExamenUnidad examen = examenUnidadRepository.findOne(id);
+		if(examen==null || !examen.isCompleto()){
+			return new ResponseEntity<Evaluacion>(HttpStatus.NOT_FOUND);			
+		}
+		
+		try {
+			List<Evaluacion> evaluaciones = evaluacionService.consultarEvaluacion(examen.getId().getNumero(), idUsuario);
+			
+			if (!evaluaciones.isEmpty()) {
+				Collections.sort(evaluaciones, new EvaluacionComparator());
+				evaluacion = evaluaciones.get(0);
+			} 
+		} catch (Exception e) {
+			return new ResponseEntity<Evaluacion>(evaluacion, HttpStatus.NOT_FOUND);
+		}
+		
+		return new ResponseEntity<Evaluacion>(evaluacion,HttpStatus.OK);
+	}
 
 	
+	public class EvaluacionComparator implements Comparator<Evaluacion> {
+	    @Override
+	    public int compare(Evaluacion o1, Evaluacion o2) {
+	        return o1.getFechaActualizacion().compareTo(o2.getFechaActualizacion());
+	    }
+	}
 
 }
