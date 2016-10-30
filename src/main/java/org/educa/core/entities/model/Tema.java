@@ -23,6 +23,8 @@ import org.hibernate.annotations.OrderBy;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "tema")
 public class Tema implements Serializable, Comparable<Tema> {
@@ -71,9 +73,6 @@ public class Tema implements Serializable, Comparable<Tema> {
 
 	public Tema() {
 		super();
-		// this.estado = EstadoPublicacion.INDEFINIDO; TODO comento esto porque
-		// no va a estar bueno para hibernate hacerlo en el constuctor por
-		// defecto
 	}
 
 	public Date getFechaCreacion() {
@@ -122,20 +121,20 @@ public class Tema implements Serializable, Comparable<Tema> {
 
 	public void setComentarios(SortedSet<Comentario> comentarios) {
 		this.comentarios = comentarios;
-		calcularComentariosPorAprobar();
+		//calcularComentariosPorAprobar();
 	}
 
-	private void calcularComentariosPorAprobar() {
-		this.cantidadComentariosPorAprobar = 0;
-		if(this.comentarios == null || this.comentarios.isEmpty()){
-			return;
-		}
-		for(Comentario comentario : this.comentarios){
-			if(!EstadoPublicacion.APROBADO.equals(comentario.getEstado())){
-				this.cantidadComentariosPorAprobar ++;
-			}
-		}
-	}
+//	private void calcularComentariosPorAprobar() {
+//		this.cantidadComentariosPorAprobar = 0;
+//		if(this.comentarios == null || this.comentarios.isEmpty()){
+//			return;
+//		}
+//		for(Comentario comentario : this.comentarios){
+//			if(!EstadoPublicacion.APROBADO.equals(comentario.getEstado())){
+//				this.cantidadComentariosPorAprobar ++;
+//			}
+//		}
+//	}
 
 	public EstadoPublicacion getEstado() {
 		return estado;
@@ -183,7 +182,22 @@ public class Tema implements Serializable, Comparable<Tema> {
 		}
 		
 		this.comentarios.add(comentario);
-		calcularComentariosPorAprobar();
+		//calcularComentariosPorAprobar();
+	}
+	
+	@JsonIgnore
+	public String getNombreCompletoUsuario(){
+		String nombre = "";
+		if(this.getUsuario().getNombre() != null){
+			nombre = this.getUsuario().getNombre();
+		}
+		
+		String apellido = "";
+		if(this.getUsuario().getApellido() != null){
+			apellido = this.getUsuario().getApellido();
+		}
+		
+		return nombre + " " + apellido;
 	}
 
 	@Override

@@ -168,8 +168,6 @@ public class ForoController {
 	@RequestMapping(value = "/agregarComentario/{idCurso}/{nroSesion}/{idTema}", method = RequestMethod.POST)
 	public String agregarComentario(@PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @PathVariable("idTema") long idTema, 
 			@ModelAttribute @Valid ForoForm foroForm, BindingResult bindingResult, Model model, HttpServletRequest request) {
-		//TODO
-		System.out.println("ENTRO A DAR DE ALTA UN COMENTARIO");
 		if (bindingResult.hasFieldErrors("comentario.*")) {			
 			model.addAttribute("altaComentarioError", true);//TODO EDIAZ ESTO HAY Q HACERLO EN LA VISTA, NO ESTA ACTUALMENTE
 			cargarDatosDetalleTema(idTema, model, idCurso, nroSesion);

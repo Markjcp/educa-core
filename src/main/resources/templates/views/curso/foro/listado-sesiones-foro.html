@@ -64,7 +64,7 @@
 												</div>
 												<div class="row">
 													<div class="col s2"></div>
-													<div class="col s4"> 
+													<div class="col s4">
 														<div class="form-group input-group input-field">
 															<label for="cantidadTemasPorAprobar" class="" style="color: black; font-weight: inherit;">
 																Temas <span style="color: #d50000;">por aprobar</span>:&nbsp;
@@ -104,15 +104,19 @@
 													        <li th:each="tema : ${sesion.foro.temas}" class="collection-item">
 													        	<div>
 													        		<div>
-													        			<i th:if="${tema.aprobado} == false" class="material-icons" style="color: #d50000; vertical-align: middle;">error_outline</i>
+													        			<i th:if="${tema.aprobado} == false and ${tema.rechazado} == false" class="material-icons" style="color: #d50000; vertical-align: middle;">error_outline</i>
 																		<i th:if="${tema.aprobado} == true" class="material-icons" style="color: #26a69a; vertical-align: middle;">done_all</i>
-																		<span th:text="${tema.titulo}">&nbsp;</span>
+																		<i th:if="${tema.rechazado} == true" class="material-icons" style="color: #a0a0a0; vertical-align: middle;">visibility_off</i>																		
+																		<span th:if="${tema.aprobado} == false and ${tema.rechazado} == false" style="color: #d50000;" th:text="${tema.titulo}">&nbsp;</span>
+																		<span th:if="${tema.aprobado} == true" th:text="${tema.titulo}">&nbsp;</span>
+																		<span th:if="${tema.rechazado} == true" style="color: #a0a0a0;" th:text="${tema.titulo}">&nbsp;</span>
 																		<div style="float: right;">
 																			<button th:if="${tema.cantidadComentariosPorAprobar} > 0" type="button" class="btn btn-danger-educa btn-circle-educa circle tooltipped" data-position="top" data-tooltip="Cantidad de comentarios sin aprobar." th:text="${tema.cantidadComentariosPorAprobar}">&nbsp;</button>
 																			&nbsp;&nbsp;&nbsp;&nbsp;
 																			<a href="#" th:href="@{/foro/detalleTema/{idCurso}/{nroSesion}/{idTema}(idCurso=${sesion.id.idCurso},nroSesion=${sesion.id.numero},idTema=${tema.id})}" class="secondary-content">
-																				<i th:if="${tema.aprobado} == false" class="material-icons" style="color: #d50000;">send</i>
-																				<i th:if="${tema.aprobado} == true" class="material-icons" style="color: #d50000;">send</i>
+																				<i th:if="${tema.aprobado} == false and ${tema.rechazado} == false" style="color: #d50000;" class="material-icons">send</i>
+																				<i th:if="${tema.aprobado} == true" class="material-icons">send</i>
+																				<i th:if="${tema.rechazado} == true" style="color: #a0a0a0;" class="material-icons">send</i>
 																			</a>
 																		</div>															
 																	</div>																																								        	
@@ -141,36 +145,34 @@
 									</div>
 									
 									<!-- Alta de un tema dentro del foro de la sesion. -->
-									<div id="modalAltaTema" class="modal">										
-										<div class="modal-content">											
-											<h4 class="modal-title" id="myModalLabel">Foro - Nuevo tema</h4>
-											<hr></hr>																							
+									<div id="modalAltaTema" class="modal-educa fade-educa">
+										<div class="modal-educa-dialog" style="transform: translate(0,0);">
 											<form action="#" th:action="@{/foro/agregarTema/{idCurso}/{nroSesion}(idCurso=${sesion.id.idCurso},nroSesion=${sesion.id.numero})}" th:object="${foroForm}" method="post" id="formularioAltaTema">
-												<input type="hidden" th:field="*{tema.idForo}" th:value="${sesion.foro.id}"/>
-												<input type="hidden" th:field="*{tema.estado}" th:value="APROBADO"/>
-												<div class="col l6 s12"> 
-													<div class="form-group input-field">
-														<input type="text" th:field="*{tema.titulo}" placeholder="T&iacute;tulo del nuevo tema" length="45"/>
-														<p id="tituloTemaError" th:errors="*{tema.titulo}" class="has-error-custom"></p>
-													</div>							        	                      
-													<div class="form-group input-field">
-														<textarea class="materialize-textarea" th:field="*{tema.descripcion}" placeholder="Descripci&oacute;n del nuevo tema" length="200"></textarea>
-														<p id="descripcionTemaError" th:errors="*{tema.descripcion}" class="has-error-custom"></p>
-													</div>		 			    		 	                         
-												</div>
-												
-												<div class="row">
-													<div class="col-xs-12">
-														<hr></hr>
+												<div class="panel-educa panel-educa-yellow">
+													<div class="panel-educa-heading">
+														Foro - Nuevo tema
 													</div>
-												</div>
-													
-												<div class="col l12 s12" style="margin-top: -40px;">
-													<button type="submit" class="btn orange-effect orange darken-4">Publicar</button>
+													<div class="panel-educa-body">
+														<input type="hidden" th:field="*{tema.idForo}" th:value="${sesion.foro.id}"/>
+														<input type="hidden" th:field="*{tema.estado}" th:value="APROBADO"/>
+														<div class="col l6 s12"> 
+															<div class="form-group input-field">
+																<input type="text" th:field="*{tema.titulo}" placeholder="T&iacute;tulo del nuevo tema" length="45"/>
+																<p id="tituloTemaError" th:errors="*{tema.titulo}" class="has-error-custom"></p>
+															</div>							        	                      
+															<div class="form-group input-field">
+																<textarea class="materialize-textarea" th:field="*{tema.descripcion}" placeholder="Descripci&oacute;n del nuevo tema" length="200"></textarea>
+																<p id="descripcionTemaError" th:errors="*{tema.descripcion}" class="has-error-custom"></p>
+															</div>		 			    		 	                         
+														</div>
+													</div>
+													<div class="panel-educa-footer">
+														<button type="submit" class="btn orange-effect orange darken-4">Publicar</button>
 													<a class="btn orange-effect orange darken-4" onclick="cerrarModalAltaTema();">Salir</a>
-												</div>
-											</form>																																																																
-										</div>																																				
+													</div>
+												</div> 
+											</form>											 
+										</div>																																														
 									</div>				
 								</li>								
 							</ul>																					

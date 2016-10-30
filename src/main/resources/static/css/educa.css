@@ -126,3 +126,217 @@ button:focus {
   width:400px;
   color: #2f2f2f;
 }
+
+
+/******** MODAL  *****/
+.fade-educa {
+  opacity: 0;
+  -webkit-transition: opacity .15s linear;
+       -o-transition: opacity .15s linear;
+          transition: opacity .15s linear;
+}
+.fade-educa.in {
+  opacity: 1;
+}
+
+.modal-educa-open {
+  overflow: hidden;
+}
+.modal-educa {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1050;
+  display: none;
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
+  outline: 0;
+}
+.modal-educa.fade-educa .modal-educa-dialog {
+  -webkit-transition: -webkit-transform .3s ease-out;
+       -o-transition:      -o-transform .3s ease-out;
+          transition:         transform .3s ease-out;
+  -webkit-transform: translate(0, -25%);
+      -ms-transform: translate(0, -25%);
+       -o-transform: translate(0, -25%);
+          transform: translate(0, -25%);
+}
+.modal-educa.in .modal-educa-dialog {
+  -webkit-transform: translate(0, 0);
+      -ms-transform: translate(0, 0);
+       -o-transform: translate(0, 0);
+          transform: translate(0, 0);
+}
+.modal-educa-open .modal-educa {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.modal-educa-dialog {
+  position: relative;
+  width: auto;
+  margin: 10px;
+}
+.modal-educa-content {
+  position: relative;
+  background-color: #fff;
+  -webkit-background-clip: padding-box;
+          background-clip: padding-box;
+  border: 1px solid #999;
+  border: 1px solid rgba(0, 0, 0, .2);
+  border-radius: 6px;
+  outline: 0;
+  -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+          box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+}
+.modal-educa-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1040;
+  background-color: #000;
+}
+.modal-educa-backdrop.fade {
+  filter: alpha(opacity=0);
+  opacity: 0;
+}
+.modal-educa-backdrop.in {
+  filter: alpha(opacity=50);
+  opacity: .5;
+}
+.modal-educa-header {
+  padding: 15px;
+  border-bottom: 1px solid #e5e5e5;
+}
+.modal-educa-header .close {
+  margin-top: -2px;
+}
+.modal-educa-title {
+  margin: 0;
+  line-height: 1.42857143;
+}
+.modal-educa-body {
+  position: relative;
+  padding: 15px;
+}
+.modal-educa-footer {
+  padding: 15px;
+  text-align: right;
+  border-top: 1px solid #e5e5e5;
+}
+.modal-educa-footer .btn + .btn {
+  margin-bottom: 0;
+  margin-left: 5px;
+}
+.modal-educa-footer .btn-group .btn + .btn {
+  margin-left: -1px;
+}
+.modal-educa-footer .btn-block + .btn-block {
+  margin-left: 0;
+}
+.modal-educa-scrollbar-measure {
+  position: absolute;
+  top: -9999px;
+  width: 50px;
+  height: 50px;
+  overflow: scroll;
+}
+@media (min-width: 768px) {
+  .modal-educa-dialog {
+    width: 600px;
+    margin: 30px auto;
+  }
+  .modal-educa-content {
+    -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+  }
+  .modal-educa-sm {
+    width: 300px;
+  }
+}
+@media (min-width: 992px) {
+  .modal-educa-lg {
+    width: 900px;
+  }
+}
+
+.modal-educa-header:before,
+.modal-educa-header:after,
+.modal-educa-footer:before,
+.modal-educa-footer:after {
+  display: table;
+  content: " ";
+}
+
+.modal-educa-header:after,
+.modal-educa-footer:after {
+  clear: both;
+}
+
+/******** FIN MODAL  *****/
+
+/******** PANEL  *****/
+.panel-educa {
+  margin-bottom: 20px;
+  background-color: #fff;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+          box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+  margin-right: 5px;
+}
+
+.panel-educa-body {
+  padding: 15px;
+  height: 350px;
+  overflow-y: scroll;
+}
+
+.panel-educa-yellow {
+  border-color: #f0ad4e;
+}
+
+.panel-educa-yellow > .panel-educa-heading {
+  padding: 10px 15px;
+  border-bottom: 1px solid transparent;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-color: #f0ad4e;
+  color: white;
+  background-color: #f0ad4e;
+}
+
+.panel-educa-heading > .dropdown .dropdown-toggle {
+  color: inherit;
+}
+
+.panel-educa-footer {
+  padding: 10px 15px;
+  background-color: #f5f5f5;
+  border-top: 1px solid #ddd;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+
+.panel-educa-yellow > a {
+  color: #f0ad4e;
+}
+.panel-educa-yellow > a:hover {
+  color: #df8a13;
+}
+
+.panel-educa > .panel-educa-body + .table,
+.panel-educa > .panel-educa-body + .table-responsive,
+.panel-educa > .table + .panel-educa-body,
+.panel-educa > .table-responsive + .panel-educa-body {
+  border-top: 1px solid #ddd;
+}
+
+/*footer,
+{
+  display: block;
+}*/
+/******** FIN - PANEL  *****/

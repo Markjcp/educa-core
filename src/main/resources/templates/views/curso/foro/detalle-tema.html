@@ -57,6 +57,18 @@
 								<span th:text="${tema.descripcion}">&nbsp;</span>
 							</label>
 						</div>
+						<div class="form-group input-group input-field">
+							<label for="temaDescripcion" class="" style="color: black; font-weight: inherit;">
+								Usuario:&nbsp;
+								<span th:text="${tema.nombreCompletoUsuario}">&nbsp;</span>
+							</label>
+						</div>
+						<div class="form-group input-group input-field">
+							<label for="temaDescripcion" class="" style="color: black; font-weight: inherit;">
+								Fecha:&nbsp;
+								<span th:text="${#dates.format(tema.fechaCreacion, 'dd-MM-yyyy')}">&nbsp;</span>
+							</label>
+						</div>
 			    	</div>
 			    	
 			    	<div th:if="${tema.aprobado} == false and ${foroForm.sesion.foro.moderado} == true">
@@ -74,10 +86,10 @@
 						</div>
 			    	</div>
 			    	
-			    	<div class="col l12 s12" th:if="${tema.aprobado} == true or ${foroForm.sesion.foro.moderado} == false">
+			    	<div class="col l12 s12" th:if="${tema.aprobado} == true or ${foroForm.sesion.foro.moderado} == false and ${tema.rechazado} == false">
 			    		<!-- Si el tema esta aprobado o el foro no es moderado, listo los comentarios -->
 			    		<div class="panel panel-default">
-							<div class="panel-heading">
+							<div class="panel-heading" style="font-weight: bold;">
 								Comentarios
 							</div>
 							<div class="panel-body">
@@ -167,7 +179,7 @@
 					</div>
 				</div>
 				
-				<div th:if="${tema.aprobado} == true or ${foroForm.sesion.foro.moderado} == false" id="chat-box" class="row">
+				<div th:if="${tema.aprobado} == true or ${foroForm.sesion.foro.moderado} == false and ${tema.rechazado} == false" id="chat-box" class="row">
 					<form action="#" th:action="@{/foro/agregarComentario/{idCurso}/{nroSesion}/{idTema}(idCurso=${foroForm.curso.id},nroSesion=${foroForm.sesion.id.numero},idTema=${tema.id})}" th:object="${foroForm}" method="post" id="formularioAltaComentario">
 						<div class="message-input-wrapper">
 							<textarea class="materialize-textarea" th:field="*{comentario.descripcion}" placeholder="Ingrese un nuevo comentario" length="500"></textarea>
