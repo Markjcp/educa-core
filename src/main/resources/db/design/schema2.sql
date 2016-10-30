@@ -581,5 +581,5 @@ CREATE TABLE IF NOT EXISTS `educa`.`evaluacion` (
     FOREIGN KEY (`numero_componente`)
     REFERENCES `educa`.`sesion` (`numero_componente`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION);
 
