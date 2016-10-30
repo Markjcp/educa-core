@@ -41,7 +41,7 @@ public class ForoController {
 	
 	private static final String LISTADO_SESION_FORO = "views/curso/foro/listado-sesiones-foro";	
 	private static final String DETALLE_TEMA = "views/curso/foro/detalle-tema";
-	private static final int COMENTS_LIST_PAGE_SIZE = 5;
+	private static final int COMENTS_LIST_PAGE_SIZE = 10;
 	
 	
 	
