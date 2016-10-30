@@ -59,6 +59,8 @@ public class TemaApiController {
 			Foro foro = foroRepository.findOne(tema.getIdForo());
 			if(foro.getEstado().equals(EstadoForo.MODERADO)){
 				tema.setEstado(EstadoPublicacion.NO_APROBADO);
+				foro.setCantidadTemasPorAprobar(foro.getCantidadTemasPorAprobar()+1);
+				foroRepository.save(foro);
 			}else{
 				tema.setEstado(EstadoPublicacion.APROBADO);
 			}

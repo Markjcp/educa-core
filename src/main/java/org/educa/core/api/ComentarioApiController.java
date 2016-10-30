@@ -52,6 +52,8 @@ public class ComentarioApiController {
 			Foro foro = foroRepository.findOne(tema.getIdForo());
 			if(foro.getEstado().equals(EstadoForo.MODERADO)){
 				comentario.setEstado(EstadoPublicacion.NO_APROBADO);
+				foro.setCantidadComentariosPorAprobar(foro.getCantidadComentariosPorAprobar()+1);
+				foroRepository.save(foro);
 			}else{
 				comentario.setEstado(EstadoPublicacion.APROBADO);
 			}

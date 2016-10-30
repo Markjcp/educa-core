@@ -121,10 +121,14 @@ public class ForoController {
 	
 	@RequestMapping(value = "/aprobarTema/{idCurso}/{nroSesion}/{idTema}", method = RequestMethod.GET)
 	public String aprobarTema(@PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @PathVariable("idTema") long idTema,
-			@ModelAttribute @Valid ForoForm foroForm, BindingResult bindingResult, Model model) {		
+			@ModelAttribute @Valid ForoForm foroForm, BindingResult bindingResult, Model model) {
 		Tema tema = temaRepository.findOne(idTema);
+		Foro foro = foroRepository.findOne(tema.getIdForo());
 		tema.setEstado(EstadoPublicacion.APROBADO);
 		temaRepository.save(tema);
+		foro.setCantidadTemasAprobados(foro.getCantidadTemasAprobados()+1);
+		foro.setCantidadTemasPorAprobar(foro.getCantidadTemasPorAprobar()-1);
+		foroRepository.save(foro);
 		
 		tema = temaRepository.findOne(idTema);//Lo vuelvo a buscar para que este actualizado
 		model.addAttribute("tema", tema);
@@ -149,13 +153,13 @@ public class ForoController {
 		return LISTADO_SESION_FORO;
 	}
 	
-	@RequestMapping(value = "/aprobarComentario/{idCurso}/{nroSesion}/{idTema}/{idComentario}", method = RequestMethod.POST)
+	@RequestMapping(value = "/aprobarComentario/{idCurso}/{nroSesion}/{idTema}/{idComentario}", method = RequestMethod.GET)
 	public String aprobarComentario(@PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @PathVariable("idTema") long idTema, 
 			@PathVariable("idComentario") long idComentario, Model model) {		
 		return cambiarEstadoComentario(idCurso, nroSesion, idTema, idComentario, model, EstadoPublicacion.APROBADO);
 	}
 	
-	@RequestMapping(value = "/ocultarComentario/{idCurso}/{nroSesion}/{idTema}/{idComentario}", method = RequestMethod.POST)
+	@RequestMapping(value = "/ocultarComentario/{idCurso}/{nroSesion}/{idTema}/{idComentario}", method = RequestMethod.GET)
 	public String ocultarComentario(@PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @PathVariable("idTema") long idTema, 
 			@PathVariable("idComentario") long idComentario, Model model) {
 		return cambiarEstadoComentario(idCurso, nroSesion, idTema, idComentario, model, EstadoPublicacion.RECHAZADO);
@@ -288,6 +292,10 @@ public class ForoController {
 		comentarioActualizado.setEstado(estado);		
 		temaActualizar.addComentario(comentarioActualizado);
 		foro.actualizarTema(temaActualizar);
+		if(estado.equals(EstadoPublicacion.APROBADO)){
+			foro.setCantidadComentariosAprobados(foro.getCantidadComentariosAprobados()+1);
+			foro.setCantidadComentariosPorAprobar(foro.getCantidadComentariosPorAprobar()-1);
+		}
 		foro = this.foroRepository.save(foro);
 		
 		cargarDatosDetalleTema(idTema, model, idCurso, nroSesion);
