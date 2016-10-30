@@ -130,7 +130,7 @@
 												</p>
 											</div>
 											
-											<div th:if="${comentario.rechazado} == false and ${comentario.aprobado} == false and ${foroForm.sesion.foro.moderado} == true">
+											<div>
 						    					<!-- Comentario INDEFINIDO para foro MODERADO -->
 						    					<div class="row">
 													<div class="col-xs-12">
@@ -140,8 +140,8 @@
 												
 												<div class="row">        		
 													<div class="col-xs-12" style="text-align: right;">
-														<a type="submit" class="btn orange-effect orange darken-4" th:href="@{/foro/aprobarComentario/{idCurso}/{nroSesion}/{idTema}/{idComentario}(idCurso=${foroForm.curso.id},nroSesion=${foroForm.sesion.id.numero},idTema=${tema.id},idComentario=${comentario.id})}">Aprobar</a>
-														<a type="submit" class="btn orange-effect orange darken-4" th:href="@{/foro/ocultarComentario/{idCurso}/{nroSesion}/{idTema}/{idComentario}(idCurso=${foroForm.curso.id},nroSesion=${foroForm.sesion.id.numero},idTema=${tema.id},idComentario=${comentario.id})}">Ocultar</a>																    	
+														<a th:if="${comentario.rechazado} == false and ${comentario.aprobado} == false and ${foroForm.sesion.foro.moderado} == true" type="submit" class="btn orange-effect orange darken-4" th:href="@{/foro/aprobarComentario/{idCurso}/{nroSesion}/{idTema}/{idComentario}(idCurso=${foroForm.curso.id},nroSesion=${foroForm.sesion.id.numero},idTema=${tema.id},idComentario=${comentario.id})}">Aprobar</a>
+														<a th:if="${comentario.rechazado} == false" type="submit" class="btn orange-effect orange darken-4" th:href="@{/foro/ocultarComentario/{idCurso}/{nroSesion}/{idTema}/{idComentario}(idCurso=${foroForm.curso.id},nroSesion=${foroForm.sesion.id.numero},idTema=${tema.id},idComentario=${comentario.id})}">Ocultar</a>																    	
 													</div>
 												</div>
 											</div>
