@@ -115,7 +115,7 @@
 							</div>
 							<div class="panel-body">
 								<ul class="timeline">
-					    			<li th:each="comentario : ${tema.comentarios}">
+					    			<li th:each="comentario : ${comentarios.pageList}">
 					    				<!-- Icono de estado del comentario -->
 					    				<div th:if="${comentario.aprobado} == true or ${foroForm.sesion.foro.moderado} == false" class="timeline-badge success">
 					    					<!-- Comentario OK -->					    					
@@ -182,6 +182,41 @@
 					    			</li>			    		
 					    		</ul>
 							</div>
+							
+							<div  class="col-md-12 text-center">
+					        	<div  class='pagination pagination-centered'>
+					        		<ul class="pagination">
+					        			<li th:class="${currentIndex == 1}? 'disabled' : ''"><span
+											th:if='${currentIndex == 1}'>Primera</span> <a
+											th:if='${currentIndex != 1}' th:href="@{|${baseUrl}1|}">Primera</a>
+										</li>
+											<li th:class="${currentIndex != 1}? '' : 'disabled'"><span
+											th:if='${currentIndex == 1}'>«</span> <a
+											th:if='${currentIndex != 1}'
+											th:href="@{|${baseUrl}${currentIndex-1}|}"
+											title='Ir a la p&aacute;gina anterior'>«</a>
+										</li>
+										<li th:each="item : ${#numbers.sequence(beginIndex,endIndex)}"
+											th:class="${item == currentIndex ? 'active' : '' }"><span
+											th:if='${item == currentIndex}' th:text='${item}'>1</span> <a
+											th:if='${item != currentIndex}' th:href="@{|${baseUrl}${item}|}">
+												<span th:text='${item}'>1</span>
+											</a>
+										</li>
+										<li th:class="${currentIndex != totalPageCount}? '' : 'disabled'">
+											<span th:if='${currentIndex == totalPageCount}'>»</span> <a
+											th:if='${currentIndex != totalPageCount}'
+											th:href="@{|${baseUrl}${currentIndex+1}|}"
+											title='Ir a la pr&oacute;xima p&aacute;gina'>»</a>
+										</li>
+										<li th:class="${currentIndex == totalPageCount}? 'disabled' : ''">
+											<span th:if='${currentIndex == totalPageCount}'>&Uacute;ltima</span> <a
+											th:if='${currentIndex != totalPageCount}'
+											th:href="@{|${baseUrl}${totalPageCount}|}">&Uacute;ltima</a>
+										</li>
+					        		</ul>
+					        	</div>
+					        </div>
 						</div>			    		
 			    	</div>	    	    
 			    </div>

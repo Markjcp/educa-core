@@ -1,6 +1,8 @@
 package org.educa.core.controller;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.SortedSet;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +25,7 @@ import org.educa.core.entities.model.Usuario;
 import org.educa.core.services.CursoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,6 +41,9 @@ public class ForoController {
 	
 	private static final String LISTADO_SESION_FORO = "views/curso/foro/listado-sesiones-foro";	
 	private static final String DETALLE_TEMA = "views/curso/foro/detalle-tema";
+	private static final int COMENTS_LIST_PAGE_SIZE = 5;
+	
+	
 	
 	@Autowired
 	private CursoService cursoService;
@@ -118,10 +124,68 @@ public class ForoController {
 	}	
 	
 	@RequestMapping(value = "/detalleTema/{idCurso}/{nroSesion}/{idTema}", method = RequestMethod.GET)
-	public String detalleTema(@PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @PathVariable("idTema") long idTema, Model model) {		
+	public String detalleTema(HttpServletRequest request, @PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @PathVariable("idTema") long idTema, Model model) {		
+		cargarDatosDetalleTema(idTema, model, idCurso, nroSesion);
+
+		request.getSession().setAttribute("listaComentarios", null);
+		armarPaginadoComentarios(request, idCurso, nroSesion, idTema, 1, model);
+
+		return DETALLE_TEMA;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/detalleTema/{idCurso}/{nroSesion}/{idTema}/{numeroPagina}", method = RequestMethod.GET)
+	public String detalleTema(HttpServletRequest request,
+								@PathVariable("idCurso") long idCurso, 
+								@PathVariable("nroSesion") int nroSesion, 
+								@PathVariable("idTema") long idTema,
+								@PathVariable("numeroPagina") int numeroPagina,
+								Model model) {
+		
 		cargarDatosDetalleTema(idTema, model, idCurso, nroSesion);
 		
+		armarPaginadoComentarios(request, idCurso, nroSesion, idTema, numeroPagina, model);
+		
 		return DETALLE_TEMA;
+	}
+
+	private void armarPaginadoComentarios(HttpServletRequest request, long idCurso, int nroSesion, long idTema,
+			int numeroPagina, Model model) {
+		PagedListHolder<Comentario> pagedListHolder = 
+				(PagedListHolder<Comentario>)request.getSession().getAttribute("listaComentarios");
+		
+		if (pagedListHolder == null) {
+			
+			Tema tema = temaRepository.findOne(idTema);			
+			List<Comentario> comentarios = new ArrayList<Comentario>();
+			comentarios.addAll(tema.getComentarios());
+			
+			pagedListHolder =  new PagedListHolder(comentarios);
+			pagedListHolder.setPageSize(COMENTS_LIST_PAGE_SIZE);
+			
+			request.getSession().setAttribute("listaComentarios", pagedListHolder);
+
+			
+		} else {
+			final int irAPagina = numeroPagina - 1;
+			if (irAPagina <= pagedListHolder.getPageCount() && irAPagina >= 0) {
+				pagedListHolder.setPage(irAPagina);				
+			}
+		}	
+		
+		int current = pagedListHolder.getPage() + 1;
+		int begin = Math.max(1, current - COMENTS_LIST_PAGE_SIZE);
+		int end = Math.min(begin+COMENTS_LIST_PAGE_SIZE, pagedListHolder.getPageCount());
+		int totalPageCount = pagedListHolder.getPageCount();
+		String baseUrl = "/foro/detalleTema/"+idCurso+"/"+nroSesion+"/"+idTema+"/";
+		
+		
+		model.addAttribute("beginIndex", begin);
+		model.addAttribute("endIndex", end);
+		model.addAttribute("currentIndex", current);
+		model.addAttribute("totalPageCount", totalPageCount);
+		model.addAttribute("baseUrl", baseUrl);
+		model.addAttribute("comentarios", pagedListHolder);
 	}
 	
 	@RequestMapping(value = "/aprobarTema/{idCurso}/{nroSesion}/{idTema}", method = RequestMethod.GET)
@@ -160,14 +224,21 @@ public class ForoController {
 	
 	@RequestMapping(value = "/aprobarComentario/{idCurso}/{nroSesion}/{idTema}/{idComentario}", method = RequestMethod.GET)
 	public String aprobarComentario(@PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @PathVariable("idTema") long idTema, 
-			@PathVariable("idComentario") long idComentario, Model model) {		
-		return cambiarEstadoComentario(idCurso, nroSesion, idTema, idComentario, model, EstadoPublicacion.APROBADO);
+			@PathVariable("idComentario") long idComentario, Model model, HttpServletRequest request) {
+		
+		String nombreVista = cambiarEstadoComentario(idCurso, nroSesion, idTema, idComentario, model, EstadoPublicacion.APROBADO);
+		request.getSession().setAttribute("listaComentarios", null);
+		armarPaginadoComentarios(request, idCurso, nroSesion, idTema, 1, model);	
+		return nombreVista;
 	}
 	
 	@RequestMapping(value = "/ocultarComentario/{idCurso}/{nroSesion}/{idTema}/{idComentario}", method = RequestMethod.GET)
 	public String ocultarComentario(@PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @PathVariable("idTema") long idTema, 
-			@PathVariable("idComentario") long idComentario, Model model) {
-		return cambiarEstadoComentario(idCurso, nroSesion, idTema, idComentario, model, EstadoPublicacion.RECHAZADO);
+			@PathVariable("idComentario") long idComentario, Model model,  HttpServletRequest request) {
+		String nombreVista = cambiarEstadoComentario(idCurso, nroSesion, idTema, idComentario, model, EstadoPublicacion.RECHAZADO);
+		request.getSession().setAttribute("listaComentarios", null);
+		armarPaginadoComentarios(request, idCurso, nroSesion, idTema, 1, model);
+		return nombreVista;
 	}
 	
 	@RequestMapping(value = "/agregarComentario/{idCurso}/{nroSesion}/{idTema}", method = RequestMethod.POST)
@@ -178,7 +249,7 @@ public class ForoController {
 			String errorMsj = bindingResult.getAllErrors().iterator().next().getDefaultMessage();
 			model.addAttribute("altaComentarioErrorMsj", errorMsj);
 			cargarDatosDetalleTema(idTema, model, idCurso, nroSesion);
-			
+			armarPaginadoComentarios(request, idCurso, nroSesion, idTema, 1, model);
 			return DETALLE_TEMA;
 		}
 		
@@ -205,11 +276,13 @@ public class ForoController {
 		idSesion.setNumero(nroSesion);
 		Sesion sesion = this.sesionRepository.findOne(idSesion);
 		if(sesion == null){
+			armarPaginadoComentarios(request, idCurso, nroSesion, idTema, 1, model);
 			return DETALLE_TEMA;
 		}
 		
 		Foro foro = sesion.getForo();
 		if(foro == null){
+			armarPaginadoComentarios(request, idCurso, nroSesion, idTema, 1, model);
 			return DETALLE_TEMA;
 		}
 		
@@ -223,6 +296,7 @@ public class ForoController {
 		}
 		
 		if(temaActualizar == null){
+			armarPaginadoComentarios(request, idCurso, nroSesion, idTema, 1, model);
 			return DETALLE_TEMA;
 		}
 					
@@ -233,12 +307,14 @@ public class ForoController {
 		cargarDatosDetalleTema(idTema, model, idCurso, nroSesion);
 		model.addAttribute("altaComentarioOk", true);//TODO EDIAZ ESTO HAY Q HACERLO EN LA VISTA, NO ESTA ACTUALMENTE
 		
+		request.getSession().setAttribute("listaComentarios", null);
+		armarPaginadoComentarios(request, idCurso, nroSesion, idTema, 1, model);
 		return DETALLE_TEMA;
 	}
 	
 	private void cargarDatosDetalleTema(long idTema, Model model, long idCurso, int nroSesion){
 		Tema tema = temaRepository.findOne(idTema);
-		model.addAttribute("tema", tema);
+		model.addAttribute("tema", tema);			
 		
 		Curso curso = this.cursoService.encontrarCursoPorId(idCurso);
 		ForoForm foroForm = new ForoForm();
