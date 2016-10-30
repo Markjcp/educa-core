@@ -559,7 +559,6 @@ ALTER TABLE `educa`.`foro`
 -- -----------------------------------------------------
 -- Table `educa`.`evaluacion`
 -- -----------------------------------------------------
-
 DROP TABLE IF EXISTS `educa`.`evaluacion` ;
 CREATE TABLE IF NOT EXISTS `educa`.`evaluacion` (
   `id_evaluacion` BIGINT NOT NULL AUTO_INCREMENT,
@@ -581,5 +580,5 @@ CREATE TABLE IF NOT EXISTS `educa`.`evaluacion` (
     FOREIGN KEY (`numero_componente`)
     REFERENCES `educa`.`sesion` (`numero_componente`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION);
 
