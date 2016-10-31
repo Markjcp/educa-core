@@ -157,7 +157,7 @@ public class UnidadApiController {
 	public class EvaluacionComparator implements Comparator<Evaluacion> {
 	    @Override
 	    public int compare(Evaluacion o1, Evaluacion o2) {
-	        return o1.getFechaActualizacion().compareTo(o2.getFechaActualizacion());
+	        return (o1.getFechaActualizacion().compareTo(o2.getFechaActualizacion())*(-1));
 	    }
 	}
 
