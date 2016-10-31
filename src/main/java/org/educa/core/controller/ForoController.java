@@ -197,8 +197,25 @@ public class ForoController {
 	public String ocultarTema(@PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @PathVariable("idTema") long idTema,
 			@ModelAttribute @Valid ForoForm foroForm, BindingResult bindingResult, Model model) {		
 		Tema tema = temaRepository.findOne(idTema);
+		EstadoPublicacion estadoAnterior = tema.getEstado();
 		tema.setEstado(EstadoPublicacion.RECHAZADO);
 		temaRepository.save(tema);
+		
+		//Voy a actualizar las cantidades de temas
+		Foro foro = foroRepository.findOne(tema.getIdForo());
+		if(foro.isModerado()){
+			if(EstadoPublicacion.APROBADO.equals(estadoAnterior)){
+				foro.setCantidadTemasAprobados(foro.getCantidadTemasAprobados() - 1);
+			} else if (!EstadoPublicacion.RECHAZADO.equals(estadoAnterior)){
+				foro.setCantidadTemasPorAprobar(foro.getCantidadTemasPorAprobar() - 1);
+			}
+		} else {
+			//Solo estan en estado aprobado o rechazado
+			if(!EstadoPublicacion.RECHAZADO.equals(estadoAnterior)){
+				foro.setCantidadTemasAprobados(foro.getCantidadTemasAprobados() - 1);
+			}
+		}
+		foroRepository.save(foro);
 		
 		tema = temaRepository.findOne(idTema);//Lo vuelvo a buscar para que este actualizado
 		model.addAttribute("tema", tema);
@@ -356,17 +373,36 @@ public class ForoController {
 			}
 		}
 		
+		EstadoPublicacion estadoAnterior = comentarioActualizado.getEstado();
 		comentarioActualizado.setEstado(estado);		
 		temaActualizar.addComentario(comentarioActualizado);
 		foro.actualizarTema(temaActualizar);
 		if(estado.equals(EstadoPublicacion.APROBADO)){		
-			foro.setCantidadComentariosAprobados(foro.getCantidadComentariosAprobados()+1);			
+			foro.setCantidadComentariosAprobados(foro.getCantidadComentariosAprobados()+1);
+			if(foro.isModerado()){
+				temaActualizar.setCantidadComentariosPorAprobar(temaActualizar.getCantidadComentariosPorAprobar() - 1);
+			}
 		}
-		temaActualizar.setCantidadComentariosPorAprobar(temaActualizar.getCantidadComentariosPorAprobar() - 1);
-		foro.setCantidadComentariosPorAprobar(foro.getCantidadComentariosPorAprobar()-1);
+		
+		if(EstadoPublicacion.RECHAZADO.equals(estado)){
+			if(foro.isModerado()){
+				if(EstadoPublicacion.APROBADO.equals(estadoAnterior)){
+					foro.setCantidadComentariosAprobados(foro.getCantidadComentariosAprobados() - 1);
+				} else if (!EstadoPublicacion.RECHAZADO.equals(estadoAnterior)){
+					foro.setCantidadComentariosPorAprobar(foro.getCantidadComentariosPorAprobar() - 1);
+				}
+			} else {
+				//Solo estan en estado aprobado o rechazado
+				if(!EstadoPublicacion.RECHAZADO.equals(estadoAnterior)){
+					foro.setCantidadComentariosAprobados(foro.getCantidadComentariosAprobados() - 1);
+				}
+			}
+		}
+		
+		foroRepository.save(foro);		
+		
 		//En ambos se actualizan las cantidades
 		this.temaRepository.save(temaActualizar);
-		foro = this.foroRepository.save(foro);
 		
 		cargarDatosDetalleTema(idTema, model, idCurso, nroSesion, new ForoForm());
 		
