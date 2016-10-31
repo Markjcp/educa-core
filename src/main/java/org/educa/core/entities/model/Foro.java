@@ -131,7 +131,6 @@ public class Foro implements Serializable {
 			this.temas = new TreeSet<Tema>();
 		}
 		this.temas.add(tema);
-		//actualizarCantidades(tema);
 	}
 	
 	public boolean actualizarTema(Tema tema){
@@ -142,7 +141,6 @@ public class Foro implements Serializable {
 					encontrado = true;
 					this.temas.remove(temaViejo);
 					this.temas.add(tema);
-					//actualizarCantidadesPreexistentes(tema, temaViejo);
 					break;
 				}
 			}
@@ -150,53 +148,6 @@ public class Foro implements Serializable {
 		
 		return encontrado;
 	}
-	
-//	private void actualizarCantidadesPreexistentes(Tema temaNuevo, Tema temaViejo){
-//		if(temaNuevo != null && temaViejo != null){
-//			//Actualizo segun tema viejo (decremento cantidades)
-//			decrementoCantidades(temaViejo);
-//			//Actualizo por tema nuevo (aumento cantidades)
-//			actualizarCantidades(temaNuevo);
-//		}
-//	}
-//	
-//	private void decrementoCantidades(Tema tema){
-//		if(tema.isAprobado()){
-//			this.cantidadTemasAprobados--;
-//		} else if(!tema.isRechazado()){
-//			this.cantidadComentariosPorAprobar--;
-//		}
-//		
-//		if(tema.getComentarios() != null && !tema.getComentarios().isEmpty()){
-//			for(Comentario comentario : tema.getComentarios()){
-//				if(comentario.isAprobado()){
-//					this.cantidadComentariosAprobados--;
-//				} else if(!comentario.isRechazado()) {
-//					this.cantidadComentariosPorAprobar--;
-//				}
-//			}
-//		}	
-//	}
-//	
-//	private void actualizarCantidades(Tema tema) {
-//		if(tema != null){
-//			if(tema.isAprobado()){
-//				this.cantidadTemasAprobados++;
-//			} else if(!tema.isRechazado()){
-//				this.cantidadComentariosPorAprobar++;
-//			}
-//			
-//			if(tema.getComentarios() != null && !tema.getComentarios().isEmpty()){
-//				for(Comentario comentario : tema.getComentarios()){
-//					if(comentario.isAprobado()){
-//						this.cantidadComentariosAprobados++;
-//					} else if(!comentario.isRechazado()) {
-//						this.cantidadComentariosPorAprobar++;
-//					}
-//				}
-//			}
-//		}
-//	}
 	
 	@Override
 	public int hashCode() {

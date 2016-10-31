@@ -1,6 +1,8 @@
 package org.educa.core.api;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.educa.core.dao.ComentarioRepository;
@@ -50,8 +52,12 @@ public class ComentarioApiController {
 		try {
 			Tema tema = temaRepository.findOne(comentario.getIdTema());
 			Foro foro = foroRepository.findOne(tema.getIdForo());
+			Date fechaCreacion = Calendar.getInstance().getTime();
+			comentario.setFechaCreacion(fechaCreacion);
 			if(foro.getEstado().equals(EstadoForo.MODERADO)){
-				comentario.setEstado(EstadoPublicacion.NO_APROBADO);
+				comentario.setEstado(EstadoPublicacion.NO_APROBADO);				
+				tema.setCantidadComentariosPorAprobar(tema.getCantidadComentariosPorAprobar()+1);
+				temaRepository.save(tema);
 				foro.setCantidadComentariosPorAprobar(foro.getCantidadComentariosPorAprobar()+1);
 				foroRepository.save(foro);
 			}else{

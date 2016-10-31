@@ -285,7 +285,7 @@ table.dataTable thead .sorting:after {
   list-style: none;
 }
 .timeline:before {
-  content: " ";
+  /*content: " ";*/
   position: absolute;
   top: 0;
   bottom: 0;
@@ -317,7 +317,7 @@ table.dataTable thead .sorting:after {
 .timeline > li > .timeline-panel {
   float: left;
   position: relative;
-  width: 46%;
+  width: 90%;
   padding: 20px;
   border: 1px solid #d4d4d4;
   border-radius: 2px;
@@ -350,7 +350,7 @@ table.dataTable thead .sorting:after {
   z-index: 100;
   position: absolute;
   top: 16px;
-  left: 50%;
+  left: 94%;
   width: 50px;
   height: 50px;
   margin-left: -25px;

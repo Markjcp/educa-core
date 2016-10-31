@@ -366,6 +366,7 @@ CREATE TABLE IF NOT EXISTS `educa`.`tema` (
   `descripcion` VARCHAR(200) NOT NULL,
   `estado_tema` VARCHAR(45) NOT NULL DEFAULT 'INDEFINIDO',
   `id_foro` BIGINT NOT NULL,
+  `comentarios_por_aprobar` INT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id_tema`),
   INDEX `fk_tema_usuario1_idx` (`id_usuario` ASC),
   INDEX `fk_tema_foro1_idx` (`id_foro` ASC),

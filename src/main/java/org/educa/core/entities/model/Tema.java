@@ -17,7 +17,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.validator.constraints.Length;
@@ -68,7 +67,7 @@ public class Tema implements Serializable, Comparable<Tema> {
 	@Column(name = "estado_tema")
 	private EstadoPublicacion estado;
 		
-	@Transient
+	@Column(name = "comentarios_por_aprobar")
 	private int cantidadComentariosPorAprobar;
 
 	public Tema() {
@@ -121,20 +120,11 @@ public class Tema implements Serializable, Comparable<Tema> {
 
 	public void setComentarios(SortedSet<Comentario> comentarios) {
 		this.comentarios = comentarios;
-		//calcularComentariosPorAprobar();
 	}
 
-//	private void calcularComentariosPorAprobar() {
-//		this.cantidadComentariosPorAprobar = 0;
-//		if(this.comentarios == null || this.comentarios.isEmpty()){
-//			return;
-//		}
-//		for(Comentario comentario : this.comentarios){
-//			if(!EstadoPublicacion.APROBADO.equals(comentario.getEstado())){
-//				this.cantidadComentariosPorAprobar ++;
-//			}
-//		}
-//	}
+	public void setCantidadComentariosPorAprobar(int cantidadComentariosPorAprobar) {
+		this.cantidadComentariosPorAprobar = cantidadComentariosPorAprobar;
+	}
 
 	public EstadoPublicacion getEstado() {
 		return estado;
@@ -182,7 +172,6 @@ public class Tema implements Serializable, Comparable<Tema> {
 		}
 		
 		this.comentarios.add(comentario);
-		//calcularComentariosPorAprobar();
 	}
 	
 	@JsonIgnore

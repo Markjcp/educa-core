@@ -11,7 +11,7 @@
 	<link href="css/materialize.css" th:href="@{/css/materialize.css}" rel="stylesheet" media="screen,projection" />
 	<link href="css/style.css" th:href="@{/css/style.css}" rel="stylesheet" media="screen,projection" />
 	<link href="css/style.css" th:href="@{/css/educa.css}" rel="stylesheet" media="screen,projection" />
-	
+
 </head>
 <body>
 	<div th:replace="views/fragments/header :: header">&nbsp;</div>
@@ -41,14 +41,7 @@
 								<a href="#" class="alert-link">Bien Hecho!</a> El tema
 								se cre&oacute; con &eacute;xito.
 							</div>
-						</div>
-						<div class="col s12" th:if="${mensajeAltaTemaError} == true">
-							<div class="alert alert-danger alert-dismissable">
-								<button type="button" class="close" data-dismiss="alert"
-									aria-hidden="true">×</button>
-								<a href="#" class="alert-link">Error al crear un tema!</a> <span th:text="${mensajeAltaTemaErrorMsj}"></span>
-							</div>
-						</div>
+						</div>						
 					</div>
 			    </form>
 			    
@@ -78,7 +71,7 @@
 													</div>
 													<div class="col s3"></div>
 												</div>
-												<div class="row">
+												<div th:if="${sesion.foro.moderado} == true" class="row">
 													<div class="col s2"></div>
 													<div class="col s4">
 														<div class="form-group input-group input-field">
@@ -104,6 +97,27 @@
 														<div class="form-group input-group input-field">
 															<label for="cantidadComentariosAprobados" class="" style="color: black; font-weight: inherit;">
 																Mensajes <span style="color: #26a69a;">aprobados</span>:
+																<span th:text="${sesion.foro.cantidadComentariosAprobados}">&nbsp;</span>
+															</label>																																																							
+														</div>
+													</div>
+													<div class="col s2"></div>
+												</div>
+												
+												<div th:if="${sesion.foro.moderado} == false" class="row">
+													<div class="col s2"></div>
+													<div class="col s4">
+														<div class="form-group input-group input-field">
+															<label for="cantidadTemasAprobados" class="" style="color: black; font-weight: inherit;">
+																Temas:&nbsp;
+																<span th:text="${sesion.foro.cantidadTemasAprobados}">&nbsp;</span>
+															</label>																																																							
+														</div>														
+													</div>
+													<div class="col s4">
+														<div class="form-group input-group input-field">
+															<label for="cantidadComentariosAprobados" class="" style="color: black; font-weight: inherit;">
+																Mensajes:&nbsp;
 																<span th:text="${sesion.foro.cantidadComentariosAprobados}">&nbsp;</span>
 															</label>																																																							
 														</div>
@@ -154,42 +168,41 @@
 												<div class="col-xs-12" style="text-align: right;">
 													<!-- data-position can be : bottom, top, left, or right -->
 	  												<!-- data-delay controls delay before tooltip shows (in milliseconds)-->
-											    	<a onclick="abrirPopupNuevoTema();" class="btn-floating btn-large waves-effect waves-light orange-effect orange darken-4 tooltipped modal-trigger" data-position="top" data-tooltip="Crear tema."><i class="material-icons">add</i></a>				    	
+											    	<a th:onclick="'abrirPopupNuevoTema(' + ${sesion.id.numero} + ')'" class="btn-floating btn-large waves-effect waves-light orange-effect orange darken-4 tooltipped modal-trigger" data-position="top" data-tooltip="Crear tema."><i class="material-icons">add</i></a>				    	
 												</div>
 											</div>	
 										</form>
-									</div>
-									
-									<!-- Alta de un tema dentro del foro de la sesion. -->
-									<div id="modalAltaTema" class="modal-educa fade-educa">
-										<div class="modal-educa-dialog" style="transform: translate(0,0);">
-											<form action="#" th:action="@{/foro/agregarTema/{idCurso}/{nroSesion}(idCurso=${sesion.id.idCurso},nroSesion=${sesion.id.numero})}" th:object="${foroForm}" method="post" id="formularioAltaTema">
-												<div class="panel-educa panel-educa-yellow">
-													<div class="panel-educa-heading">
-														Foro - Nuevo tema
-													</div>
-													<div class="panel-educa-body">
-														<input type="hidden" th:field="*{tema.idForo}" th:value="${sesion.foro.id}"/>
-														<input type="hidden" th:field="*{tema.estado}" th:value="APROBADO"/>
-														<div class="col l6 s12"> 
-															<div class="form-group input-field">
-																<input type="text" th:field="*{tema.titulo}" placeholder="T&iacute;tulo del nuevo tema" length="45"/>
-																<p id="tituloTemaError" th:errors="*{tema.titulo}" class="has-error-custom"></p>
-															</div>							        	                      
-															<div class="form-group input-field">
-																<textarea class="materialize-textarea" th:field="*{tema.descripcion}" placeholder="Descripci&oacute;n del nuevo tema" length="200"></textarea>
-																<p id="descripcionTemaError" th:errors="*{tema.descripcion}" class="has-error-custom"></p>
-															</div>		 			    		 	                         
+										<!-- Alta de un tema dentro del foro de la sesion. -->
+										<div th:id="'modalAltaTema-' + ${sesion.id.numero}" class="modal-educa fade-educa">
+											<div class="modal-educa-dialog" style="transform: translate(0,0);">
+												<form action="#" th:action="@{/foro/agregarTema/{idCurso}/{nroSesion}(idCurso=${sesion.id.idCurso},nroSesion=${sesion.id.numero})}" th:object="${foroForm}" method="post" id="formularioAltaTema">
+													<div class="panel-educa panel-educa-yellow">
+														<div class="panel-educa-heading">
+															Foro - Nuevo tema
 														</div>
-													</div>
-													<div class="panel-educa-footer">
-														<button type="submit" class="btn orange-effect orange darken-4">Publicar</button>
-													<a class="btn orange-effect orange darken-4" onclick="cerrarModalAltaTema();">Salir</a>
-													</div>
-												</div> 
-											</form>											 
-										</div>																																														
-									</div>				
+														<div class="panel-educa-body">
+															<input type="hidden" th:field="*{tema.idForo}" th:value="${sesion.foro.id}"/>
+															<input type="hidden" th:field="*{tema.estado}" th:value="APROBADO"/>
+															<div class="col l12 s12"> 
+																<div class="form-group input-field">
+																	<input type="text" th:field="*{tema.titulo}" placeholder="T&iacute;tulo del nuevo tema" length="45"/>
+																	<p id="tituloTemaError" th:errors="*{tema.titulo}" class="has-error-custom"></p>
+																</div>							        	                      
+																<div class="form-group input-field">
+																	<textarea class="materialize-textarea" th:field="*{tema.descripcion}" placeholder="Descripci&oacute;n del nuevo tema" length="200"></textarea>
+																	<p id="descripcionTemaError" th:errors="*{tema.descripcion}" class="has-error-custom"></p>
+																</div>
+															</div>
+														</div>
+														<div class="panel-educa-footer">
+															<button type="submit" class="btn orange-effect orange darken-4">Publicar</button>
+															<a class="btn orange-effect orange darken-4" th:onclick="'cerrarModalAltaTema(' + ${sesion.id.numero} + ')'">Salir</a>
+														</div>
+													</div> 
+												</form>											 
+											</div>																																														
+										</div>
+									</div>													
 								</li>								
 							</ul>																					
 						</div>
@@ -228,13 +241,26 @@
     <script src="js/materialize.js" th:src="@{/js/materialize.js}"></script>
     <script src="js/init.js" th:src="@{/js/init.js}"></script>
     
+    <script th:inline="javascript">
+	/*<![CDATA[*/
+	    var abrir = [[${abrirPopupAltaTemaError}]];
+		if(abrir == true){
+			var nro = [[${nroSesion}]];
+			var elemento = '#modalAltaTema-' + nro;
+			$(elemento).openModal();
+		}
+	/*]]>*/
+	</script>
+    
     <script type="text/javascript">
-    	function abrirPopupNuevoTema(){
-    		$('#modalAltaTema').openModal();	
+    	function abrirPopupNuevoTema(nroSesion){
+    		var elemento = '#modalAltaTema-' + nroSesion;
+    		$(elemento).openModal();	
     	}    
     
-    	function cerrarModalAltaTema(){
-    		$('#modalAltaTema').closeModal();    		
+    	function cerrarModalAltaTema(nroSesion){
+    		var elemento = '#modalAltaTema-' + nroSesion;
+    		$(elemento).closeModal();    		
     	}
     </script>
     

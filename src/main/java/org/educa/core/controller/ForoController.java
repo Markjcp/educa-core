@@ -82,15 +82,9 @@ public class ForoController {
 	public String agregarTema(@PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @ModelAttribute @Valid ForoForm foroForm, 
 			BindingResult bindingResult, Model model, HttpServletRequest request) {		
 		if (bindingResult.hasFieldErrors("tema.*")) {
-// 			Esto lo comente porque no se si la idea era hacer lógica para que el popup no se cierre, se puede mejorar
-//			SortedSet<Sesion> sesiones = sesionRepository.findByFechaAndIdCurso(Calendar.getInstance().getTime(), idCurso);
-//			model.addAttribute("abrirPopupAltaTemaError", true);//TODO EDIAZ ESTO HAY Q HACERLO EN LA VISTA, NO ESTA ACTUALMENTE
-//			model.addAttribute("foroForm", foroForm);
-//			model.addAttribute("sesiones", sesiones);
-			model.addAttribute("mensajeAltaTemaError", true);
-			String errorMsj = bindingResult.getAllErrors().iterator().next().getDefaultMessage();
-			model.addAttribute("mensajeAltaTemaErrorMsj", errorMsj);			
-			cargarDatosListadoSesionForo(idCurso, new ForoForm(), nroSesion, model);
+			model.addAttribute("abrirPopupAltaTemaError", true);
+			model.addAttribute("nroSesion", nroSesion);
+			cargarDatosListadoSesionForo(idCurso, foroForm, nroSesion, model);
 			
 			return LISTADO_SESION_FORO;
 		}
@@ -114,8 +108,9 @@ public class ForoController {
 			tema.setUsuario(usuarioLogeado);
 			
 			foro.addTema(tema);
+			foro.setCantidadTemasAprobados(foro.getCantidadTemasAprobados() + 1);
 			foroRepository.save(foro);
-			model.addAttribute("mensajeAltaTemaOk", true);//TODO EDIAZ ESTO HAY Q MOSTRARLO EN LA VISTA
+			model.addAttribute("mensajeAltaTemaOk", true);
 		}
 		
 		cargarDatosListadoSesionForo(idCurso, new ForoForm(), nroSesion, model);
@@ -125,7 +120,7 @@ public class ForoController {
 	
 	@RequestMapping(value = "/detalleTema/{idCurso}/{nroSesion}/{idTema}", method = RequestMethod.GET)
 	public String detalleTema(HttpServletRequest request, @PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @PathVariable("idTema") long idTema, Model model) {		
-		cargarDatosDetalleTema(idTema, model, idCurso, nroSesion);
+		cargarDatosDetalleTema(idTema, model, idCurso, nroSesion, new ForoForm());
 
 		request.getSession().setAttribute("listaComentarios", null);
 		armarPaginadoComentarios(request, idCurso, nroSesion, idTema, 1, model);
@@ -133,29 +128,23 @@ public class ForoController {
 		return DETALLE_TEMA;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/detalleTema/{idCurso}/{nroSesion}/{idTema}/{numeroPagina}", method = RequestMethod.GET)
-	public String detalleTema(HttpServletRequest request,
-								@PathVariable("idCurso") long idCurso, 
-								@PathVariable("nroSesion") int nroSesion, 
-								@PathVariable("idTema") long idTema,
-								@PathVariable("numeroPagina") int numeroPagina,
-								Model model) {
+	public String detalleTema(HttpServletRequest request, @PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, 
+								@PathVariable("idTema") long idTema, @PathVariable("numeroPagina") int numeroPagina, Model model) {
 		
-		cargarDatosDetalleTema(idTema, model, idCurso, nroSesion);
-		
+		cargarDatosDetalleTema(idTema, model, idCurso, nroSesion, new ForoForm());		
 		armarPaginadoComentarios(request, idCurso, nroSesion, idTema, numeroPagina, model);
 		
 		return DETALLE_TEMA;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void armarPaginadoComentarios(HttpServletRequest request, long idCurso, int nroSesion, long idTema,
 			int numeroPagina, Model model) {
 		PagedListHolder<Comentario> pagedListHolder = 
 				(PagedListHolder<Comentario>)request.getSession().getAttribute("listaComentarios");
 		
-		if (pagedListHolder == null) {
-			
+		if (pagedListHolder == null) {			
 			Tema tema = temaRepository.findOne(idTema);			
 			List<Comentario> comentarios = new ArrayList<Comentario>();
 			comentarios.addAll(tema.getComentarios());
@@ -164,8 +153,6 @@ public class ForoController {
 			pagedListHolder.setPageSize(COMENTS_LIST_PAGE_SIZE);
 			
 			request.getSession().setAttribute("listaComentarios", pagedListHolder);
-
-			
 		} else {
 			final int irAPagina = numeroPagina - 1;
 			if (irAPagina <= pagedListHolder.getPageCount() && irAPagina >= 0) {
@@ -178,8 +165,7 @@ public class ForoController {
 		int end = Math.min(begin+COMENTS_LIST_PAGE_SIZE, pagedListHolder.getPageCount());
 		int totalPageCount = pagedListHolder.getPageCount();
 		String baseUrl = "/foro/detalleTema/"+idCurso+"/"+nroSesion+"/"+idTema+"/";
-		
-		
+				
 		model.addAttribute("beginIndex", begin);
 		model.addAttribute("endIndex", end);
 		model.addAttribute("currentIndex", current);
@@ -245,10 +231,10 @@ public class ForoController {
 	public String agregarComentario(@PathVariable("idCurso") long idCurso, @PathVariable("nroSesion") int nroSesion, @PathVariable("idTema") long idTema, 
 			@ModelAttribute @Valid ForoForm foroForm, BindingResult bindingResult, Model model, HttpServletRequest request) {
 		if (bindingResult.hasFieldErrors("comentario.*")) {			
-			model.addAttribute("altaComentarioError", true);//TODO EDIAZ ESTO HAY Q HACERLO EN LA VISTA, NO ESTA ACTUALMENTE
+			model.addAttribute("altaComentarioError", true);
 			String errorMsj = bindingResult.getAllErrors().iterator().next().getDefaultMessage();
 			model.addAttribute("altaComentarioErrorMsj", errorMsj);
-			cargarDatosDetalleTema(idTema, model, idCurso, nroSesion);
+			cargarDatosDetalleTema(idTema, model, idCurso, nroSesion, foroForm);
 			armarPaginadoComentarios(request, idCurso, nroSesion, idTema, 1, model);
 			return DETALLE_TEMA;
 		}
@@ -302,22 +288,22 @@ public class ForoController {
 					
 		temaActualizar.addComentario(comentario);
 		foro.actualizarTema(temaActualizar);
+		foro.setCantidadComentariosAprobados(foro.getCantidadComentariosAprobados() + 1);
 		foro = this.foroRepository.save(foro);
 		
-		cargarDatosDetalleTema(idTema, model, idCurso, nroSesion);
-		model.addAttribute("altaComentarioOk", true);//TODO EDIAZ ESTO HAY Q HACERLO EN LA VISTA, NO ESTA ACTUALMENTE
+		cargarDatosDetalleTema(idTema, model, idCurso, nroSesion, new ForoForm());
+		model.addAttribute("altaComentarioOk", true);
 		
 		request.getSession().setAttribute("listaComentarios", null);
 		armarPaginadoComentarios(request, idCurso, nroSesion, idTema, 1, model);
 		return DETALLE_TEMA;
 	}
 	
-	private void cargarDatosDetalleTema(long idTema, Model model, long idCurso, int nroSesion){
+	private void cargarDatosDetalleTema(long idTema, Model model, long idCurso, int nroSesion, ForoForm foroForm){
 		Tema tema = temaRepository.findOne(idTema);
 		model.addAttribute("tema", tema);			
 		
 		Curso curso = this.cursoService.encontrarCursoPorId(idCurso);
-		ForoForm foroForm = new ForoForm();
 		foroForm.setCurso(curso);
 		
 		ComponenteId idSesion = new ComponenteId();
@@ -373,13 +359,16 @@ public class ForoController {
 		comentarioActualizado.setEstado(estado);		
 		temaActualizar.addComentario(comentarioActualizado);
 		foro.actualizarTema(temaActualizar);
-		if(estado.equals(EstadoPublicacion.APROBADO)){
-			foro.setCantidadComentariosAprobados(foro.getCantidadComentariosAprobados()+1);
-			foro.setCantidadComentariosPorAprobar(foro.getCantidadComentariosPorAprobar()-1);
+		if(estado.equals(EstadoPublicacion.APROBADO)){		
+			foro.setCantidadComentariosAprobados(foro.getCantidadComentariosAprobados()+1);			
 		}
+		temaActualizar.setCantidadComentariosPorAprobar(temaActualizar.getCantidadComentariosPorAprobar() - 1);
+		foro.setCantidadComentariosPorAprobar(foro.getCantidadComentariosPorAprobar()-1);
+		//En ambos se actualizan las cantidades
+		this.temaRepository.save(temaActualizar);
 		foro = this.foroRepository.save(foro);
 		
-		cargarDatosDetalleTema(idTema, model, idCurso, nroSesion);
+		cargarDatosDetalleTema(idTema, model, idCurso, nroSesion, new ForoForm());
 		
 		return DETALLE_TEMA;
 	}

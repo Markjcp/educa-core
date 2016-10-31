@@ -582,3 +582,12 @@ CREATE TABLE IF NOT EXISTS `educa`.`evaluacion` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
+
+-- 30/10
+
+-- -----------------------------------------------------
+-- Table `educa`.`tema`
+-- -----------------------------------------------------
+ALTER TABLE `educa`.`tema`
+  ADD `comentarios_por_aprobar` INT NOT NULL DEFAULT 0;
+    

@@ -155,12 +155,16 @@
 													El siguiente comentario no est&aacute; visible para los alumnos.
 												</div>
 												<br></br>
-												<p th:if="${comentario.rechazado} == true">
-													<span style="color: #a0a0a0" th:text="${comentario.descripcion}">&nbsp;</span>
-												</p>
-												<p th:if="${comentario.rechazado} == false">
-													<span th:text="${comentario.descripcion}">&nbsp;</span>
-												</p>
+												<div th:if="${comentario.rechazado} == true" class="form-group input-field">
+													<textarea style="color: #a0a0a0" class="materialize-textarea" th:text="${comentario.descripcion}" length="500">
+														[[${comentario.descripcion}]]
+													</textarea>
+												</div>												
+												<div th:if="${comentario.rechazado} == false" class="form-group input-field">
+													<textarea class="materialize-textarea" th:text="${comentario.descripcion}" length="500">
+														[[${comentario.descripcion}]]
+													</textarea>
+												</div>
 											</div>
 											
 											<div>
@@ -255,16 +259,6 @@
     <script src="js/sb-admin-2.js" th:src="@{/js/sb-admin-2.js}"></script>
     <script src="js/materialize.js" th:src="@{/js/materialize.js}"></script>
     <script src="js/init.js" th:src="@{/js/init.js}"></script>
-    
-    <script type="text/javascript">
-    	function abrirPopupNuevoTema(){
-    		$('#modalAltaTema').openModal();	
-    	}    
-    
-    	function cerrarModalAltaTema(){
-    		$('#modalAltaTema').closeModal();    		
-    	}
-    </script>
     
 </body>
 </html>
