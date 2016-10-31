@@ -191,15 +191,15 @@ public class Tema implements Serializable, Comparable<Tema> {
 
 	@Override
 	public int compareTo(Tema o) {
-		if(getFechaCreacion() == null && o.getFechaCreacion() != null){
+		/*if(getFechaCreacion() == null && o.getFechaCreacion() != null){
 			return -1;
-		}
+		}*/
 		
 		if(getFechaCreacion() == null && o.getFechaCreacion() == null){
 			return 0;
 		}
 		
-		int resultado = getFechaCreacion().compareTo(o.getFechaCreacion());
+		int resultado = o.getFechaCreacion().compareTo(this.getFechaCreacion()); //getFechaCreacion().compareTo(o.getFechaCreacion());
 		if (resultado == 0 && usuario!= null && o.getUsuario() != null) {
 			resultado = usuario.getId().compareTo(o.getUsuario().getId());
 		}

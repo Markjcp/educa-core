@@ -63,6 +63,7 @@ public class TemaApiController {
 				foroRepository.save(foro);
 			}else{
 				tema.setEstado(EstadoPublicacion.APROBADO);
+				foro.setCantidadTemasAprobados(foro.getCantidadTemasAprobados()+1);
 			}
 			resultado = temaRepository.save(tema);
 			return new ResponseEntity<Tema>(resultado, HttpStatus.OK);

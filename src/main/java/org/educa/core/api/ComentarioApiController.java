@@ -62,6 +62,7 @@ public class ComentarioApiController {
 				foroRepository.save(foro);
 			}else{
 				comentario.setEstado(EstadoPublicacion.APROBADO);
+				foro.setCantidadComentariosAprobados(foro.getCantidadComentariosAprobados()+1);
 			}
 			resultado = comentarioRepository.save(comentario);
 			return new ResponseEntity<Comentario>(resultado, HttpStatus.OK);
