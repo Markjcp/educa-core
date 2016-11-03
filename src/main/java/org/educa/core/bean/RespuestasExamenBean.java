@@ -4,20 +4,60 @@ import java.util.List;
 
 public class RespuestasExamenBean {
 
-	private Long idUsuario;
-	private List<RespuestaExamenBean> respuestas;
+	// identifica examen
+	private Integer idCurso;
+	private Integer numeroUnidad;
 	
-	public Long getIdUsuario() {
+	// identifica inscripcion
+	private Integer idUsuario;
+	private Integer idSesion;
+	
+	private Integer cantDePreguntas;
+	private Integer cantDePregAprobadas;
+	private String estado;
+	
+	
+	public Integer getIdUsuario() {
 		return idUsuario;
 	}
-	public void setIdUsuario(Long idUsuario) {
+	public void setIdUsuario(Integer idUsuario) {
 		this.idUsuario = idUsuario;
 	}
-	public List<RespuestaExamenBean> getRespuestas() {
-		return respuestas;
+	public Integer getIdCurso() {
+		return idCurso;
 	}
-	public void setRespuestas(List<RespuestaExamenBean> respuestas) {
-		this.respuestas = respuestas;
+	public void setIdCurso(Integer idCurso) {
+		this.idCurso = idCurso;
+	}
+	public Integer getIdSesion() {
+		return idSesion;
+	}
+	public void setIdSesion(Integer idSesion) {
+		this.idSesion = idSesion;
+	}
+	public Integer getCantDePreguntas() {
+		return cantDePreguntas;
+	}
+	public void setCantDePreguntas(Integer cantDePreguntas) {
+		this.cantDePreguntas = cantDePreguntas;
+	}
+	public Integer getCantDePregAprobadas() {
+		return cantDePregAprobadas;
+	}
+	public void setCantDePregAprobadas(Integer cantDePregAprobadas) {
+		this.cantDePregAprobadas = cantDePregAprobadas;
+	}
+	public String getEstado() {
+		return estado;
+	}
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
+	public Integer getNumeroUnidad() {
+		return numeroUnidad;
+	}
+	public void setNumeroUnidad(Integer numeroUnidad) {
+		this.numeroUnidad = numeroUnidad;
 	}
 	
 	

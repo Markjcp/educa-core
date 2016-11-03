@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 
 
@@ -31,16 +32,23 @@ public class Evaluacion implements Serializable {
 	private Long id;
 	
 	@Column(name = "id_usuario")
-	private Long idUsuario;
+	private Integer idUsuario;
 	
-	@Column(name = "numero_componente")
+	@Column(name = "id_sesion")
 	private Integer idSesion;
+	
+	@Column(name = "id_curso")
+	private Integer idCurso;
+	
+	@Column(name = "numero_unidad")
+	private Integer numeroUnidad;
+	
 	
 	@Column(name = "cantidad_respuestas_correctas")
 	private Integer cantidadRespuestasCorrectas;
 	
-	@Column(name = "cantidad_respuestas_incorrectas")
-	private Integer cantidadRespuestasIncorrectas;
+	@Column(name = "cantidad_preguntas_totales")
+	private Integer cantidadPreguntasTotales;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "estado_examen")
@@ -49,7 +57,8 @@ public class Evaluacion implements Serializable {
 	@Column(name = "fecha_actualizacion")
 	private Date fechaActualizacion;
 	
-	
+	@Transient
+	private String porcentaje;
 	
 
 	public Evaluacion() {
@@ -65,11 +74,11 @@ public class Evaluacion implements Serializable {
 		this.id = id;
 	}
 
-	public Long getIdUsuario() {
+	public Integer getIdUsuario() {
 		return idUsuario;
 	}
 
-	public void setIdUsuario(Long idUsuario) {
+	public void setIdUsuario(Integer idUsuario) {
 		this.idUsuario = idUsuario;
 	}
 
@@ -89,12 +98,12 @@ public class Evaluacion implements Serializable {
 		this.cantidadRespuestasCorrectas = cantidadRespuestasCorrectas;
 	}
 
-	public Integer getCantidadRespuestasInorrectas() {
-		return cantidadRespuestasIncorrectas;
+	public Integer getCantidadPreguntasTotales() {
+		return cantidadPreguntasTotales;
 	}
 
-	public void setCantidadRespuestasIncorrectas(Integer cantidadRespuestasIncorrectas) {
-		this.cantidadRespuestasIncorrectas = cantidadRespuestasIncorrectas;
+	public void setCantidadPreguntasTotales(Integer cantidadPreguntasTotales) {
+		this.cantidadPreguntasTotales = cantidadPreguntasTotales;
 	}
 
 	public EstadoExamen getEstado() {
@@ -112,8 +121,33 @@ public class Evaluacion implements Serializable {
 	public void setFechaActualizacion(Date fechaActualizacion) {
 		this.fechaActualizacion = fechaActualizacion;
 	}
+
+	public String getPorcentaje() {
+		return porcentaje;
+	}
+
+	public void setPorcentaje(String porcentaje) {
+		this.porcentaje = porcentaje;
+	}
+
+	public Integer getIdCurso() {
+		return idCurso;
+	}
+
+	public void setIdCurso(Integer idCurso) {
+		this.idCurso = idCurso;
+	}
+
+	public Integer getNumeroUnidad() {
+		return numeroUnidad;
+	}
+
+	public void setNumeroUnidad(Integer numeroUnidad) {
+		this.numeroUnidad = numeroUnidad;
+	}
 	
 	
 	
+
 
 }

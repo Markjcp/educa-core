@@ -8,7 +8,7 @@ import org.educa.core.entities.model.ExamenUnidad;
 
 public interface EvaluacionService {
 
-	public Evaluacion evaluar(ExamenUnidad examen, RespuestasExamenBean respuestasBean);
+	public Evaluacion evaluar(RespuestasExamenBean respuestasBean)  throws Exception ;
 
-	public List<Evaluacion> consultarEvaluacion(Integer numero, Long idUsuario);
+	public Evaluacion consultarEvaluacion(Integer idSesion, Integer idUsuario, Integer idCurso, Integer numeroUnidad)  throws Exception;
 }

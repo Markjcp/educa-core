@@ -1,6 +1,7 @@
 package org.educa.core.api;
 
 import java.io.ByteArrayInputStream;
+import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.educa.core.entities.model.ExamenUnidad;
 import org.educa.core.entities.model.ExamenUnidadId;
 import org.educa.core.entities.model.MaterialUnidad;
 import org.educa.core.entities.model.VideoUnidad;
+import org.educa.core.exceptions.YaExisteException;
 import org.educa.core.services.EvaluacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -94,58 +96,42 @@ public class UnidadApiController {
 	}
 	
 	@ResponseBody
-	@RequestMapping(method = RequestMethod.POST, value = "{numeroUnidad}/{idCurso}/evaluacion", produces = {"application/json"})
-	public ResponseEntity<Evaluacion> evaluacion(@PathVariable Integer numeroUnidad, 
-											@PathVariable Long idCurso,
+	@RequestMapping(method = RequestMethod.POST, value = "enviarResultado", produces = {"application/json"})
+	public ResponseEntity<Evaluacion> evaluacion(											
 											@RequestBody RespuestasExamenBean respuestasBean) throws JsonProcessingException {
 		
 		
 		Evaluacion evaluacion = new Evaluacion();
 		
-		ExamenUnidadId id = new ExamenUnidadId();
-		id.setIdCurso(idCurso);
-		id.setIdExamen(PRIMER_EXAMEN_ID);
-		id.setNumero(numeroUnidad);
-		ExamenUnidad examen = examenUnidadRepository.findOne(id);
-		if(examen==null || !examen.isCompleto()){
-			return new ResponseEntity<Evaluacion>(HttpStatus.NOT_FOUND);			
-		}
-		
 		try {
-			evaluacion = evaluacionService.evaluar(examen, respuestasBean);
+			evaluacion = evaluacionService.evaluar(respuestasBean);
+			String porcentaje = calcularPorcenta(evaluacion);
+			evaluacion.setPorcentaje(porcentaje);
+		} catch (YaExisteException e) {
+			return new ResponseEntity<Evaluacion>(evaluacion, HttpStatus.CONFLICT);
 		} catch (Exception e) {
 			return new ResponseEntity<Evaluacion>(evaluacion, HttpStatus.NOT_FOUND);
-
 		}
 		
 		return new ResponseEntity<Evaluacion>(evaluacion,HttpStatus.OK);
 	}
 	
 	@ResponseBody
-	@RequestMapping(method = RequestMethod.GET, value = "{numeroUnidad}/{idCurso}/evaluacion/{idUsuario}", produces = {"application/json"})
-	public ResponseEntity<Evaluacion> evaluacion(@PathVariable Integer numeroUnidad, 
-											@PathVariable Long idCurso,
-											@PathVariable Long idUsuario) throws JsonProcessingException {
+	@RequestMapping(method = RequestMethod.GET, value = "consultarExamen/{idUsuario}/{idSesion}/{idCurso}/{numeroUnidad}", produces = {"application/json"})
+	public ResponseEntity<Evaluacion> evaluacion(@PathVariable Integer idUsuario,
+											@PathVariable Integer idSesion,
+											@PathVariable Integer idCurso,
+											@PathVariable Integer numeroUnidad) throws JsonProcessingException {
 		
 		
 		Evaluacion evaluacion = new Evaluacion();
 		
-		ExamenUnidadId id = new ExamenUnidadId();
-		id.setIdCurso(idCurso);
-		id.setIdExamen(PRIMER_EXAMEN_ID);
-		id.setNumero(numeroUnidad);
-		ExamenUnidad examen = examenUnidadRepository.findOne(id);
-		if(examen==null || !examen.isCompleto()){
-			return new ResponseEntity<Evaluacion>(HttpStatus.NOT_FOUND);			
-		}
 		
 		try {
-			List<Evaluacion> evaluaciones = evaluacionService.consultarEvaluacion(examen.getId().getNumero(), idUsuario);
+			evaluacion = evaluacionService.consultarEvaluacion(idSesion, idUsuario, idCurso, numeroUnidad);
+			String porcentaje = calcularPorcenta(evaluacion);
+			evaluacion.setPorcentaje(porcentaje);
 			
-			if (!evaluaciones.isEmpty()) {
-				Collections.sort(evaluaciones, new EvaluacionComparator());
-				evaluacion = evaluaciones.get(0);
-			} 
 		} catch (Exception e) {
 			return new ResponseEntity<Evaluacion>(evaluacion, HttpStatus.NOT_FOUND);
 		}
@@ -153,12 +139,14 @@ public class UnidadApiController {
 		return new ResponseEntity<Evaluacion>(evaluacion,HttpStatus.OK);
 	}
 
-	
-	public class EvaluacionComparator implements Comparator<Evaluacion> {
-	    @Override
-	    public int compare(Evaluacion o1, Evaluacion o2) {
-	        return (o1.getFechaActualizacion().compareTo(o2.getFechaActualizacion())*(-1));
-	    }
+	private String calcularPorcenta(Evaluacion evaluacion) {
+		double nota = (double)evaluacion.getCantidadRespuestasCorrectas() / (double)evaluacion.getCantidadPreguntasTotales();
+		double porcentajeNota = nota * 100;
+		DecimalFormat df = new DecimalFormat("#.00");
+		String porcentaje = df.format(porcentajeNota);
+		return porcentaje;
 	}
+
+	
 
 }
