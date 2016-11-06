@@ -2,6 +2,7 @@ package org.educa.core.entities.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -20,6 +21,9 @@ public class SesionUsuario implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "id_curso", insertable = false, updatable = false)
 	private Curso curso;
+	
+	@Column(name = "desaprobado")
+	private Boolean desaprobado;
 
 	public SesionUsuarioId getId() {
 		return id;
@@ -35,6 +39,14 @@ public class SesionUsuario implements Serializable {
 
 	public void setCurso(Curso curso) {
 		this.curso = curso;
+	}
+	
+	public Boolean getDesaprobado() {
+		return desaprobado;
+	}
+
+	public void setDesaprobado(Boolean desaprobado) {
+		this.desaprobado = desaprobado;
 	}
 
 	@Override
