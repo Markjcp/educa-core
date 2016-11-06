@@ -4,9 +4,6 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Embeddable
 public class SesionUsuarioId implements Serializable {
@@ -21,7 +18,7 @@ public class SesionUsuarioId implements Serializable {
 
 	@Column(name = "id_usuario")
 	private Long id;
-
+	
 	public Integer getNumero() {
 		return numero;
 	}

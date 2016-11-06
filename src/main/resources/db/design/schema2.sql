@@ -594,3 +594,9 @@ CREATE TABLE IF NOT EXISTS `educa`.`evaluacion` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
+
+
+-- 5/11
+ALTER TABLE `educa`.`sesion_usuario` 
+ADD COLUMN `desaprobado` TINYINT(1) NOT NULL DEFAULT 0 AFTER `id_usuario`;
+

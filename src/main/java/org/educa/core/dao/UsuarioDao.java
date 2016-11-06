@@ -3,7 +3,7 @@ package org.educa.core.dao;
 import java.util.List;
 
 import org.educa.core.entities.model.Curso;
-import org.educa.core.entities.model.SesionUsuarioId;
+import org.educa.core.entities.model.SesionUsuario;
 
 public interface UsuarioDao {
 	
@@ -13,7 +13,7 @@ public interface UsuarioDao {
 	
 	public List<Curso> obtenerMisCursos(Long usuarioId);
 	
-	public List<SesionUsuarioId> obtenerMisSesiones(Long usuarioId);
+	public List<SesionUsuario> obtenerMisSesiones(Long usuarioId);
 	
 	
 }

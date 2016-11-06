@@ -3,17 +3,21 @@ package org.educa.core.api;
 import java.io.ByteArrayInputStream;
 import java.text.DecimalFormat;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.educa.core.bean.RespuestasExamenBean;
 import org.educa.core.dao.ExamenUnidadRepository;
 import org.educa.core.dao.MaterialUnidadRepository;
+import org.educa.core.dao.SesionUsuarioRepository;
 import org.educa.core.dao.VideoUnidadRepository;
+import org.educa.core.entities.model.EstadoExamen;
 import org.educa.core.entities.model.Evaluacion;
 import org.educa.core.entities.model.ExamenUnidad;
 import org.educa.core.entities.model.ExamenUnidadId;
 import org.educa.core.entities.model.MaterialUnidad;
+import org.educa.core.entities.model.PreguntaExamenUnidad;
+import org.educa.core.entities.model.SesionUsuario;
+import org.educa.core.entities.model.SesionUsuarioId;
 import org.educa.core.entities.model.VideoUnidad;
 import org.educa.core.exceptions.YaExisteException;
 import org.educa.core.services.EvaluacionService;
@@ -50,6 +54,9 @@ public class UnidadApiController {
 	
 	@Autowired
 	private EvaluacionService evaluacionService;
+	
+	@Autowired
+	private SesionUsuarioRepository sesionUsuarioRepository;
 	
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, value = "{numeroUnidad}/{idCurso}/video", headers="Accept=*/*",produces = {"video/mp4"})
@@ -91,7 +98,10 @@ public class UnidadApiController {
 			return new ResponseEntity<ExamenUnidad>(HttpStatus.NOT_FOUND);			
 		}
 		ObjectMapper mapper = new ObjectMapper();
-		System.out.println(mapper.writeValueAsString(resultado));
+		List<PreguntaExamenUnidad> preguntas = resultado.getPreguntas();
+		Collections.shuffle(preguntas);
+		preguntas = preguntas.subList(0, resultado.getCantPreguntasUsuario());
+		resultado.setPreguntas(preguntas);
 		return new ResponseEntity<ExamenUnidad>(resultado,HttpStatus.OK);	
 	}
 	
@@ -107,6 +117,16 @@ public class UnidadApiController {
 			evaluacion = evaluacionService.evaluar(respuestasBean);
 			String porcentaje = calcularPorcenta(evaluacion);
 			evaluacion.setPorcentaje(porcentaje);
+			if(evaluacion.getEstado().equals(EstadoExamen.DESAPROBADO)){
+				SesionUsuarioId sesionUsuarioId = new SesionUsuarioId();
+				sesionUsuarioId.setId(Long.valueOf(respuestasBean.getIdSesion()));
+				sesionUsuarioId.setIdCurso(Long.valueOf(respuestasBean.getIdCurso()));
+				sesionUsuarioId.setNumero(respuestasBean.getNumeroUnidad());
+				
+				SesionUsuario sesionUsuario = sesionUsuarioRepository.findOne(sesionUsuarioId);
+				sesionUsuario.setDesaprobado(true);
+				sesionUsuarioRepository.save(sesionUsuario);				
+			}
 		} catch (YaExisteException e) {
 			return new ResponseEntity<Evaluacion>(evaluacion, HttpStatus.CONFLICT);
 		} catch (Exception e) {
@@ -130,8 +150,7 @@ public class UnidadApiController {
 		try {
 			evaluacion = evaluacionService.consultarEvaluacion(idSesion, idUsuario, idCurso, numeroUnidad);
 			String porcentaje = calcularPorcenta(evaluacion);
-			evaluacion.setPorcentaje(porcentaje);
-			
+			evaluacion.setPorcentaje(porcentaje);			
 		} catch (Exception e) {
 			return new ResponseEntity<Evaluacion>(evaluacion, HttpStatus.NOT_FOUND);
 		}

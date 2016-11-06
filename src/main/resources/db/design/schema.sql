@@ -118,10 +118,6 @@ DROP TABLE IF EXISTS `educa`.`foro` ;
 CREATE TABLE IF NOT EXISTS `educa`.`foro` (
   `id_foro` BIGINT NOT NULL AUTO_INCREMENT,
   `estado_foro` VARCHAR(45) NOT NULL DEFAULT 'HABILITADO',
-  `temas_por_aprobar` INT NOT NULL DEFAULT 0,
-  `temas_aprobados` INT NOT NULL DEFAULT 0,
-  `comentarios_por_aprobar` INT NOT NULL DEFAULT 0,
-  `comentarios_aprobados` INT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id_foro`))
 ENGINE = InnoDB;
 
@@ -233,6 +229,7 @@ CREATE TABLE IF NOT EXISTS `educa`.`sesion_usuario` (
   `numero_componente` INT NOT NULL,
   `id_curso` INT NOT NULL,
   `id_usuario` BIGINT NOT NULL,
+  `desaprobado` TINYINT(1) NOT NULL DEFAULT false,
   PRIMARY KEY (`numero_componente`, `id_curso`, `id_usuario`),
   INDEX `fk_sesion_has_usuario_usuario1_idx` (`id_usuario` ASC),
   INDEX `fk_sesion_has_usuario_sesion1_idx` (`numero_componente` ASC, `id_curso` ASC),
@@ -366,7 +363,6 @@ CREATE TABLE IF NOT EXISTS `educa`.`tema` (
   `descripcion` VARCHAR(200) NOT NULL,
   `estado_tema` VARCHAR(45) NOT NULL DEFAULT 'INDEFINIDO',
   `id_foro` BIGINT NOT NULL,
-  `comentarios_por_aprobar` INT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id_tema`),
   INDEX `fk_tema_usuario1_idx` (`id_usuario` ASC),
   INDEX `fk_tema_foro1_idx` (`id_foro` ASC),
@@ -406,6 +402,37 @@ CREATE TABLE IF NOT EXISTS `educa`.`comentario` (
   CONSTRAINT `fk_comentario_tema1`
     FOREIGN KEY (`id_tema`)
     REFERENCES `educa`.`tema` (`id_tema`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `educa`.`evaluacion`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `educa`.`evaluacion` ;
+
+CREATE TABLE IF NOT EXISTS `educa`.`evaluacion` (
+  `id_evaluacion` BIGINT NOT NULL AUTO_INCREMENT,
+  `id_usuario` BIGINT NOT NULL,
+  `Id_sesion` INT NOT NULL,
+  `id_curso` INT NOT NULL,
+  `numero_unidad` INT NOT NULL,
+  `cantidad_respuestas_correctas` INT NULL,
+  `cantidad_respuestas_incorrectas` INT NULL,
+  `estado_examen` VARCHAR(45) NULL,
+  `fecha_actualizacion` TIMESTAMP NULL,
+  PRIMARY KEY (`id_evaluacion`),
+  INDEX `fk_examen_1_idx` (`id_usuario` ASC),
+  INDEX `fk_evaluacion_1_idx` (`id_curso` ASC),
+  CONSTRAINT `fk_examen_1`
+    FOREIGN KEY (`id_usuario`)
+    REFERENCES `educa`.`usuario` (`id_usuario`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_evaluacion_1`
+    FOREIGN KEY (`id_curso`)
+    REFERENCES `educa`.`curso` (`id_curso`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

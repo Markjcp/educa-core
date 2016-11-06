@@ -12,6 +12,7 @@ import org.educa.core.bean.UsuarioSeguridad;
 import org.educa.core.controller.forms.ForoForm;
 import org.educa.core.dao.ComentarioRepository;
 import org.educa.core.dao.ForoRepository;
+import org.educa.core.dao.SesionDao;
 import org.educa.core.dao.SesionRepository;
 import org.educa.core.dao.TemaRepository;
 import org.educa.core.entities.model.Comentario;
@@ -63,6 +64,10 @@ public class ForoController {
 	@Autowired
 	@Qualifier("comentarioRepository")
 	private ComentarioRepository comentarioRepository;
+	
+	@Autowired
+	@Qualifier("sesionDao")
+	private SesionDao sesionDao;
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public String index(@PathVariable("id") long id, Model model) {
@@ -70,7 +75,7 @@ public class ForoController {
 		ForoForm foroForm = new ForoForm();
 		foroForm.setCurso(curso);
 		
-		SortedSet<Sesion> sesiones = sesionRepository.findByFechaAndIdCurso(Calendar.getInstance().getTime(), id);
+		SortedSet<Sesion> sesiones = sesionDao.findByFechaAndIdCurso(Calendar.getInstance().getTime(), id);
 		
 		model.addAttribute("foroForm", foroForm);
 		model.addAttribute("sesiones", sesiones);

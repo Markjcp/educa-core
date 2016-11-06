@@ -60,17 +60,6 @@
 									<div class="collapsible-body" style="">
 										<form action="#">
 											<div id="formularioSesion">
-												<div class="row">
-													<br></br>
-													<div class="col s3"></div>
-													<div class="col s6">
-														<div class="alert alert-success">
-														   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-														   <span th:text="${sesion.mensajeEstado}">&nbsp;</span>	                   
-														</div>
-													</div>
-													<div class="col s3"></div>
-												</div>
 												<div th:if="${sesion.foro.moderado} == true" class="row">
 													<div class="col s2"></div>
 													<div class="col s4">
