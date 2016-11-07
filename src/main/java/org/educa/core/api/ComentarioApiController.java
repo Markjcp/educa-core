@@ -38,9 +38,17 @@ public class ComentarioApiController {
 	@RequestMapping(method = RequestMethod.GET, value = "listar/{idTema}")
 	public ResponseEntity<List<Comentario>> comentariosPorTema(@PathVariable Long idTema) {
 		List<Comentario> resultado = new ArrayList<Comentario>();
+		List<Comentario> resultadoFiltrado = new ArrayList<Comentario>();
 		try {
 			resultado = comentarioRepository.findByIdTema(idTema);
-			return new ResponseEntity<List<Comentario>>(resultado, HttpStatus.OK);
+			
+			for (Comentario comentario : resultado) {
+				if (comentario.isAprobado()) {
+					resultadoFiltrado.add(comentario);
+				}
+			}
+			
+			return new ResponseEntity<List<Comentario>>(resultadoFiltrado, HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<List<Comentario>>(resultado, HttpStatus.NOT_FOUND);
 		}
