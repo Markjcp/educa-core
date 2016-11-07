@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "sesion_usuario")
 public class SesionUsuario implements Serializable {
@@ -18,6 +20,7 @@ public class SesionUsuario implements Serializable {
 	@EmbeddedId
 	private SesionUsuarioId id;
 	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "id_curso", insertable = false, updatable = false)
 	private Curso curso;
