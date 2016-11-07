@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.educa.core.dao.ForoRepository;
 import org.educa.core.dao.TemaRepository;
+import org.educa.core.entities.model.Comentario;
 import org.educa.core.entities.model.EstadoForo;
 import org.educa.core.entities.model.EstadoPublicacion;
 import org.educa.core.entities.model.Foro;
@@ -38,10 +41,25 @@ public class TemaApiController {
 	@RequestMapping(method = RequestMethod.GET, value = "listar/{idForo}")
 	public ResponseEntity<List<Tema>> listar(@PathVariable Long idForo) {
 		List<Tema> temas = new ArrayList<Tema>();
+		List<Tema> temasFiltados = new ArrayList<Tema>();
 		
 		try {
 			temas = temaRepository.findByIdForo(idForo);
-			return new ResponseEntity<List<Tema>>(temas, HttpStatus.OK);	
+			
+			for (Tema tema : temas) {
+				if (tema.isAprobado()) {
+					SortedSet<Comentario> comentariosFiltados = new TreeSet<Comentario>();
+					for (Comentario comentario : tema.getComentarios()) {
+						if (comentario.isAprobado()) {
+							comentariosFiltados.add(comentario);
+						}
+					}
+					tema.setComentarios(comentariosFiltados);
+					temasFiltados.add(tema);
+				}
+				
+			}
+			return new ResponseEntity<List<Tema>>(temasFiltados, HttpStatus.OK);	
 		} catch (Exception e) {
 			return new ResponseEntity<List<Tema>>(temas, HttpStatus.NOT_FOUND);
 		}
