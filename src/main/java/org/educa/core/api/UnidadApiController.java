@@ -119,9 +119,9 @@ public class UnidadApiController {
 			evaluacion.setPorcentaje(porcentaje);
 			if(evaluacion.getEstado().equals(EstadoExamen.DESAPROBADO)){
 				SesionUsuarioId sesionUsuarioId = new SesionUsuarioId();
-				sesionUsuarioId.setId(Long.valueOf(respuestasBean.getIdSesion()));
+				sesionUsuarioId.setId(Long.valueOf(respuestasBean.getIdUsuario()));
 				sesionUsuarioId.setIdCurso(Long.valueOf(respuestasBean.getIdCurso()));
-				sesionUsuarioId.setNumero(respuestasBean.getNumeroUnidad());
+				sesionUsuarioId.setNumero(respuestasBean.getIdSesion());
 				
 				SesionUsuario sesionUsuario = sesionUsuarioRepository.findOne(sesionUsuarioId);
 				sesionUsuario.setDesaprobado(true);
@@ -130,6 +130,7 @@ public class UnidadApiController {
 		} catch (YaExisteException e) {
 			return new ResponseEntity<Evaluacion>(evaluacion, HttpStatus.CONFLICT);
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return new ResponseEntity<Evaluacion>(evaluacion, HttpStatus.NOT_FOUND);
 		}
 		
