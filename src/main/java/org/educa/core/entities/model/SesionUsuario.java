@@ -5,6 +5,8 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -27,6 +29,10 @@ public class SesionUsuario implements Serializable {
 	
 	@Column(name = "desaprobado")
 	private Boolean desaprobado;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "estado_sesion_usuario")
+	private EstadoSesionUsuario estado;
 
 	public SesionUsuarioId getId() {
 		return id;
@@ -50,6 +56,14 @@ public class SesionUsuario implements Serializable {
 
 	public void setDesaprobado(Boolean desaprobado) {
 		this.desaprobado = desaprobado;
+	}
+	
+	public EstadoSesionUsuario getEstado() {
+		return estado;
+	}
+
+	public void setEstado(EstadoSesionUsuario estado) {
+		this.estado = estado;
 	}
 
 	@Override

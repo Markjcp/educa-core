@@ -230,6 +230,7 @@ CREATE TABLE IF NOT EXISTS `educa`.`sesion_usuario` (
   `id_curso` INT NOT NULL,
   `id_usuario` BIGINT NOT NULL,
   `desaprobado` TINYINT(1) NOT NULL DEFAULT false,
+  `estado_sesion_usuario` VARCHAR(45) NOT NULL DEFAULT 'INDEFINIDO',
   PRIMARY KEY (`numero_componente`, `id_curso`, `id_usuario`),
   INDEX `fk_sesion_has_usuario_usuario1_idx` (`id_usuario` ASC),
   INDEX `fk_sesion_has_usuario_sesion1_idx` (`numero_componente` ASC, `id_curso` ASC),

@@ -600,3 +600,8 @@ ENGINE = InnoDB;
 ALTER TABLE `educa`.`sesion_usuario` 
 ADD COLUMN `desaprobado` TINYINT(1) NOT NULL DEFAULT 0 AFTER `id_usuario`;
 
+-- 9/11
+
+ALTER TABLE `educa`.`sesion_usuario` 
+ADD COLUMN `estado_sesion_usuario` VARCHAR(45) NOT NULL DEFAULT 'INDEFINIDO' AFTER `desaprobado`;
+
