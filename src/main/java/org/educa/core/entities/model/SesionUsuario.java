@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -21,18 +22,25 @@ public class SesionUsuario implements Serializable {
 
 	@EmbeddedId
 	private SesionUsuarioId id;
-	
+
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "id_curso", insertable = false, updatable = false)
 	private Curso curso;
-	
+
 	@Column(name = "desaprobado")
 	private Boolean desaprobado;
-	
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "estado_sesion_usuario")
 	private EstadoSesionUsuario estado;
+
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumns({
+			@JoinColumn(name = "numero_componente", referencedColumnName = "numero_componente", insertable = false, updatable = false),
+			@JoinColumn(name = "id_curso", referencedColumnName = "id_curso", insertable = false, updatable = false) })
+	private Sesion sesion;
 
 	public SesionUsuarioId getId() {
 		return id;
@@ -41,7 +49,7 @@ public class SesionUsuario implements Serializable {
 	public void setId(SesionUsuarioId id) {
 		this.id = id;
 	}
-	
+
 	public Curso getCurso() {
 		return curso;
 	}
@@ -49,7 +57,7 @@ public class SesionUsuario implements Serializable {
 	public void setCurso(Curso curso) {
 		this.curso = curso;
 	}
-	
+
 	public Boolean getDesaprobado() {
 		return desaprobado;
 	}
@@ -57,13 +65,21 @@ public class SesionUsuario implements Serializable {
 	public void setDesaprobado(Boolean desaprobado) {
 		this.desaprobado = desaprobado;
 	}
-	
+
 	public EstadoSesionUsuario getEstado() {
 		return estado;
 	}
 
 	public void setEstado(EstadoSesionUsuario estado) {
 		this.estado = estado;
+	}
+	
+	public Sesion getSesion() {
+		return sesion;
+	}
+
+	public void setSesion(Sesion sesion) {
+		this.sesion = sesion;
 	}
 
 	@Override

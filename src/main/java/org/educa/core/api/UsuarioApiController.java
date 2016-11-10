@@ -3,6 +3,7 @@ package org.educa.core.api;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.educa.core.bean.DiplomaBean;
 import org.educa.core.bean.FacebookLoginBean;
 import org.educa.core.bean.GoogleLoginBean;
 import org.educa.core.bean.ResponseBean;
@@ -16,6 +17,8 @@ import org.educa.core.entities.model.SesionUsuario;
 import org.educa.core.entities.model.SesionUsuarioId;
 import org.educa.core.entities.model.Usuario;
 import org.educa.core.exceptions.MasDeUnUsuarioException;
+import org.educa.core.exceptions.SinResultadosException;
+import org.educa.core.util.AdaptadorDiploma;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -121,8 +124,25 @@ public class UsuarioApiController {
 		}		
 	}
 	
-	
-	
+	@RequestMapping(method = RequestMethod.GET, value = "mis-diplomas/{idUsuario}")
+	public ResponseEntity<List<DiplomaBean>> misDiplomas(@PathVariable Long idUsuario){
+		List<DiplomaBean> resultado = new ArrayList<DiplomaBean>();
+		try {
+			List<SesionUsuario> sesiones = usuarioDao.obtenerMisDiplomas(idUsuario);
+			if(sesiones != null){
+				for (SesionUsuario sesion : sesiones) {
+					resultado.add(new AdaptadorDiploma(sesion).adaptar());
+				}				
+			}
+			if(!resultado.isEmpty()){
+				return new ResponseEntity<List<DiplomaBean>>(resultado,HttpStatus.OK);				
+			}
+			throw new SinResultadosException();
+		} catch (Exception e) {
+			return new ResponseEntity<List<DiplomaBean>>(resultado,HttpStatus.NOT_FOUND);
+		}		
+	}
+		
 	private Usuario buildUsuario(List<Usuario> usuarios){
 		if(usuarios!=null && usuarios.size()>1){
 			throw new MasDeUnUsuarioException();

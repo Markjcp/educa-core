@@ -15,5 +15,8 @@ public interface UsuarioDao {
 	
 	public List<SesionUsuario> obtenerMisSesiones(Long usuarioId);
 	
+	public List<SesionUsuario> obtenerMisDiplomas(Long usuarioId);
+
+	
 	
 }
