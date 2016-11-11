@@ -1,22 +1,28 @@
-package org.educa.core.test.charts;
+package org.educa.core.services.impl;
 
+import java.util.Date;
+import java.util.Map;
+
+import org.educa.core.bean.ContadorEstadistica;
 import org.educa.core.bean.EstadisticaGraficoRoleBean;
-import org.junit.Test;
+import org.educa.core.entities.model.Categoria;
+import org.educa.core.exceptions.SerializacionException;
+import org.educa.core.services.EstadisticaService;
+import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.googlecode.charts4j.BarChart;
-import com.googlecode.charts4j.Color;
-import com.googlecode.charts4j.Data;
-import com.googlecode.charts4j.GCharts;
-import com.googlecode.charts4j.Plot;
-import com.googlecode.charts4j.Plots;
-import com.googlecode.charts4j.Shape;
 
-public class EstadisticaTest {
-	
-	@Test
-	public void probarSerializar() throws JsonProcessingException{
+@Service
+public class EstadisticaServiceImpl implements EstadisticaService{
+
+	@Override
+	public Map<Categoria, ContadorEstadistica> buscarEstadisticas(Date desde, Date hasta, Long usuarioId) {
+		return null;
+	}
+
+	@Override
+	public String adaptarResultados(Map<Categoria, ContadorEstadistica> resultados) {
 		Object[] root = new Object[4];
 		
 		EstadisticaGraficoRoleBean role = new EstadisticaGraficoRoleBean();
@@ -29,7 +35,7 @@ public class EstadisticaTest {
 		cabecera[4]=role;
 		
 		Object[] categoria1 = new Object[5];
-		categoria1[0] = "Programacion";
+		categoria1[0] = "Programacion I";
 		categoria1[1] = 10;
 		categoria1[2] = 2;
 		categoria1[3] = 3;
@@ -39,14 +45,14 @@ public class EstadisticaTest {
 		categoria2[0] = "Moda";
 		categoria2[1] = 11;
 		categoria2[2] = 4;
-		categoria2[3] = 4;
+		categoria2[3] = 6;
 		categoria2[4] = "";
 		
 		Object[] categoria3 = new Object[5];
 		categoria3[0] = "Gastronomía";
 		categoria3[1] = 13;
 		categoria3[2] = 4;
-		categoria3[3] = 4;
+		categoria3[3] = 5;
 		categoria3[4] = "";
 		
 		root[0] = cabecera;
@@ -55,21 +61,11 @@ public class EstadisticaTest {
 		root[3] = categoria3;
 		
 		ObjectMapper om = new ObjectMapper();
-		System.out.println(om.writeValueAsString(root));
-	}
-	
-	@Test
-	public void probarGraficoBarras(){
-		Plot plot = Plots.newPlot(Data.newData(0, 10, 20, 30, 40, 50, 60, 70, 80, 90));
-		//plot.
-        plot.addShapeMarkers(Shape.DIAMOND, Color.BLUE, 12);
-		
-		BarChart barChart = GCharts.newBarChart(plot);
-		barChart.setTitle("Titulo", Color.BLACK, 15);
-		barChart.setSize(400, 600);
-		barChart.setDataStacked(true);
-		System.out.println(barChart.toURLString());
-		
+		try {
+			return om.writeValueAsString(root);
+		} catch (JsonProcessingException e) {
+			throw new SerializacionException();
+		}		
 	}
 
 }
