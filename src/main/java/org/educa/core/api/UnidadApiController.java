@@ -5,12 +5,14 @@ import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.List;
 
+import org.educa.core.bean.ResponseBean;
 import org.educa.core.bean.RespuestasExamenBean;
 import org.educa.core.dao.ExamenUnidadRepository;
 import org.educa.core.dao.MaterialUnidadRepository;
 import org.educa.core.dao.SesionUsuarioRepository;
 import org.educa.core.dao.VideoUnidadRepository;
 import org.educa.core.entities.model.EstadoExamen;
+import org.educa.core.entities.model.EstadoSesionUsuario;
 import org.educa.core.entities.model.Evaluacion;
 import org.educa.core.entities.model.ExamenUnidad;
 import org.educa.core.entities.model.ExamenUnidadId;
@@ -108,7 +110,7 @@ public class UnidadApiController {
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, value = "enviarResultado", produces = {"application/json"})
 	public ResponseEntity<Evaluacion> evaluacion(											
-											@RequestBody RespuestasExamenBean respuestasBean) throws JsonProcessingException {
+				@RequestBody RespuestasExamenBean respuestasBean) throws JsonProcessingException {
 		
 		
 		Evaluacion evaluacion = new Evaluacion();
@@ -125,7 +127,11 @@ public class UnidadApiController {
 				
 				SesionUsuario sesionUsuario = sesionUsuarioRepository.findOne(sesionUsuarioId);
 				sesionUsuario.setDesaprobado(true);
-				sesionUsuarioRepository.save(sesionUsuario);				
+				sesionUsuario.setEstado(EstadoSesionUsuario.DESAPROBADO);
+				sesionUsuarioRepository.save(sesionUsuario);
+				
+			} else {
+				// verificar si aprobo todos los examentes
 			}
 		} catch (YaExisteException e) {
 			return new ResponseEntity<Evaluacion>(evaluacion, HttpStatus.CONFLICT);
