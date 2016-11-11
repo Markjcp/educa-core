@@ -17,6 +17,7 @@ public class EstadisticasController {
 		
 		EstadisticaForm estadisticaForm = new EstadisticaForm();
 		estadisticaForm.setChartUrl("");
+		estadisticaForm.setChartContentData("[[ 'Inscriptos','Aprobados', 'Desaprobados', 'No terminaron', { role : 'annotation' } ], [ 'Programacion', 10, 2, 3,''],[ 'Moda', 11, 4, 4,''], [ 'Gastronomía', 13,4,4,''] ]"); //@TODO sacar el hardcodeado y cambar el nombre
 		
 
 		model.addAttribute("estadisticaForm", estadisticaForm);

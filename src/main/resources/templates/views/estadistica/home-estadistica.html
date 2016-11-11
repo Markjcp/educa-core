@@ -27,9 +27,10 @@
 		<div class="section">
 			<div class="row">
 				<h1>Estadisticas</h1>
-				<!-- 				<form id="estadisticaForm" action="#" th:object="${estadisticaForm}"> -->
-				<!-- 					<img alt="Inscripciones" th:src="*{chartUrl}" /> -->
-				<!-- 				</form>			 -->
+								<form id="estadisticaForm" action="#" th:object="${estadisticaForm}">
+<!-- 									<img alt="Inscripciones" th:src="*{chartUrl}" /> -->
+									<input type="hidden" id="datosGrafico" th:value="*{chartContentData}" th:field="*{chartContentData}"/>
+								</form>			
 				<div id="chart_div"></div>
 
 			</div>
@@ -61,14 +62,18 @@
 		// instantiates the pie chart, passes in the data and
 		// draws it.
 		function drawChart() {
-
-			var data = google.visualization.arrayToDataTable([
+			var dataStr = $('#datosGrafico').val();
+			var json = JSON.stringify(eval("(" + dataStr + ")"));
+			var dataArray = JSON.parse(json);
+			/*var data = google.visualization.arrayToDataTable([
 					[ 'Inscriptos','Aprobados', 'Desaprobados', 'No terminaron', {
 								role : 'annotation'
 							} ], 
 					[ 'Programacion', 10, 2, 3,''],
 					[ 'Moda', 11, 4, 4,''],
-					[ 'Gastronomía', 13,4,4,''] ]);
+					[ 'Gastronomía', 13,4,4,''] ]);*/
+					
+			var data = google.visualization.arrayToDataTable(dataArray);
 
 			var options = {
 				width : 600,
