@@ -4,20 +4,16 @@
 <title>Taller Desarrollo II - FIUBA</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-	rel="stylesheet" />
-
-<link href="css/bootstrap.css" th:href="@{/css/bootstrap.css}"
-	rel="stylesheet" media="screen,projection" />
-<link href="css/sb-admin-2.css" th:href="@{/css/sb-admin-2.css}"
-	rel="stylesheet" media="screen,projection" />
-<link href="css/materialize.css" th:href="@{/css/materialize.css}"
-	rel="stylesheet" media="screen,projection" />
-<link href="css/style.css" th:href="@{/css/style.css}" rel="stylesheet"
-	media="screen,projection" />
-<link href="css/style.css" th:href="@{/css/educa.css}" rel="stylesheet"
-	media="screen,projection" />
-
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    
+    <link href="../../static/css/bootstrap.css" th:href="@{/css/bootstrap.css}" rel="stylesheet" media="screen,projection" />
+    <link href="../../static/css/metisMenu.css" th:href="@{/css/metisMenu.css}" rel="stylesheet" media="screen,projection" />    
+	<link href="../../static/css/sb-admin-2.css" th:href="@{/css/sb-admin-2.css}" rel="stylesheet" media="screen,projection" />
+    <link href="../../static/css/materialize.css" th:href="@{/css/materialize.css}" rel="stylesheet" media="screen,projection" />
+	<link href="../../static/css/style.css" th:href="@{/css/style.css}" rel="stylesheet" media="screen,projection" />	
+	<link href="../../static/css/educa.css" th:href="@{/css/educa.css}" rel="stylesheet" media="screen,projection" />
+	<link href="../../static/css/bootstrap-datetimepicker.css" th:href="@{/css/bootstrap-datetimepicker.css}" rel="stylesheet" media="screen,projection" />	
+	<link href="../../static/css/font-awesome.css" th:href="@{/css/font-awesome.css}" rel="stylesheet" media="screen,projection" />	
 </head>
 <body>
 
@@ -26,11 +22,47 @@
 	<div class="container">
 		<div class="section">
 			<div class="row">
-				<h1>Estadisticas</h1>
-								<form id="estadisticaForm" action="#" th:object="${estadisticaForm}">
-<!-- 									<img alt="Inscripciones" th:src="*{chartUrl}" /> -->
-									<input type="hidden" id="datosGrafico" th:value="*{chartContentData}" th:field="*{chartContentData}"/>
-								</form>			
+				<!-- <h5>Estadisticas</h5>  -->
+					<form id="estadisticaForm" action="#" th:object="${estadisticaForm}" th:action="@{/estadisticas/buscar}" method="post">
+						<input type="hidden" id="datosGrafico" th:value="*{chartContentData}" th:field="*{chartContentData}"/>
+						<div class="col l3 s12">
+							<div class="form-group input-group input-field date" id="fechaDesdeActualizadar">
+								<label for="fechaDesde" class="">Fecha desde</label> <input th:name="fechaDesde"
+									th:field="*{fechaDesde}"
+									type="text" class="form-control" /> <span
+									class="input-group-addon"
+									style="border: none; background-color: #f8f8f8;"> <span
+									class="glyphicon glyphicon-calendar"> </span>
+									</span>
+							</div>
+						</div>
+						<div class="col l3 s12">
+							<div class="form-group input-group input-field date" id="fechaHastaActualizadar">
+								<label for="fechaHasta" class="">Fecha hasta</label> <input th:name="fechaHasta"
+									th:field="*{fechaHasta}"
+									type="text" class="form-control" /> <span
+									class="input-group-addon"
+									style="border: none; background-color: #f8f8f8;"> <span
+									class="glyphicon glyphicon-calendar"> </span>
+									</span>
+							</div>
+						</div>
+						<div class="col l3 s12" style="padding-top: 20px;">
+							<div class="form-group">
+								<button type="submit" class="btn orange-effect orange darken-4">Buscar</button>						
+							</div>						
+						</div>
+						<div class="col l3 s12" style="padding-top: 20px;">
+							<div class="form-group">
+								<a class="btn orange-effect orange darken-4" href="#" th:href="@{/estadisticas}">Limpiar</a>
+							</div>						
+						</div>
+					</form>
+				<br></br>
+				<br></br>
+				<br></br>
+				<br></br>
+				<br></br>			
 				<div id="chart_div"></div>
 
 			</div>
@@ -39,15 +71,17 @@
 
 
 	<!--  Scripts-->
-	<script src="../../static/js/jquery-2.1.1.js"
-		th:src="@{/js/jquery-2.1.1.js}"></script>
-	<script src="js/bootstrap.js" th:src="@{/js/bootstrap.js}"></script>
-	<script src="../../static/js/metisMenu.js" th:src="@{/js/metisMenu.js}"></script>
-	<script src="js/sb-admin-2.js" th:src="@{/js/sb-admin-2.js}"></script>
-	<script src="js/materialize.js" th:src="@{/js/materialize.js}"></script>
-	<script src="js/init.js" th:src="@{/js/init.js}"></script>
-	<script type="text/javascript"
-		src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="../../static/js/jquery-2.1.1.js" th:src="@{/js/jquery-2.1.1.js}"></script> 
+    <script src="../../static/js/bootstrap.js" th:src="@{/js/bootstrap.js}"></script>
+    <script src="../../static/js/metisMenu.js" th:src="@{/js/metisMenu.js}"></script>
+    <script src="../../static/js/sb-admin-2.js" th:src="@{/js/sb-admin-2.js}"></script>
+    <script src="../../static/js/materialize.js" th:src="@{/js/materialize.js}"></script>
+    <script src="../../static/js/init.js" th:src="@{/js/init.js}"></script>   
+    <script src="../../static/js/moment-with-locales.js" th:src="@{/js/moment-with-locales.js}"></script>
+    <script src="../../static/js/moment.js" th:src="@{/js/moment.js}"></script>
+    <script src="../../static/js/locale/es.js" th:src="@{/js/locale/es.js}"></script>    
+    <script src="../../static/js/bootstrap-datetimepicker.min.js" th:src="@{/js/bootstrap-datetimepicker.min.js}"></script>
+   	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 	<script type="text/javascript">
 		// Load the Visualization API and the corechart package.
@@ -85,6 +119,17 @@
 					.getElementById('chart_div'));
 			chart.draw(data, options);
 		}
+		
+		$(function () {
+	        $('#fechaDesde').datetimepicker({            
+	            format: 'DD-MM-YYYY',
+	            locale: 'es'
+	        });
+	        $('#fechaHasta').datetimepicker({            
+	            format: 'DD-MM-YYYY',
+	            locale: 'es'
+	        });
+	    });
 	</script>
 
 

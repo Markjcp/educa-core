@@ -139,7 +139,7 @@ public class UsuarioApiController {
 			}
 			throw new SinResultadosException();
 		} catch (Exception e) {
-			return new ResponseEntity<List<DiplomaBean>>(resultado,HttpStatus.NOT_FOUND);
+			return new ResponseEntity<List<DiplomaBean>>(resultado,HttpStatus.OK);
 		}		
 	}
 		
