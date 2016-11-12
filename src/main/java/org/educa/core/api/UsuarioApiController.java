@@ -12,6 +12,7 @@ import org.educa.core.dao.SesionUsuarioRepository;
 import org.educa.core.dao.UsuarioDao;
 import org.educa.core.dao.UsuarioRepository;
 import org.educa.core.entities.model.Curso;
+import org.educa.core.entities.model.EstadoSesionUsuario;
 import org.educa.core.entities.model.RolUsuario;
 import org.educa.core.entities.model.SesionUsuario;
 import org.educa.core.entities.model.SesionUsuarioId;
@@ -82,6 +83,8 @@ public class UsuarioApiController {
 		} 
 		auxiliar = new SesionUsuario();
 		auxiliar.setId(id);
+		auxiliar.setDesaprobado(false);
+		auxiliar.setEstado(EstadoSesionUsuario.INDEFINIDO);
 		sesionUsuarioRepository.save(auxiliar);
 		return new ResponseEntity<ResponseBean>(new ResponseBean(true),HttpStatus.OK);
 	}

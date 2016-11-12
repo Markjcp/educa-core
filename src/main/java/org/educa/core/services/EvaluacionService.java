@@ -11,4 +11,6 @@ public interface EvaluacionService {
 	public Evaluacion evaluar(RespuestasExamenBean respuestasBean)  throws Exception ;
 
 	public Evaluacion consultarEvaluacion(Integer idSesion, Integer idUsuario, Integer idCurso, Integer numeroUnidad)  throws Exception;
+	
+	public List<Evaluacion> consultarEvaluaciones(Integer numero, Integer idUsuario, Integer idCurso) throws Exception;
 }
