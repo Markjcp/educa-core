@@ -13,6 +13,7 @@ import org.educa.core.controller.forms.EstadisticaForm;
 import org.educa.core.entities.model.Categoria;
 import org.educa.core.entities.model.Usuario;
 import org.educa.core.exceptions.SerializacionException;
+import org.educa.core.exceptions.SinResultadosException;
 import org.educa.core.services.EstadisticaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -66,6 +67,9 @@ public class EstadisticasController extends AbstractController {
 		} catch (SerializacionException e) {
 			logger.severe("Error deserializando: " + e);
 			return "";
+		} catch (SinResultadosException e){
+			logger.info("Sin resultados");
+			return "";			
 		}
 	}
 	

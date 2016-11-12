@@ -15,6 +15,8 @@ public class EstadisticaForm {
 
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date fechaHasta;
+	
+	private boolean sinResultados = false;
 
 	public String getChartUrl() {
 		return chartUrl;
@@ -30,6 +32,13 @@ public class EstadisticaForm {
 
 	public void setChartContentData(String chartContentData) {
 		this.chartContentData = chartContentData;
+		if(chartContentData== null || chartContentData.isEmpty()){
+			sinResultados = true;
+		}
+	}
+	
+	public boolean isSinResultados() {
+		return sinResultados;
 	}
 
 	public Date getFechaDesde() {

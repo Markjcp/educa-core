@@ -62,8 +62,11 @@
 				<br></br>
 				<br></br>
 				<br></br>
-				<br></br>			
-				<div id="chart_div"></div>
+				<br></br>
+				<div th:if="${estadisticaForm.sinResultados} == true">
+					<div class="alert alert-warning">No hay resultados por mostrar.</div>
+				</div>
+				<div id="chart_div" th:if="${estadisticaForm.sinResultados} == false"></div>
 
 			</div>
 		</div>
