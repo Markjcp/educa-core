@@ -2,8 +2,6 @@ package org.educa.core.bean;
 
 public class ContadorEstadistica {
 
-	private int inscriptos;
-
 	private int desaprobados;
 
 	private int aprobados;
@@ -11,35 +9,31 @@ public class ContadorEstadistica {
 	private int inconcluso;
 
 	public int getInscriptos() {
-		return inscriptos;
-	}
-
-	public void setInscriptos(int inscriptos) {
-		this.inscriptos = inscriptos;
+		return desaprobados + aprobados + inconcluso;
 	}
 
 	public int getDesaprobados() {
 		return desaprobados;
 	}
 
-	public void setDesaprobados(int desaprobados) {
-		this.desaprobados = desaprobados;
+	public void sumarDesaprobados() {
+		this.desaprobados = desaprobados +1;
 	}
 
 	public int getAprobados() {
 		return aprobados;
 	}
 
-	public void setAprobados(int aprobados) {
-		this.aprobados = aprobados;
+	public void sumarAprobados() {
+		this.aprobados = aprobados +1;
 	}
 
 	public int getInconcluso() {
 		return inconcluso;
 	}
 
-	public void setInconcluso(int inconcluso) {
-		this.inconcluso = inconcluso;
+	public void sumarInconcluso() {
+		this.inconcluso = inconcluso + 1;
 	}
 
 }
