@@ -5,21 +5,15 @@ import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.List;
 
-import org.educa.core.bean.ResponseBean;
 import org.educa.core.bean.RespuestasExamenBean;
 import org.educa.core.dao.ExamenUnidadRepository;
 import org.educa.core.dao.MaterialUnidadRepository;
-import org.educa.core.dao.SesionUsuarioRepository;
 import org.educa.core.dao.VideoUnidadRepository;
-import org.educa.core.entities.model.EstadoExamen;
-import org.educa.core.entities.model.EstadoSesionUsuario;
 import org.educa.core.entities.model.Evaluacion;
 import org.educa.core.entities.model.ExamenUnidad;
 import org.educa.core.entities.model.ExamenUnidadId;
 import org.educa.core.entities.model.MaterialUnidad;
 import org.educa.core.entities.model.PreguntaExamenUnidad;
-import org.educa.core.entities.model.SesionUsuario;
-import org.educa.core.entities.model.SesionUsuarioId;
 import org.educa.core.entities.model.VideoUnidad;
 import org.educa.core.exceptions.YaExisteException;
 import org.educa.core.services.EvaluacionService;
@@ -57,8 +51,7 @@ public class UnidadApiController {
 	@Autowired
 	private EvaluacionService evaluacionService;
 	
-	@Autowired
-	private SesionUsuarioRepository sesionUsuarioRepository;
+	
 	
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, value = "{numeroUnidad}/{idCurso}/video", headers="Accept=*/*",produces = {"video/mp4"})
@@ -117,22 +110,7 @@ public class UnidadApiController {
 		
 		try {
 			evaluacion = evaluacionService.evaluar(respuestasBean);
-			String porcentaje = calcularPorcenta(evaluacion);
-			evaluacion.setPorcentaje(porcentaje);
-			if(evaluacion.getEstado().equals(EstadoExamen.DESAPROBADO)){
-				SesionUsuarioId sesionUsuarioId = new SesionUsuarioId();
-				sesionUsuarioId.setId(Long.valueOf(respuestasBean.getIdUsuario()));
-				sesionUsuarioId.setIdCurso(Long.valueOf(respuestasBean.getIdCurso()));
-				sesionUsuarioId.setNumero(respuestasBean.getIdSesion());
-				
-				SesionUsuario sesionUsuario = sesionUsuarioRepository.findOne(sesionUsuarioId);
-				sesionUsuario.setDesaprobado(true);
-				sesionUsuario.setEstado(EstadoSesionUsuario.DESAPROBADO);
-				sesionUsuarioRepository.save(sesionUsuario);
-				
-			} else {
-				// verificar si aprobo todos los examentes
-			}
+
 		} catch (YaExisteException e) {
 			return new ResponseEntity<Evaluacion>(evaluacion, HttpStatus.CONFLICT);
 		} catch (Exception e) {
@@ -142,6 +120,8 @@ public class UnidadApiController {
 		
 		return new ResponseEntity<Evaluacion>(evaluacion,HttpStatus.OK);
 	}
+
+	
 	
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, value = "consultarExamen/{idUsuario}/{idSesion}/{idCurso}/{numeroUnidad}", produces = {"application/json"})

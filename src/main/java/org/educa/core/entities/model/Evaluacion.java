@@ -60,6 +60,9 @@ public class Evaluacion implements Serializable {
 	@Transient
 	private String porcentaje;
 	
+	@Transient
+	private EstadoSesionUsuario estadoSesionUsuario;
+	
 
 	public Evaluacion() {
 		super();
@@ -145,9 +148,13 @@ public class Evaluacion implements Serializable {
 	public void setNumeroUnidad(Integer numeroUnidad) {
 		this.numeroUnidad = numeroUnidad;
 	}
-	
-	
-	
 
+	public EstadoSesionUsuario getEstadoSesionUsuario() {
+		return estadoSesionUsuario;
+	}
+
+	public void setEstadoSesionUsuario(EstadoSesionUsuario estadoSesionUsuario) {
+		this.estadoSesionUsuario = estadoSesionUsuario;
+	}
 
 }
