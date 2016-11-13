@@ -204,22 +204,12 @@ public class ForoController {
 		Tema tema = temaRepository.findOne(idTema);
 		EstadoPublicacion estadoAnterior = tema.getEstado();
 		tema.setEstado(EstadoPublicacion.RECHAZADO);
-		temaRepository.save(tema);
 		
 		//Voy a actualizar las cantidades de temas
 		Foro foro = foroRepository.findOne(tema.getIdForo());
-		if(foro.isModerado()){
-			if(EstadoPublicacion.APROBADO.equals(estadoAnterior)){
-				foro.setCantidadTemasAprobados(foro.getCantidadTemasAprobados() - 1);
-			} else if (!EstadoPublicacion.RECHAZADO.equals(estadoAnterior)){
-				foro.setCantidadTemasPorAprobar(foro.getCantidadTemasPorAprobar() - 1);
-			}
-		} else {
-			//Solo estan en estado aprobado o rechazado
-			if(!EstadoPublicacion.RECHAZADO.equals(estadoAnterior)){
-				foro.setCantidadTemasAprobados(foro.getCantidadTemasAprobados() - 1);
-			}
-		}
+		actualizarContadoresTema(estadoAnterior, EstadoPublicacion.RECHAZADO, foro, tema);
+		
+		temaRepository.save(tema);
 		foroRepository.save(foro);
 		
 		tema = temaRepository.findOne(idTema);//Lo vuelvo a buscar para que este actualizado
@@ -381,32 +371,12 @@ public class ForoController {
 		EstadoPublicacion estadoAnterior = comentarioActualizado.getEstado();
 		comentarioActualizado.setEstado(estado);		
 		temaActualizar.addComentario(comentarioActualizado);
-		foro.actualizarTema(temaActualizar);
-		if(estado.equals(EstadoPublicacion.APROBADO)){		
-			foro.setCantidadComentariosAprobados(foro.getCantidadComentariosAprobados()+1);
-			if(foro.isModerado()){
-				temaActualizar.setCantidadComentariosPorAprobar(temaActualizar.getCantidadComentariosPorAprobar() - 1);
-			}
-		}
 		
-		if(EstadoPublicacion.RECHAZADO.equals(estado)){
-			if(foro.isModerado()){
-				if(EstadoPublicacion.APROBADO.equals(estadoAnterior)){
-					foro.setCantidadComentariosAprobados(foro.getCantidadComentariosAprobados() - 1);
-				} else if (!EstadoPublicacion.RECHAZADO.equals(estadoAnterior)){
-					foro.setCantidadComentariosPorAprobar(foro.getCantidadComentariosPorAprobar() - 1);
-				}
-			} else {
-				//Solo estan en estado aprobado o rechazado
-				if(!EstadoPublicacion.RECHAZADO.equals(estadoAnterior)){
-					foro.setCantidadComentariosAprobados(foro.getCantidadComentariosAprobados() - 1);
-				}
-			}
-		}
+		actualizarContadoresComentario(estadoAnterior, estado, foro, temaActualizar);
 		
-		foroRepository.save(foro);		
+		foro.actualizarTema(temaActualizar);		
 		
-		//En ambos se actualizan las cantidades
+		this.foroRepository.save(foro);
 		this.temaRepository.save(temaActualizar);
 		
 		cargarDatosDetalleTema(idTema, model, idCurso, nroSesion, new ForoForm());
@@ -438,5 +408,141 @@ public class ForoController {
 		}
 		
 		return usuarioLogeado;
+	}
+	
+	private void actualizarContadoresComentario(EstadoPublicacion estadoActual, EstadoPublicacion estadoNuevo, Foro foro, Tema tema) {
+		/*
+		 * Comentario:
+		 * 		Si foro Moderado
+		 * 			si actual == NO_APROBADO
+		 * 				si APROBADO
+		 * 					foro cantidadComentariosAprobados ++
+		 * 					foro cantidadComentariosPorAprobar --
+		 * 					tema cantidadComentariosPorAprobar --
+		 * 
+		 * 				si RECHAZADO
+		 * 					foro cantidadComentariosPorAprobar --
+		 * 					tema cantidadComentariosPorAprobar --
+		 * 
+		 * 			si actual == APROBADO
+		 * 				si RECHAZADO
+		 * 					foro cantidadComentariosAprobados --
+		 * 
+		 * 		Si foro No Moderado
+		 * 			si nuevo estado == RECHAZADO
+		 * 					foro cantidadComentariosAprobados --
+		 */
+		
+		if(!foro.isModerado()){
+			if(EstadoPublicacion.RECHAZADO.equals(estadoNuevo)){
+				foro.setCantidadComentariosAprobados(foro.getCantidadComentariosAprobados() - 1);
+			}
+			
+			return;
+		}
+		
+		//FORO MODERADO
+		
+		if(EstadoPublicacion.NO_APROBADO.equals(estadoActual)){
+			if(EstadoPublicacion.APROBADO.equals(estadoNuevo)){
+				foro.setCantidadComentariosAprobados(foro.getCantidadComentariosAprobados() + 1);
+				foro.setCantidadComentariosPorAprobar(foro.getCantidadComentariosPorAprobar() - 1);
+				tema.setCantidadComentariosPorAprobar(tema.getCantidadComentariosPorAprobar() - 1);
+			}
+			
+			if(EstadoPublicacion.RECHAZADO.equals(estadoNuevo)){
+				foro.setCantidadComentariosPorAprobar(foro.getCantidadComentariosPorAprobar() - 1);
+				tema.setCantidadComentariosPorAprobar(tema.getCantidadComentariosPorAprobar() - 1);
+			}
+		}
+		
+		if(EstadoPublicacion.APROBADO.equals(estadoActual)){
+			if(EstadoPublicacion.RECHAZADO.equals(estadoNuevo)){
+				foro.setCantidadComentariosAprobados(foro.getCantidadComentariosAprobados() - 1);				
+			}
+		}
+	}
+	
+	private void actualizarContadoresTema(EstadoPublicacion estadoActual, EstadoPublicacion estadoNuevo, Foro foro, Tema tema) {
+		/*
+		 * Tema:
+		 * 		Si foro Moderado
+		 * 			si actual == NO_APROBADO
+		 * 				si APROBADO
+		 * 					foro cantidadTemasAprobados ++
+		 * 					foro cantidadTemasPorAprobar --
+		 * 
+		 * 				si RECHAZADO
+		 * 					foro cantidadTemasPorAprobar -- 					
+		 * 
+		 * 			si actual == APROBADO
+		 * 				si RECHAZADO
+		 * 					foro cantidadTemasAprobados --
+		 * 					OjO aca deberia de restarse los comentarios que tenia aprobados asociados a ese tema. Actualizar el estado de esos comentarios
+		 * 					Si el comentario esta aprobado, entonces lo resto de aprobados
+		 * 					Si el comentario esta NO_APROBADO, entonces lo resto de los por aprobar.
+		 * 		
+		 * 		Si foro No Moderado
+		 * 			si nuevo estado == RECHAZADO
+		 * 					foro  cantidadTemasAprobados --
+		 * 					OjO aca deberia de restarse los comentarios que tenia aprobados asociados a ese tema. Actualizar el estado de esos comentarios
+		 * 					Directamente resta los aprobados
+		 */
+		if(!foro.isModerado()){
+			if(EstadoPublicacion.RECHAZADO.equals(estadoNuevo)){
+				foro.setCantidadTemasAprobados(foro.getCantidadTemasAprobados() - 1);
+				
+				int cantidadComentarios = 0;				
+				if(tema.getComentarios() != null){
+					for(Comentario comentario : tema.getComentarios()){
+						if(EstadoPublicacion.APROBADO.equals(comentario.getEstado())){
+							cantidadComentarios++;
+							comentario.setEstado(EstadoPublicacion.RECHAZADO);
+						}						
+					}
+				}
+				
+				foro.setCantidadComentariosAprobados(foro.getCantidadComentariosAprobados() - cantidadComentarios);
+			}
+			
+			return;
+		}
+				
+		//FORO MODERADO
+		
+		if(EstadoPublicacion.NO_APROBADO.equals(estadoActual)){
+			if(EstadoPublicacion.APROBADO.equals(estadoNuevo)){
+				foro.setCantidadTemasAprobados(foro.getCantidadTemasAprobados() + 1);
+				foro.setCantidadTemasPorAprobar(foro.getCantidadComentariosPorAprobar() - 1);
+			}
+			
+			if(EstadoPublicacion.RECHAZADO.equals(estadoNuevo)){
+				foro.setCantidadTemasPorAprobar(foro.getCantidadTemasPorAprobar() - 1);				
+			}
+		}
+		
+		if(EstadoPublicacion.APROBADO.equals(estadoActual)){
+			if(EstadoPublicacion.RECHAZADO.equals(estadoNuevo)){
+				foro.setCantidadTemasAprobados(foro.getCantidadTemasAprobados() - 1);
+				
+				int cantidadComentariosAprobado = 0;
+				int cantidadComentariosPorAprobar = 0;
+				
+				if(tema.getComentarios() != null){
+					for(Comentario comentario : tema.getComentarios()){
+						if(EstadoPublicacion.APROBADO.equals(comentario.getEstado())){
+							cantidadComentariosAprobado++;
+							comentario.setEstado(EstadoPublicacion.RECHAZADO);
+						} else if(EstadoPublicacion.NO_APROBADO.equals(comentario.getEstado())){
+							cantidadComentariosPorAprobar++;
+							comentario.setEstado(EstadoPublicacion.RECHAZADO);
+						}
+					}
+				}
+				
+				foro.setCantidadComentariosAprobados(foro.getCantidadComentariosAprobados() - cantidadComentariosAprobado);
+				foro.setCantidadComentariosPorAprobar(foro.getCantidadComentariosPorAprobar() - cantidadComentariosPorAprobar);
+			}
+		}
 	}
 }
