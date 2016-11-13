@@ -17,6 +17,7 @@ import org.educa.core.entities.model.Usuario;
 import org.educa.core.exceptions.SerializacionException;
 import org.educa.core.exceptions.SinResultadosException;
 import org.educa.core.services.EstadisticaService;
+import org.educa.core.validator.FechasFiltroGraficoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,6 +38,9 @@ public class EstadisticasController extends AbstractController {
 	
 	@Autowired
 	private EstadisticaService estadisticaService;
+	
+	@Autowired
+	private FechasFiltroGraficoValidator fechasFiltroGraficoValidator;
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String index(Model model, HttpServletRequest request) {
@@ -68,6 +72,12 @@ public class EstadisticasController extends AbstractController {
 	@RequestMapping(value="/buscar", method = RequestMethod.POST)
 	public String buscar(@ModelAttribute @Valid EstadisticaForm estadisticaForm, BindingResult bindingResult, 
 			Model model, HttpServletRequest request){
+		fechasFiltroGraficoValidator.validate(estadisticaForm, bindingResult);
+		if (bindingResult.hasFieldErrors("fechaDesde")) {
+			estadisticaForm.setChartContentData("");
+			model.addAttribute("estadisticaForm", estadisticaForm);
+			return INDEX;
+		}
 		Map<Categoria,ContadorEstadistica> datos = estadisticaService.buscarEstadisticas(estadisticaForm.getFechaDesde(), estadisticaForm.getFechaHasta(), obtenerUsuarioId(request));
 		estadisticaForm.setChartContentData(generarJsonDeDatos(datos));
 		estadisticaForm.setResultados(convertirDatosEnLista(datos));

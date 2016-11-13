@@ -25,6 +25,7 @@
 				<!-- <h5>Estadisticas</h5>  -->
 					<form id="estadisticaForm" action="#" th:object="${estadisticaForm}" th:action="@{/estadisticas/buscar}" method="post">
 						<input type="hidden" id="datosGrafico" th:value="*{chartContentData}" th:field="*{chartContentData}"/>
+						<p th:errors="*{fechaDesde}" class="has-error-custom"></p>
 						<div class="col l3 s12">
 							<div class="form-group input-group input-field date" id="fechaDesdeActualizadar">
 								<label for="fechaDesde" class="">Fecha desde</label> <input th:name="fechaDesde"
@@ -33,7 +34,7 @@
 									class="input-group-addon"
 									style="border: none; background-color: #f8f8f8;"> <span
 									class="glyphicon glyphicon-calendar"> </span>
-									</span>
+									</span>																
 							</div>
 						</div>
 						<div class="col l3 s12">
