@@ -1,7 +1,9 @@
 package org.educa.core.controller.forms;
 
 import java.util.Date;
+import java.util.List;
 
+import org.educa.core.bean.ResultadosEstadisticas;
 import org.springframework.format.annotation.DateTimeFormat;
 
 public class EstadisticaForm {
@@ -17,6 +19,8 @@ public class EstadisticaForm {
 	private Date fechaHasta;
 	
 	private boolean sinResultados = false;
+	
+	private List<ResultadosEstadisticas> resultados;
 
 	public String getChartUrl() {
 		return chartUrl;
@@ -57,4 +61,11 @@ public class EstadisticaForm {
 		this.fechaHasta = fechaHasta;
 	}
 
+	public List<ResultadosEstadisticas> getResultados() {
+		return resultados;
+	}
+
+	public void setResultados(List<ResultadosEstadisticas> resultados) {
+		this.resultados = resultados;
+	}
 }

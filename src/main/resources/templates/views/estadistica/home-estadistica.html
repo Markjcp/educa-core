@@ -62,11 +62,50 @@
 				<br></br>
 				<br></br>
 				<br></br>
+				<br></br>				
+				<br></br>
 				<br></br>
 				<div th:if="${estadisticaForm.sinResultados} == true">
 					<div class="alert alert-warning">No hay resultados por mostrar.</div>
 				</div>
 				<div id="chart_div" th:if="${estadisticaForm.sinResultados} == false"></div>
+								
+				<br></br>
+				<br></br>
+				
+				<div th:if="${estadisticaForm.sinResultados} == false" class="panel panel-default">				    
+				    <div class="panel-body">
+				        <div id="dataTables-example_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">				            
+			                <div class="row">
+			                    <div class="col-sm-12">
+			                        <table class="table" id="dataTables-example" role="grid" aria-describedby="dataTables-example_info">
+			                            <thead>
+			                                <tr role="row">
+			                                    <th tabindex="0" aria-controls="dataTables-example">Categor&iacute;a</th>
+			                                    <th tabindex="0" aria-controls="dataTables-example" style="text-align:center;">Inscriptos</th>
+			                                    <th tabindex="0" aria-controls="dataTables-example" style="text-align:center;">Aprobados</th>
+			                                    <th tabindex="0" aria-controls="dataTables-example" style="text-align:center;">Desaprobados</th>
+			                                    <th tabindex="0" aria-controls="dataTables-example" style="text-align:center;">Inconclusos</th>
+			                                    <th>&nbsp;</th>			                                    
+			                                </tr>
+			                            </thead>
+			                            <tbody>			                                
+			                                <tr th:each="resultado : ${estadisticaForm.resultados}" class="gradeA odd" role="row">			                                	
+										        <td th:text="${resultado.categoria.descripcion}">&nbsp;</td>
+										        <td th:text="${resultado.contador.inscriptos}" style="text-align:center;">&nbsp;</td>
+										        <td th:text="${resultado.contador.aprobados}" style="text-align:center;">&nbsp;</td>
+										        <td th:text="${resultado.contador.desaprobados}" style="text-align:center;">&nbsp;</td>
+										        <td th:text="${resultado.contador.inconcluso}" style="text-align:center;">&nbsp;</td>
+										    </tr>			                                
+			                            </tbody>
+			                        </table>
+			                    </div>
+			                </div>			                
+			            </div>
+			            <!-- /.table-responsive -->
+			        </div>
+			        <!-- /.panel-body -->
+			    </div>
 
 			</div>
 		</div>
@@ -105,7 +144,7 @@
 			var data = google.visualization.arrayToDataTable(dataArray);
 
 			var options = {
-				width : 600,
+				width : 800,
 				height : 400,
 				legend : {
 					position : 'top',

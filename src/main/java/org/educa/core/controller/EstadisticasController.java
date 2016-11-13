@@ -1,5 +1,7 @@
 package org.educa.core.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -8,6 +10,7 @@ import javax.validation.Valid;
 
 import org.educa.core.api.AbstractController;
 import org.educa.core.bean.ContadorEstadistica;
+import org.educa.core.bean.ResultadosEstadisticas;
 import org.educa.core.controller.forms.EstadisticaForm;
 import org.educa.core.entities.model.Categoria;
 import org.educa.core.entities.model.Usuario;
@@ -44,6 +47,7 @@ public class EstadisticasController extends AbstractController {
 		if(estadisticaForm == null){
 			estadisticaForm = new EstadisticaForm();
 			Map<Categoria,ContadorEstadistica> datos = estadisticaService.buscarEstadisticas(null, null, obtenerUsuarioId(request));
+			estadisticaForm.setResultados(convertirDatosEnLista(datos));
 			estadisticaForm.setChartContentData(generarJsonDeDatos(datos)); 			
 		}
 		model.addAttribute("estadisticaForm", estadisticaForm);
@@ -51,11 +55,22 @@ public class EstadisticasController extends AbstractController {
 		return INDEX;
 	}
 	
+	private List<ResultadosEstadisticas> convertirDatosEnLista(Map<Categoria, ContadorEstadistica> datos) {
+		List<ResultadosEstadisticas> resultados = new ArrayList<ResultadosEstadisticas>();
+		if(datos != null && !datos.isEmpty()){
+			for (Map.Entry<Categoria,ContadorEstadistica> entrada : datos.entrySet()) {
+				resultados.add(new ResultadosEstadisticas(entrada.getKey(), entrada.getValue()));			
+			}				
+		}
+		return resultados;
+	}
+
 	@RequestMapping(value="/buscar", method = RequestMethod.POST)
 	public String buscar(@ModelAttribute @Valid EstadisticaForm estadisticaForm, BindingResult bindingResult, 
 			Model model, HttpServletRequest request){
 		Map<Categoria,ContadorEstadistica> datos = estadisticaService.buscarEstadisticas(estadisticaForm.getFechaDesde(), estadisticaForm.getFechaHasta(), obtenerUsuarioId(request));
 		estadisticaForm.setChartContentData(generarJsonDeDatos(datos));
+		estadisticaForm.setResultados(convertirDatosEnLista(datos));
 		model.addAttribute("estadisticaForm", estadisticaForm);
 		return INDEX;
 	}
