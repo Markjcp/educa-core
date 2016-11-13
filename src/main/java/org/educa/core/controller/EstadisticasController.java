@@ -1,6 +1,5 @@
 package org.educa.core.controller;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -44,8 +43,8 @@ public class EstadisticasController extends AbstractController {
 		
 		if(estadisticaForm == null){
 			estadisticaForm = new EstadisticaForm();
-			estadisticaForm.setChartUrl("");
-			estadisticaForm.setChartContentData(generarJsonDeDatos(null, null, obtenerUsuarioId(request))); //@TODO sacar el hardcodeado y cambar el nombre			
+			Map<Categoria,ContadorEstadistica> datos = estadisticaService.buscarEstadisticas(null, null, obtenerUsuarioId(request));
+			estadisticaForm.setChartContentData(generarJsonDeDatos(datos)); 			
 		}
 		model.addAttribute("estadisticaForm", estadisticaForm);
 
@@ -54,15 +53,15 @@ public class EstadisticasController extends AbstractController {
 	
 	@RequestMapping(value="/buscar", method = RequestMethod.POST)
 	public String buscar(@ModelAttribute @Valid EstadisticaForm estadisticaForm, BindingResult bindingResult, 
-			Model model, HttpServletRequest request){		
-		estadisticaForm.setChartContentData(generarJsonDeDatos(estadisticaForm.getFechaDesde(), estadisticaForm.getFechaHasta(), obtenerUsuarioId(request)));
+			Model model, HttpServletRequest request){
+		Map<Categoria,ContadorEstadistica> datos = estadisticaService.buscarEstadisticas(estadisticaForm.getFechaDesde(), estadisticaForm.getFechaHasta(), obtenerUsuarioId(request));
+		estadisticaForm.setChartContentData(generarJsonDeDatos(datos));
 		model.addAttribute("estadisticaForm", estadisticaForm);
 		return INDEX;
 	}
 	
-	private String generarJsonDeDatos(Date desde, Date hasta, Long usuarioId){
+	private String generarJsonDeDatos(Map<Categoria,ContadorEstadistica> datos){
 		try {
-			Map<Categoria,ContadorEstadistica> datos = estadisticaService.buscarEstadisticas(desde, hasta, usuarioId);
 			return estadisticaService.adaptarResultados(datos);			
 		} catch (SerializacionException e) {
 			logger.severe("Error deserializando: " + e);
