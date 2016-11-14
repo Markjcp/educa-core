@@ -258,6 +258,12 @@ public class CursoNoAdminController {
 		cursoForm.setPublicado(curso.isPublicado());
 		model.addAttribute("mostrarTabUnidad", false);
 		
+		//Cargo datos faltantes de la sesion: curso y foro
+		sesion.setCurso(curso);
+		Sesion sesionAnterior = this.sesionRepository.findOne(sesion.getId());
+		sesion.setForo(sesionAnterior.getForo());
+		sesion.setForoModerado(sesionAnterior.isForoModerado());
+		
 		if (bindingResult.hasErrors()) {
 			validarFechasSesion(sesion, bindingResult);
 			cargarValoresBasicosParaUnidad(model, false, false, false, false, false);
