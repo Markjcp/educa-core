@@ -605,3 +605,8 @@ ADD COLUMN `desaprobado` TINYINT(1) NOT NULL DEFAULT 0 AFTER `id_usuario`;
 ALTER TABLE `educa`.`sesion_usuario` 
 ADD COLUMN `estado_sesion_usuario` VARCHAR(45) NOT NULL DEFAULT 'INDEFINIDO' AFTER `desaprobado`;
 
+-- 19/11
+ALTER TABLE `educa`.`evaluacion` 
+CHANGE COLUMN `Id_sesion` `id_sesion` INT(11) NOT NULL ;
+
+
