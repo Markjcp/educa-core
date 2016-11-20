@@ -347,4 +347,69 @@ public class CursoDaoImpl extends GeneralDaoSupport<Curso>implements CursoDao {
 						"SELECT u FROM VideoUnidad u JOIN u.id d WHERE d.numero = :numero and d.idCurso = :idCurso ")
 				.setParameter("numero", numero).setParameter("idCurso", idCurso).getResultList();
 	}
+
+	@Override
+	public boolean sesionTieneAlumnosInscriptos(long idCurso, int numeroSesion) {
+		StringBuilder query = new StringBuilder();
+		query.append("  select count(*)  ");
+		query.append("  from sesion_usuario  ");
+		query.append("  where numero_componente = " + numeroSesion);
+		query.append("  and id_curso = " + idCurso);
+		
+		Query qSesion = this.getEntityManager().createNativeQuery(query.toString());
+		
+		try{
+			BigInteger cantidadAlumnos = (BigInteger) qSesion.getSingleResult();
+			return (cantidadAlumnos.intValue() > 0 ? true : false);			
+		}  catch(NoResultException e){
+			
+		} catch (Exception e) {
+			throw e;
+		}
+		
+		return false;
+	}
+
+	@Override
+	public boolean unidadFueRendidad(long idCurso, int numeroUnidad) {		
+		StringBuilder query = new StringBuilder();
+		query.append("  select count(*)  ");
+		query.append("  from evaluacion  ");
+		query.append("  where numero_unidad = " + numeroUnidad);
+		query.append("  and id_curso = " + idCurso);
+		
+		Query qSesion = this.getEntityManager().createNativeQuery(query.toString());
+		
+		try{
+			BigInteger cantidadAlumnos = (BigInteger) qSesion.getSingleResult();
+			return (cantidadAlumnos.intValue() > 0 ? true : false);
+		}  catch(NoResultException e){
+			
+		} catch (Exception e) {
+			throw e;
+		}
+		
+		return false;
+	}
+
+	@Override
+	public boolean cursoTieneAlumnosInscriptos(long idCurso) {
+		StringBuilder query = new StringBuilder();
+		query.append("  select count(*)  ");
+		query.append("  from sesion_usuario  ");
+		query.append("  where id_curso = " + idCurso);
+		
+		Query qSesion = this.getEntityManager().createNativeQuery(query.toString());
+		
+		try{
+			BigInteger cantidadAlumnos = (BigInteger) qSesion.getSingleResult();
+			return (cantidadAlumnos.intValue() > 0 ? true : false);			
+		}  catch(NoResultException e){
+			
+		} catch (Exception e) {
+			throw e;
+		}
+		
+		return false;
+	}
 }

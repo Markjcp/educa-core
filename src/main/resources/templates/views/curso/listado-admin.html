@@ -18,7 +18,7 @@
 	<div class="container">
 		<div class="section">
 			<div class="row">
-				<h1>Listado de cursos</h1>
+				<h3>Listado de cursos</h3>
 				
                 <div th:if="${mostrarMensajeAlta} == true" class="alert alert-success alert-dismissable">
                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
@@ -35,6 +35,13 @@
                    <a href="#" class="alert-link">Bien Hecho!</a> El curso se elimin&oacute; correctamente.	                   
                 </div>
                 
+                <!-- Mensajes de cursoTieneAlumnos -->
+                <div th:if="${cursoTieneAlumnos} == true" class="alert alert-danger alert-dismissable">
+				   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+				   <a href="#" class="alert-link">Error!</a> El curso no puede eliminarse porque posee alumnos inscriptos.
+				</div>
+				<!-- FIN de Mensajes de cursoTieneAlumnos -->
+                
                 <div th:if="${not #lists.isEmpty(cursos)}" class="panel panel-default">				    
 				    <div class="panel-body">
 				        <div id="dataTables-example_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">				            
@@ -45,6 +52,7 @@
 			                                <tr role="row">
 			                                    <th tabindex="0" aria-controls="dataTables-example">Nombre</th>
 			                                    <th tabindex="0" aria-controls="dataTables-example">Descripci&oacute;n</th>
+			                                    <th>&nbsp;</th>
 			                                    <th>&nbsp;</th>			                                    
 			                                </tr>
 			                            </thead>
@@ -53,8 +61,9 @@
 										        <td th:text="${curso.nombre}">&nbsp;</td>
 										        <td th:text="${curso.descripcion}">&nbsp;</td>
 										        <td>										        	
-										        	<a type="button" class="btn btn-default btn-educa-basico" th:href="@{/cursoAdmin/altaCurso/{cursoId}(cursoId=${curso.id})}">Modificar</a>
-										        	&nbsp;
+										        	<a type="button" class="btn btn-default btn-educa-basico" th:href="@{/cursoAdmin/altaCurso/{cursoId}(cursoId=${curso.id})}">Modificar</a>										        	
+										        </td>
+										        <td>										        	
 										        	<a type="button" th:href="@{/cursoAdmin/eliminarCurso/{cursoId}(cursoId=${curso.id})}" class="btn btn-default btn-educa-basico">Eliminar</a>
 										        </td>
 										    </tr>

@@ -236,4 +236,19 @@ public class CursoServiceImpl implements CursoService {
 		}
 		return null;
 	}
+
+	@Override
+	public boolean sesionTieneAlumnosInscriptos(long idCurso, int numeroSesion) {
+		return this.cursoDao.sesionTieneAlumnosInscriptos(idCurso, numeroSesion);
+	}
+
+	@Override
+	public boolean unidadFueRendida(long idCurso, int numeroUnidad) {
+		return this.cursoDao.unidadFueRendidad(idCurso, numeroUnidad);
+	}
+
+	@Override
+	public boolean cursoTieneAlumnosInscriptos(long id) {
+		return this.cursoDao.cursoTieneAlumnosInscriptos(id);
+	}
 }

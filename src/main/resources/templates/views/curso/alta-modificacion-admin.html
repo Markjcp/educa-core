@@ -21,8 +21,8 @@
 	<div class="container">
 		<div class="section">
 			<div class="row">
-				<h1 th:if="${edicion} == false">Nuevo curso</h1>
-				<h1 th:if="${edicion} == true">Modificaci&oacute;n de curso</h1>
+				<h3 th:if="${edicion} == false">Nuevo curso</h3>
+				<h3 th:if="${edicion} == true">Modificaci&oacute;n de curso</h3>
 			    <form action="#" th:action="@{/cursoAdmin/altaCurso}" th:object="${cursoForm}" method="post" enctype="multipart/form-data">
 			    	<div class="col l6 s12"> 
 			    		<div class="form-group input-field">

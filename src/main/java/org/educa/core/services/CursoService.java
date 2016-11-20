@@ -31,4 +31,10 @@ public interface CursoService {
 	boolean eliminarSesionCurso(Curso curso, long idSesion, int numeroSesion);
 
 	Curso encontrarCursoPorIdHidratado(long idCurso);
+	
+	boolean sesionTieneAlumnosInscriptos(long idCurso, int numeroSesion);
+
+	boolean unidadFueRendida(long idCurso, int numeroUnidad);
+
+	boolean cursoTieneAlumnosInscriptos(long id);
 }

@@ -20,10 +20,10 @@
 	<div class="container">
 		<div class="section">
 			<div class="row">
-				<h1>Foro - Tema</h1>
+				<h3>Foro - Tema</h3>
 				<form id="cursoForm" action="#" th:object="${foroForm}">
 			    	<div class="row">
-			    		<div class="col s4">
+			    		<div class="col s3">
 				    		<div class="form-group input-field">
 				    			<input type="text" th:field="*{sesion.descripcionForo}" placeholder="Nombre sesi&oacute;n" disabled="disabled" style="color: #000; border-bottom: 1px solid #26a69a;"/>			    			
 				    		</div>
@@ -35,7 +35,7 @@
 				    		</div>
 				    	</div>
 				    	<div class="col s1"></div>
-				    	<div class="col s3">	
+				    	<div class="col s4">	
 				        	<div class="form-group input-field">
 				        		 <input type="text" th:field="*{curso.categoria.descripcion}" placeholder="Categor&iacute;a del curso" disabled="disabled" style="color: #000; border-bottom: 1px solid #26a69a;"/>                                                        
 	                         </div>		 			    		 	                        
@@ -117,15 +117,15 @@
 								<ul class="timeline">
 					    			<li th:each="comentario : ${comentarios.pageList}">
 					    				<!-- Icono de estado del comentario -->
-					    				<div th:if="${comentario.aprobado} == true or ${foroForm.sesion.foro.moderado} == false" class="timeline-badge success">
+					    				<div th:if="${comentario.aprobado} == true or ${foroForm.sesion.foro.moderado} == false" class="timeline-badge success" style="z-index: 1;">
 					    					<!-- Comentario OK -->					    					
 					    					<i class="fa fa-thumbs-o-up"></i>
 										</div>
-										<div th:if="${comentario.rechazado} == true" class="timeline-badge danger">
+										<div th:if="${comentario.rechazado} == true" class="timeline-badge danger" style="z-index: 1;">
 					    					<!-- Comentario RECHAZADO -->					    					
 					    					<i class="fa fa-thumbs-o-down"></i>
 										</div>
-										<div th:if="${comentario.rechazado} == false and ${comentario.aprobado} == false and ${foroForm.sesion.foro.moderado} == true" class="timeline-badge warning">
+										<div th:if="${comentario.rechazado} == false and ${comentario.aprobado} == false and ${foroForm.sesion.foro.moderado} == true" class="timeline-badge warning" style="z-index: 1;">
 					    					<!-- Comentario INDEFINIDO para foro MODERADO -->
 					    					<i class="fa fa-thumbs-o-up"></i>
 					    					<i class="fa fa-thumbs-o-down"></i>
@@ -187,7 +187,7 @@
 					    		</ul>
 							</div>
 							
-							<div  class="col-md-12 text-center">
+							<div  class="col-md-12 text-center" style="z-index: 1;">
 					        	<div  class='pagination pagination-centered'>
 					        		<ul class="pagination">
 					        			<li th:class="${currentIndex == 1}? 'disabled' : ''"><span
@@ -239,7 +239,7 @@
 					</div>
 				</div>
 				
-				<div th:if="${tema.aprobado} == true or ${foroForm.sesion.foro.moderado} == false and ${tema.rechazado} == false" id="chat-box" class="row">
+				<div th:if="${tema.aprobado} == true or ${foroForm.sesion.foro.moderado} == false and ${tema.rechazado} == false" id="chat-box" class="row" style="z-index: 1;">
 					<form action="#" th:action="@{/foro/agregarComentario/{idCurso}/{nroSesion}/{idTema}(idCurso=${foroForm.curso.id},nroSesion=${foroForm.sesion.id.numero},idTema=${tema.id})}" th:object="${foroForm}" method="post" id="formularioAltaComentario">
 						<div class="message-input-wrapper">
 							<textarea class="materialize-textarea" th:field="*{comentario.descripcion}" placeholder="Ingrese un nuevo comentario" length="500"></textarea>

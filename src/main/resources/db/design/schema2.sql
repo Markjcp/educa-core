@@ -573,7 +573,7 @@ DROP TABLE IF EXISTS `educa`.`evaluacion`;
 CREATE TABLE IF NOT EXISTS `educa`.`evaluacion` (
   `id_evaluacion` BIGINT NOT NULL AUTO_INCREMENT,
   `id_usuario` BIGINT NOT NULL,
-  `Id_sesion` INT NOT NULL,
+  `id_sesion` INT NOT NULL,
   `id_curso` INT NOT NULL,
   `numero_unidad` INT NOT NULL,
   `cantidad_respuestas_correctas` INT NULL,

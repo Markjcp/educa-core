@@ -22,7 +22,7 @@
 	<div class="container">
 		<div class="section">
 			<div class="row">
-				<h1>Configuraci&oacute;n curso</h1>			    
+				<h3>Configuraci&oacute;n curso</h3>			    
 			    <form id="cursoPublicacionForm" action="#" th:object="${cursoForm}" th:action="@{/cursoNoAdmin/cambiarEstadoPublicacion}" method="post">
 			    	<div class="row">
 				    	<div class="col s4"> 
@@ -58,7 +58,28 @@
 				   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
 				   <a href="#" class="alert-link">Error!</a> <span th:text="${mensajeErrorPublicacion}"></span>	   				   	  
 				</div>
-				<!-- FIN de Mensajes de publicacion curso -->			    		  
+				<!-- FIN de Mensajes de publicacion curso -->
+				
+				<!-- Mensajes de tieneSesionesActivas -->
+                <div th:if="${tieneSesionesActivas} == true" class="alert alert-danger alert-dismissable">
+				   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+				   <a href="#" class="alert-link">Error!</a> El curso posee sesiones activas, por lo que no se puede agregar, modificar o eliminar una unidad.				   	  
+				</div>
+				<!-- FIN de Mensajes de tieneSesionesActivas -->
+				
+				<!-- Mensajes de unidadRendida -->
+                <div th:if="${unidadRendida} == true" class="alert alert-danger alert-dismissable">
+				   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+				   <a href="#" class="alert-link">Error!</a> La unidad fue rendida al menos por un alumno, por lo que no puede ser eliminada.
+				</div>
+				<!-- FIN de Mensajes de unidadRendida -->
+				
+				<!-- Mensajes de sesionTieneAlumnos -->
+                <div th:if="${sesionTieneAlumnos} == true" class="alert alert-danger alert-dismissable">
+				   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+				   <a href="#" class="alert-link">Error!</a> La sesion tiene alumnos inscriptos por lo que no puede ser modificada ni eliminada.
+				</div>
+				<!-- FIN de Mensajes de sesionTieneAlumnos -->
 			    
 				<div class="row">
 					<div >

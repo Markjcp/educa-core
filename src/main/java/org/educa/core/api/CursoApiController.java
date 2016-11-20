@@ -1,15 +1,20 @@
 package org.educa.core.api;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.educa.core.dao.CursoDao;
 import org.educa.core.dao.CursoRepository;
 import org.educa.core.dao.ParametroRepository;
 import org.educa.core.entities.model.Curso;
 import org.educa.core.entities.model.Estado;
+import org.educa.core.entities.model.EstadoPublicacion;
 import org.educa.core.entities.model.Parametro;
+import org.educa.core.entities.model.Unidad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,7 +48,7 @@ public class CursoApiController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "listar/{categoriaId}")
 	public List<Curso> listarPorCategoria(@PathVariable Long categoriaId) {
-		List<Curso> cursos = (List<Curso>) cursoRepository.findByCategoriaIdAndEstadoCurso(categoriaId, Estado.PUBLICADO);
+		List<Curso> cursos = (List<Curso>) cursoRepository.findByCategoriaIdAndEstadoCurso(categoriaId, Estado.PUBLICADO);		
 		return cursos;
 	}
 

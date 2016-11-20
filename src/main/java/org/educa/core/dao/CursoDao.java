@@ -35,4 +35,10 @@ public interface CursoDao extends GeneralDao<Curso> {
 	List<MaterialUnidad> findMaterialUnidadByNumeroAndIdCurso(Integer numero, Long idCurso);
 	
 	List<VideoUnidad> findVideoUnidadByNumeroAndIdCurso(Integer numero, Long idCurso);
+
+	boolean sesionTieneAlumnosInscriptos(long idCurso, int numeroSesion);
+
+	boolean unidadFueRendidad(long idCurso, int numeroUnidad);
+	
+	boolean cursoTieneAlumnosInscriptos(long idCurso);
 }

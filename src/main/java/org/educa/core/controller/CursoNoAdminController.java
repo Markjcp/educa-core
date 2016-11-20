@@ -68,9 +68,29 @@ public class CursoNoAdminController {
 		}
 		
 		model.addAttribute("cursoForm", cursoForm);
-		model.addAttribute("mostrarTabUnidad", true);		
+		model.addAttribute("mostrarTabUnidad", true);						
 		
 		return CONFIGURACION_CURSO;
+	}
+	
+	private boolean tieneSesionesActivas(Curso curso){
+		if(curso == null){
+			return false;
+		}
+		
+		if(curso.getSesiones() == null || curso.getSesiones().isEmpty()){
+			return false;
+		}
+		
+		Calendar fechaHoy = Calendar.getInstance();
+		boolean tieneSesionActiva = false;
+		for(Sesion sesion : curso.getSesiones()){
+			if(fechaHoy.getTime().compareTo(sesion.getFechaHasta()) <= 0){
+				tieneSesionActiva = true;
+			}
+		}
+		
+		return tieneSesionActiva;
 	}
 	
 	@RequestMapping(value = "/cambiarEstadoPublicacion", method = RequestMethod.POST)
@@ -103,8 +123,17 @@ public class CursoNoAdminController {
 	}	
 	
 	@RequestMapping(value = "/configuracionUnidadCurso", method = RequestMethod.POST)
-	public String guardarUnidadCurso(@ModelAttribute @Valid CursoForm cursoForm, BindingResult bindingResult, Model model) {
-		Curso curso = cursoForm.getCurso();
+	public String guardarUnidadCurso(@ModelAttribute @Valid CursoForm cursoForm, BindingResult bindingResult, Model model) {		
+		Curso curso = this.cursoService.encontrarCursoPorId(cursoForm.getCurso().getId());//Vuelvo a cargar el curso porque las colecciones se cargaron en otra "sesion" de hibernate.
+		if(tieneSesionesActivas(curso)){
+			model.addAttribute("tieneSesionesActivas", true);
+			model.addAttribute("cursoForm", cursoForm);
+			cargarValoresBasicosParaUnidad(model, false, false, false, false, true);
+			cargarValoresBasicosParaSesion(curso, model, false, false, false, false, false);
+			
+			return CONFIGURACION_CURSO;
+		}
+		
 		model.addAttribute("mostrarTabUnidad", true);
 		if (bindingResult.hasFieldErrors("nuevaUnidad.*")) {
 			model.addAttribute("cursoForm", cursoForm);			
@@ -141,6 +170,15 @@ public class CursoNoAdminController {
 		cursoForm.setCurso(curso);
 		model.addAttribute("mostrarTabUnidad", true);
 		
+		if(tieneSesionesActivas(curso)){
+			model.addAttribute("tieneSesionesActivas", true);
+			model.addAttribute("cursoForm", cursoForm);
+			cargarValoresBasicosParaUnidad(model, false, false, false, false, true);
+			cargarValoresBasicosParaSesion(curso, model, false, false, false, false, false);
+			
+			return CONFIGURACION_CURSO;
+		}
+		
 		if (bindingResult.hasErrors()) {			
 			cargarValoresBasicosParaUnidad(model, false, false, true, false, false);
 			cargarValoresBasicosParaSesion(curso, model, false, false, false, false, false);			
@@ -174,13 +212,24 @@ public class CursoNoAdminController {
 	public String eliminarUnidad(@PathVariable("idCurso") long idCurso, @PathVariable("idUnidad") long idUnidad, @PathVariable("numeroUnidad") int numeroUnidad, Model model) {
 		Curso curso = this.cursoService.encontrarCursoPorId(idCurso);
 		model.addAttribute("mostrarTabUnidad", true);
+		
+		boolean tieneSesionesActivas = tieneSesionesActivas(curso);
+		if(tieneSesionesActivas){
+			model.addAttribute("tieneSesionesActivas", true);			
+		}
+		
 		boolean eliminada = false;
-		if(curso != null && curso.getUnidades() != null){
-			eliminada = this.cursoService.eliminarUnidadCurso(curso, idUnidad, numeroUnidad);			
+		if(!tieneSesionesActivas && curso != null && curso.getUnidades() != null){
+			boolean alumnosRindieronUnidad = this.cursoService.unidadFueRendida(idCurso, numeroUnidad);
+			if(alumnosRindieronUnidad){
+				model.addAttribute("unidadRendida", true);
+			} else {
+				eliminada = this.cursoService.eliminarUnidadCurso(curso, idUnidad, numeroUnidad);
+			}
 		}
 		
 		Curso cursoHidratado = this.cursoService.encontrarCursoPorIdHidratado(idCurso);		
-		//Seteo los nuevos valores		
+		//Seteo los nuevos valores
 		CursoForm cursoForm = new CursoForm();
 		cursoForm.setCurso(cursoHidratado);
 		cursoForm.setPublicado(cursoHidratado.isPublicado());
@@ -263,6 +312,16 @@ public class CursoNoAdminController {
 		Sesion sesionAnterior = this.sesionRepository.findOne(sesion.getId());
 		sesion.setForo(sesionAnterior.getForo());
 		sesion.setForoModerado(sesionAnterior.isForoModerado());
+				
+		boolean tieneAlumnos = this.cursoService.sesionTieneAlumnosInscriptos(idCurso, sesion.getId().getNumero());
+		if(tieneAlumnos){
+			model.addAttribute("sesionTieneAlumnos", true);
+			cargarValoresBasicosParaUnidad(model, false, false, false, false, false);
+			cargarValoresBasicosParaSesion(curso, model, false, false, true, false, false);			
+			model.addAttribute("cursoForm", cursoForm);
+			
+			return CONFIGURACION_CURSO;
+		}
 		
 		if (bindingResult.hasErrors()) {
 			validarFechasSesion(sesion, bindingResult);
@@ -300,12 +359,17 @@ public class CursoNoAdminController {
 		model.addAttribute("mostrarTabUnidad", false);
 		Curso curso = this.cursoService.encontrarCursoPorId(idCurso);
 		boolean eliminada = false;
-		if(curso != null && curso.getUnidades() != null){
-			eliminada = this.cursoService.eliminarSesionCurso(curso, idSesion, numeroSesion);			
+		if(curso != null && curso.getSesiones() != null){
+			boolean tieneAlumnos = this.cursoService.sesionTieneAlumnosInscriptos(idCurso, numeroSesion);
+			if(tieneAlumnos){
+				model.addAttribute("sesionTieneAlumnos", true);
+			} else {
+				eliminada = this.cursoService.eliminarSesionCurso(curso, idSesion, numeroSesion);
+			}					
 		}
 		
 		Curso cursoHidratado = this.cursoService.encontrarCursoPorIdHidratado(idCurso);		
-		//Seteo los nuevos valores		
+		//Seteo los nuevos valores
 		CursoForm cursoForm = new CursoForm();
 		cursoForm.setCurso(cursoHidratado);
 		cursoForm.setPublicado(cursoHidratado.isPublicado());
