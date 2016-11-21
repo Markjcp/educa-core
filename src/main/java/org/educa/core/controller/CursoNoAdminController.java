@@ -85,7 +85,7 @@ public class CursoNoAdminController {
 		Calendar fechaHoy = Calendar.getInstance();
 		boolean tieneSesionActiva = false;
 		for(Sesion sesion : curso.getSesiones()){
-			if(fechaHoy.getTime().compareTo(sesion.getFechaHasta()) <= 0){
+			if(fechaHoy.getTime().compareTo(sesion.getFechaDesde()) >=  0 && fechaHoy.getTime().compareTo(sesion.getFechaHasta()) <= 0){
 				tieneSesionActiva = true;
 			}
 		}
@@ -134,6 +134,7 @@ public class CursoNoAdminController {
 			return CONFIGURACION_CURSO;
 		}
 		
+		curso = cursoForm.getCurso();
 		model.addAttribute("mostrarTabUnidad", true);
 		if (bindingResult.hasFieldErrors("nuevaUnidad.*")) {
 			model.addAttribute("cursoForm", cursoForm);			
@@ -310,8 +311,10 @@ public class CursoNoAdminController {
 		//Cargo datos faltantes de la sesion: curso y foro
 		sesion.setCurso(curso);
 		Sesion sesionAnterior = this.sesionRepository.findOne(sesion.getId());
-		sesion.setForo(sesionAnterior.getForo());
-		sesion.setForoModerado(sesionAnterior.isForoModerado());
+		Foro foro = sesionAnterior.getForo();
+		EstadoForo estadoForo = (sesion.isForoModerado() ? EstadoForo.MODERADO : EstadoForo.NO_MODERADO);
+		foro.setEstado(estadoForo);
+		sesion.setForo(sesionAnterior.getForo());		
 				
 		boolean tieneAlumnos = this.cursoService.sesionTieneAlumnosInscriptos(idCurso, sesion.getId().getNumero());
 		if(tieneAlumnos){
